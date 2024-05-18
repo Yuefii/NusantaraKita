@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
+    "csvtojson": "^2.0.10",
     "express": "^4.19.2",
     "ts-node": "^10.9.2"
   },
@@ -15,10 +16,11 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.12",
     "morgan": "^1.10.0",
+    "nodemon": "^3.1.0",
     "typescript": "^5.4.5"
   },
   "scripts": {
-    "dev": "ts-node src/index.ts",
+    "dev": "nodemon",
     "start": "node dist/src/index.js",
     "build": "tsc"
   }
