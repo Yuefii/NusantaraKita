@@ -1,6 +1,8 @@
 # API NUSANTARA-KITA
 
-Demo: [http://localhost:8080](http://localhost:8080)
+API ini menyediakan data lengkap mengenai wilayah-wilayah di Indonesia yang telah dideploy menggunakan `VERCEL`, semoga API ini bisa bermanfaat untuk kalian, dan selamat mencoba.
+
+Demo: [https://nusantara-kita.yuefii.my.id](https://nusantara-kita.yuefii.my.id)
 
 - `/api/nusantara/provinces`
 - `/api/nusantara/{provinces_code}/regencies`
@@ -14,7 +16,7 @@ Api ini berisi seluruh data wilayah indonesia mulai dari:
 - Provinsi
 - Kabupaten/Kota
 - Kecamatan
-- Kelurahan
+- Desa
 
 ## Dokumentasi Project
 
@@ -71,7 +73,7 @@ GET http://localhost:8080/api/nusantara/{provinces_code}/regencies
 GET http://localhost:8080/api/nusantara/{regency_code}/districts
 ```
 
-#### 4. Mengambil Data Kelurahan berdasarkan kode Kecamatan
+#### 4. Mengambil Data Desa berdasarkan kode Kecamatan
 
 ```
 GET http://localhost:8080/api/nusantara/{district_code}/villages
