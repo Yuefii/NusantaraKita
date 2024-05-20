@@ -11,7 +11,7 @@ export class AreaController {
     async getProvinces(_req: Request, res: Response) {
         try {
             const result = await this.utils.readCSV("provinces.csv");
-            res.json({ data: result });
+            res.status(200).json({ data: result });
         } catch (error) {
             console.error(error)
             res.status(500).json({
@@ -32,7 +32,7 @@ export class AreaController {
                     message: 'province_code not found'
                 });
             }
-            res.json({ data: filtered })
+            res.status(200).json({ data: filtered })
         } catch (error) {
             console.error(error)
             res.status(500).json({
@@ -53,7 +53,7 @@ export class AreaController {
                     message: 'regency_code not found'
                 });
             }
-            res.json({ data: filtered })
+            res.status(200).json({ data: filtered })
         } catch (error) {
             console.error(error)
             res.status(500).json({
@@ -74,7 +74,7 @@ export class AreaController {
                     message: 'district_code not found'
                 });
             }
-            res.json({ data: filtered })
+            res.status(200).json({ data: filtered })
         } catch (error) {
             console.error(error)
             res.status(500).json({
