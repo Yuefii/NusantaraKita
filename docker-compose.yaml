@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+      # turn off this during production
+      - node_modules:/app/node_modules
+volumes:
+  # turn off this during production
+  node_modules:
