@@ -1,7 +1,7 @@
 import supertest from "supertest";
 
 import { app } from "../src/libs/expres"
-import { logger } from "../src/libs/winston";
+import { logger } from "../src/libs/winston"
 
 describe('GET /api/nusantara/:district_code/villages', () => {
     it('Should get data villages for a given district code', async () => {
@@ -28,4 +28,13 @@ describe('GET /api/nusantara/:district_code/villages', () => {
         });
     });
 
+    it('Should reject get and return 404 if district_code not found', async () => {
+        const invalidDistrictCode = "100"
+        const response = await supertest(app)
+            .get(`/api/nusantara/${invalidDistrictCode}/villages`)
+        logger.debug(response.body)
+        expect(response.status).toBe(404)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toBe('district_code not found')
+    });
 })

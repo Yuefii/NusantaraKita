@@ -1,7 +1,7 @@
-import supertest from "supertest";
+import supertest from "supertest"
 
 import { app } from "../src/libs/expres"
-import { logger } from "../src/libs/winston";
+import { logger } from "../src/libs/winston"
 
 describe('GET /api/nusantara/:regency_code/districts', () => {
     it('Should get data districts for a given regency code', async () => {
@@ -28,4 +28,13 @@ describe('GET /api/nusantara/:regency_code/districts', () => {
         });
     });
 
+    it('Should reject get and return 404 if regency_code not found', async () => {
+        const invalidRegencyCode = "100"
+        const response = await supertest(app)
+            .get(`/api/nusantara/${invalidRegencyCode}/districts`)
+        logger.debug(response.body);
+        expect(response.status).toBe(404);
+        expect(response.body).toHaveProperty('errors');
+        expect(response.body.errors).toBe('regency_code not found');
+    });
 })
