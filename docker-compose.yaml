@@ -1,15 +1,16 @@
-version: '3.7'
+version: '3'
+
 services:
-  api:
+  development:
+    environment:
+      - NODE_ENV=development
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - 8080:8080
+      dockerfile: Dockerfile.dev
     volumes:
-      - .:/app
-      # turn off this during production
-      - node_modules:/app/node_modules
-volumes:
-  # turn off this during production
-  node_modules:
+      - ./:/usr/src/app
+    expose:
+      - '8080'
+    ports:
+      - '8080:8080'
+    command: npm run dev

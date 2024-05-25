@@ -1,3 +1,12 @@
+Dockerfile
+docker*.yml
+
+.git
+.gitignore
+.config
+
+.npm
+.vscode
 node_modules
-docker-compose.yaml
-dockerfile
+
+README.md

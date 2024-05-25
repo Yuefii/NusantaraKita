@@ -30,7 +30,7 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "nodemon",
+    "dev": "nodemon -L",
     "start": "node dist/index.js",
     "build": "tsc"
   },
