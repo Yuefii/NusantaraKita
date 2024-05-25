@@ -1,6 +1,6 @@
 {
-  "name": "nusantara-kita",
-  "version": "1.0.0",
+  "name": "api-nusantara-kita",
+  "version": "1.0.1",
   "main": "index.ts",
   "author": "yuefii",
   "license": "MIT",

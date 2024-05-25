@@ -9,6 +9,8 @@ app.get("/", async (req, res) => {
     res.status(200).json({
         "author": "yuefii",
         "github_author": "https://github.com/yuefii",
-        "version": "1.0.0"
+        "github_repository": "https://github.com/Yuefii/api-nusantara-kita",
+        "documentation": "https://yuefii.my.id/nusantara-kita",
+        "version": "1.0.1"
     })
 })
