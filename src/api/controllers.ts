@@ -1,5 +1,7 @@
 import { Utils } from "./utils"
-import { Request, Response } from "express";
+import { logger } from "../libs/winston";
+import { ResponseError } from "../error/response-error";
+import { NextFunction, Request, Response } from "express";
 
 
 export class AreaController {
@@ -8,79 +10,55 @@ export class AreaController {
     constructor() {
         this.utils = new Utils()
     }
-    async getProvinces(_req: Request, res: Response) {
+    async getProvinces(_req: Request, res: Response, next: NextFunction) {
         try {
             const result = await this.utils.readCSV("provinces.csv");
+            logger.info("successfully to get provinces.")
             res.status(200).json({ data: result });
         } catch (error) {
-            console.error(error)
-            res.status(500).json({
-                statusCode: 500,
-                error: 'Internal Server Error'
-            })
+            next(error)
         }
     }
-    async getRegencies(req: Request, res: Response) {
+    async getRegencies(req: Request, res: Response, next: NextFunction) {
         try {
             const { provinces_code } = req.params
             const result = await this.utils.readCSV("regencies.csv")
             const filtered = result.filter(item => item.province_code === provinces_code);
             if (filtered.length === 0) {
-                return res.status(404).json({
-                    statusCode: 404,
-                    error: 'Not Found',
-                    message: 'province_code not found'
-                });
+                throw new ResponseError(404, "province_code not found")
             }
+            logger.info("successfully to get regencies.")
             res.status(200).json({ data: filtered })
         } catch (error) {
-            console.error(error)
-            res.status(500).json({
-                statusCode: 500,
-                error: 'Internal Server Error'
-            })
+            next(error)
         }
     }
-    async getDistricts(req: Request, res: Response) {
+    async getDistricts(req: Request, res: Response, next: NextFunction) {
         try {
             const { regency_code } = req.params
             const result = await this.utils.readCSV("districts.csv")
             const filtered = result.filter(item => item.regency_code === regency_code);
             if (filtered.length === 0) {
-                return res.status(404).json({
-                    statusCode: 404,
-                    error: 'Not Found',
-                    message: 'regency_code not found'
-                });
+                throw new ResponseError(404, "regency_code not found")
             }
+            logger.info("successfully to get districts.")
             res.status(200).json({ data: filtered })
         } catch (error) {
-            console.error(error)
-            res.status(500).json({
-                statusCode: 500,
-                error: 'Internal Server Error'
-            })
+            next(error)
         }
     }
-    async getVillages(req: Request, res: Response) {
+    async getVillages(req: Request, res: Response, next: NextFunction) {
         try {
             const { district_code } = req.params
             const result = await this.utils.readCSV("villages.csv")
             const filtered = result.filter(item => item.district_code === district_code);
             if (filtered.length === 0) {
-                return res.status(404).json({
-                    statusCode: 404,
-                    error: 'Not Found',
-                    message: 'district_code not found'
-                });
+                throw new ResponseError(404, "district_code not found")
             }
+            logger.info("successfully to get villages.")
             res.status(200).json({ data: filtered })
         } catch (error) {
-            console.error(error)
-            res.status(500).json({
-                statusCode: 500,
-                error: 'Internal Server Error'
-            })
+            next(error)
         }
     }
 }
