@@ -9,9 +9,13 @@ Demo: [https://nusantara-kita.yuefii.my.id](https://nusantara-kita.yuefii.my.id)
 - `/api/nusantara/{regency_code}/districts`
 - `/api/nusantara/{district_code}/villages`
 
+`noted` Karna Api ini dihosting menggunakan hosting yang free jadi akan terbatas untuk consume api nya jadi lebih baik kalian hosting sendiri project ini.
+
+`Fork` project ini ke repostory kalian lalu kemudian deploy API nya.
+
 ## Fitur
 
-Api ini berisi seluruh data wilayah indonesia mulai dari:
+API ini berisi seluruh data wilayah indonesia mulai dari:
 
 - Provinsi
 - Kabupaten/Kota
@@ -28,7 +32,7 @@ Data yang kami gunakan didasarkan pada data resmi dari pemerintah dan disimpan d
 
 ## Instalasi
 
-Langkah-langkah Cara install project ini dilokal
+Langkah-langkah cara install project ini dilokal :
 
 Git clone
 
@@ -52,6 +56,37 @@ Menjalankan Projectnya menggunakan `YARN`
   ```
   yarn dev
   ```
+
+#### Jika kalian ingin menggunakan `Docker`
+
+Untuk Menjalankannya di `Development`
+
+```
+docker-compose -f docker-compose.yaml up --build
+```
+
+`noted`
+Untuk menggunakan `Docker` pada development kalian harus `yarn install` atau `npm install` terlebih dahulu, untuk menginstall `node_modules` tidak seperti `Production` yang bisa langsung berjalan.
+
+Untuk Menjalankannya di `Production`
+
+```
+docker-compose -f docker-compose.prod.yaml up --build -d
+```
+
+Jika kalian ingin lebih mudah lagi bisa menggunakan `Make`
+
+Caranya kalian ketika gunakan command ini :
+
+- `make dev`
+- `make dev-down`
+- `make prod`
+- `make prod-down`
+
+Untuk selengkapnya kalian bisa cek di pada [Makefile](./Makefile) disana akan ada komentar yang menjelaskan kegunaannya.
+
+`noted`
+Untuk menggunakan `Make` kalian harus menginstall nya terlebih dahulu.
 
 ## Endpoint
 
