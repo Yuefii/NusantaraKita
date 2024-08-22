@@ -1,4 +1,7 @@
-mysql-connector-python==9.0.0
-pandas==2.2.2
-python-dotenv==1.0.1
-SQLAlchemy==2.0.32
+mysql-connector-python
+pandas
+python-dotenv
+SQLAlchemy
+jupyter
+Flask-SQLAlchemy
+Flask
