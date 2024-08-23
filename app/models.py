@@ -15,6 +15,15 @@ class Provinces(db.Model):
 
 
 class Regencies(db.Model):
+    """
+    Model untuk table "regencies" dalam database.
+
+    Attributes:
+        code (str): Code Unique untuk Kabupaten/Kota (primary key).
+        province_code (str): Kode Provinsi yang merupakan foreign key dari tabel "provinces".
+        name (str): Nama Kabupaten/Kota yang tidak boleh kosong.
+    """
+
     code = db.Column(db.String(5), primary_key=True)
     province_code = db.Column(
         db.String(2), db.ForeignKey("provinces.code"), nullable=False
