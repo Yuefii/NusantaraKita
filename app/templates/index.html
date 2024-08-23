@@ -1,17 +1,101 @@
 <!doctype html>
+
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NusantaraKita</title>
-    <link href="css/style.css" rel="stylesheet" />
-  </head>
-  <body>
-    <h1>Documention API</h1>
-    <ul>
-      <li>
-        <a href="/api/provinces">Endpoint Provinsi</a>
-      </li>
-    </ul>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Nusantara Kita</title>
+  <meta name="description" content="Nusantara Kita" />
+  <meta name="author" content="Yuefii" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,600&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="navbar clear">
+    <div class="row content">
+      <a class="right" style="text-decoration: underline" href="#"><i
+          class="fa-solid fa-book"></i>&nbsp;Documentation</a>
+      <a class="right" href="https://github.com/yuefii/NusantaraKita" target="_blank"><i class="fa-brands fa-github"></i>&nbsp;Github</a>
+    </div>
+  </div>
+
+  <div class="container clear">
+    <div class="row wrapper">
+      <div class="sidepanel">
+        <a class="title" href="#">Documentation</a>
+        <a class="section" href="#">Getting Started</a>
+        <a class="section" href="#">Installation</a>
+        <a class="section" href="#">Contribution</a>
+        <div class="space double"></div>
+
+        <a class="title" href="#">Endpoints</a>
+        <a class="section" href="#">Provinsi</a>
+        <a class="section" href="#">Kabupaten</a>
+        <a class="section" href="#">Kecamatan</a>
+        <a class="section" href="#">Desa</a>
+        <div class="space double"></div>
+      </div>
+
+      <div class="right-col">
+        <h1>Introduction</h1>
+
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+          ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+
+        <h2>Versions:</h2>
+
+        <p>API Version 2.0</p>
+
+        <h2>Installation</h2>
+
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+
+        <ol>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <br />
+          <li>Lorem ipsum dolor sit amet.</li>
+          <br />
+          <li>Lorem ipsum dolor sit amet.</li>
+          <br />
+        </ol>
+
+        <h2>Running project</h2>
+
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+
+        <ol>
+          <li>Lorem ipsum dolor sit amet.</li>
+          <br />
+          <li>Lorem ipsum dolor sit amet.</li>
+          <br />
+          <li>Lorem ipsum dolor sit amet.</li>
+          <br />
+          <li>Lorem ipsum dolor sit amet.</li>
+          <br />
+        </ol>
+      </div>
+    </div>
+</body>
+
 </html>
