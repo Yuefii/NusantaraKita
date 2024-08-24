@@ -30,3 +30,12 @@ class Regencies(db.Model):
     )
     name = db.Column(db.String(255), nullable=False)
     province = db.relationship("Provinces", backref=db.backref("regencies", lazy=True))
+
+
+class Districts(db.Model):
+    code = db.Column(db.String(8), primary_key=True)
+    regency_code = db.Column(
+        db.String(5), db.ForeignKey("regencies.code"), nullable=False
+    )
+    name = db.Column(db.String(255), nullable=False)
+    regency = db.relationship("Regencies", backref=db.backref("districts", lazy=True))
