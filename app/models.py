@@ -51,6 +51,15 @@ class Districts(db.Model):
 
 
 class Villages(db.Model):
+    """
+    Model untuk table "villages" dalam database.
+
+    Attributes:
+        code (str): Code Unique untuk Desa (primary key).
+        district_code (str): Kode Kecamatan yang merupakan foreign key dari tabel "districts".
+        name (str): Nama Desa yang tidak boleh kosong.
+    """
+
     code = db.Column(db.String(13), primary_key=True)
     district_code = db.Column(
         db.String(8), db.ForeignKey("districts.code"), nullable=False
