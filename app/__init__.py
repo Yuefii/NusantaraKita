@@ -15,10 +15,11 @@ def create_app():
         return render_template("index.html")
 
     with app.app_context():
-        from app.routes import province_bp, regency_bp, district_bp
+        from app.routes import province_bp, regency_bp, district_bp, village_bp
 
         app.register_blueprint(province_bp)
         app.register_blueprint(regency_bp)
         app.register_blueprint(district_bp)
+        app.register_blueprint(village_bp)
         db.create_all()
     return app
