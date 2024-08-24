@@ -33,6 +33,15 @@ class Regencies(db.Model):
 
 
 class Districts(db.Model):
+    """
+    Model untuk table "districts" dalam database.
+
+    Attributes:
+        code (str): Code Unique untuk Kecamatan (primary key).
+        regency_code (str): Kode Kabupaten/Kota yang merupakan foreign key dari tabel "regencies".
+        name (str): Nama Kecamatan yang tidak boleh kosong.
+    """
+
     code = db.Column(db.String(8), primary_key=True)
     regency_code = db.Column(
         db.String(5), db.ForeignKey("regencies.code"), nullable=False
