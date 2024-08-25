@@ -9,11 +9,42 @@ village_bp = Blueprint("villages", __name__)
 
 @province_bp.route("/api/provinces", methods=["GET"])
 def get_provinces():
-    provinces = Provinces.query.all()
-    response = [
-        {"code": province.code, "name": province.name} for province in provinces
-    ]
-    return jsonify({"data": response})
+    show_all = request.args.get("show_all", "false").lower() == "true"
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+
+    if per_page <= 0:
+        return jsonify({"error": "invalid per_page value"}), 400
+
+    if show_all:
+        provinces = Provinces.query.all()
+        response = [
+            {"code": province.code, "name": province.name} for province in provinces
+        ]
+    else:
+        total_provinces = Provinces.query.count()
+        total_pages = (total_provinces + per_page - 1) // per_page
+
+        if page > total_pages:
+            return jsonify({"error": "page number exceeds total pages"}), 400
+
+        provinces_query = Provinces.query.paginate(
+            page=page, per_page=per_page, error_out=False
+        )
+
+        response = {
+            "pagination": {
+                "total_items": provinces_query.total,
+                "total_pages": provinces_query.pages,
+                "current_page": provinces_query.page,
+                "per_page": provinces_query.per_page,
+            },
+            "data": [
+                {"code": province.code, "name": province.name}
+                for province in provinces_query.items
+            ],
+        }
+    return jsonify(response)
 
 
 @regency_bp.route("/api/regencies", methods=["GET"])
