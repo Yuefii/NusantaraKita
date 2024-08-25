@@ -48,32 +48,14 @@ def get_regencies():
         ]
     else:
         if province_code:
-            total_regencies = Regencies.query.filter_by(
-                province_code=province_code
-            ).count()
-            regencies_query = Regencies.query.filter_by(
-                province_code=province_code
-            ).paginate(page=page, per_page=per_page, error_out=False)
+            query = Regencies.query.filter_by(province_code=province_code)
         else:
-            total_regencies = Regencies.query.count()
-            regencies_query = Regencies.query.paginate(
-                page=page, per_page=per_page, error_out=False
-            )
-        total_pages = (total_regencies + per_page - 1) // per_page
-        if page > total_pages:
-            return jsonify({"error": "page number exceeds total pages"}), 400
-        response = {
-            "pagination": {
-                "total_items": regencies_query.total,
-                "total_pages": regencies_query.pages,
-                "current_page": regencies_query.page,
-                "per_page": regencies_query.per_page,
-            },
-            "data": [
-                {"code": regency.code, "name": regency.name}
-                for regency in regencies_query.items
-            ],
-        }
+            query = Regencies.query
+        try:
+            pagination = Pagination(query, page, per_page)
+            response = pagination.get_paginated_data()
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
     return jsonify(response)
 
 
@@ -94,33 +76,14 @@ def get_districts():
         ]
     else:
         if regency_code:
-            total_districts = Districts.query.filter_by(
-                regency_code=regency_code
-            ).count()
-            districts_query = Districts.query.filter_by(
-                regency_code=regency_code
-            ).paginate(page=page, per_page=per_page, error_out=False)
+            query = Districts.query.filter_by(regency_code=regency_code)
         else:
-            total_districts = Districts.query.count()
-            districts_query = Districts.query.paginate(
-                page=page, per_page=per_page, error_out=False
-            )
-        total_pages = (total_districts + per_page - 1) // per_page
-        if page > total_pages:
-            return jsonify({"error": "page number exceeds total pages"}), 400
-        response = {
-            "pagination": {
-                "total_items": districts_query.total,
-                "total_pages": districts_query.pages,
-                "current_page": districts_query.page,
-                "per_page": districts_query.per_page,
-            },
-            "data": [
-                {"code": district.code, "name": district.name}
-                for district in districts_query.items
-            ],
-        }
-
+            query = Districts.query
+        try:
+            pagination = Pagination(query, page, per_page)
+            response = pagination.get_paginated_data()
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
     return jsonify(response)
 
 
@@ -141,31 +104,12 @@ def get_villages():
         ]
     else:
         if district_code:
-            total_villages = Villages.query.filter_by(
-                district_code=district_code
-            ).count()
-            villages_query = Villages.query.filter_by(
-                district_code=district_code
-            ).paginate(page=page, per_page=per_page, error_out=False)
+            query = Villages.query.filter_by(district_code=district_code)
         else:
-            total_villages = Villages.query.count()
-            villages_query = Villages.query.paginate(
-                page=page, per_page=per_page, error_out=False
-            )
-        total_pages = (total_villages + per_page - 1) // per_page
-        if page > total_pages:
-            return jsonify({"error": "page number exceeds total pages"}), 400
-        response = {
-            "pagination": {
-                "total_items": villages_query.total,
-                "total_pages": villages_query.pages,
-                "current_page": villages_query.page,
-                "per_page": villages_query.per_page,
-            },
-            "data": [
-                {"code": village.code, "name": village.name}
-                for village in villages_query.items
-            ],
-        }
-
+            query = Villages.query
+        try:
+            pagination = Pagination(query, page, per_page)
+            response = pagination.get_paginated_data()
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
     return jsonify(response)
