@@ -95,15 +95,48 @@ def get_regencies():
 
 @district_bp.route("/api/districts", methods=["GET"])
 def get_districts():
+    show_all = request.args.get("show_all", "false").lower() == "true"
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
     regency_code = request.args.get("regency_code")
-    if not regency_code:
-        return jsonify({"error": "regency code is required"}), 400
-    districts = Districts.query.filter_by(regency_code=regency_code).all()
-    if not districts:
-        return jsonify({"message": "no districts found for given regency code"}), 404
-    response = [
-        {"code": district.code, "name": district.name} for district in districts
-    ]
+
+    if show_all:
+        if regency_code:
+            districts = Districts.query.filter_by(regency_code=regency_code).all()
+        else:
+            districts = Districts.query.all()
+        response = [
+            {"code": district.code, "name": district.name} for district in districts
+        ]
+    else:
+        if regency_code:
+            total_districts = Districts.query.filter_by(
+                regency_code=regency_code
+            ).count()
+            districts_query = Districts.query.filter_by(
+                regency_code=regency_code
+            ).paginate(page=page, per_page=per_page, error_out=False)
+        else:
+            total_districts = Districts.query.count()
+            districts_query = Districts.query.paginate(
+                page=page, per_page=per_page, error_out=False
+            )
+        total_pages = (total_districts + per_page - 1) // per_page
+        if page > total_pages:
+            return jsonify({"error": "page number exceeds total pages"}), 400
+        response = {
+            "pagination": {
+                "total_items": districts_query.total,
+                "total_pages": districts_query.pages,
+                "current_page": districts_query.page,
+                "per_page": districts_query.per_page,
+            },
+            "data": [
+                {"code": district.code, "name": district.name}
+                for district in districts_query.items
+            ],
+        }
+
     return jsonify({"data": response})
 
 
