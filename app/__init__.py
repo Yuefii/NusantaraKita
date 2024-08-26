@@ -5,13 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-def create_app():
+def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
     db.init_app(app)
 
     @app.route("/")
-    def home():
+    def home() -> str:
         return render_template("index.html")
 
     with app.app_context():

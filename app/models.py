@@ -10,8 +10,8 @@ class Provinces(db.Model):
         name (str): Nama Provinsi yang tidak boleh kosong.
     """
 
-    code = db.Column(db.String(2), primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    code: str = db.Column(db.String(2), primary_key=True)
+    name: str = db.Column(db.String(255), nullable=False)
 
 
 class Regencies(db.Model):
@@ -24,11 +24,11 @@ class Regencies(db.Model):
         name (str): Nama Kabupaten/Kota yang tidak boleh kosong.
     """
 
-    code = db.Column(db.String(5), primary_key=True)
-    province_code = db.Column(
+    code: str = db.Column(db.String(5), primary_key=True)
+    province_code: str = db.Column(
         db.String(2), db.ForeignKey("provinces.code"), nullable=False
     )
-    name = db.Column(db.String(255), nullable=False)
+    name: str = db.Column(db.String(255), nullable=False)
     province = db.relationship("Provinces", backref=db.backref("regencies", lazy=True))
 
 
@@ -42,11 +42,11 @@ class Districts(db.Model):
         name (str): Nama Kecamatan yang tidak boleh kosong.
     """
 
-    code = db.Column(db.String(8), primary_key=True)
-    regency_code = db.Column(
+    code: str = db.Column(db.String(8), primary_key=True)
+    regency_code: str = db.Column(
         db.String(5), db.ForeignKey("regencies.code"), nullable=False
     )
-    name = db.Column(db.String(255), nullable=False)
+    name: str = db.Column(db.String(255), nullable=False)
     regency = db.relationship("Regencies", backref=db.backref("districts", lazy=True))
 
 
@@ -60,9 +60,9 @@ class Villages(db.Model):
         name (str): Nama Desa yang tidak boleh kosong.
     """
 
-    code = db.Column(db.String(13), primary_key=True)
-    district_code = db.Column(
+    code: str = db.Column(db.String(13), primary_key=True)
+    district_code: str = db.Column(
         db.String(8), db.ForeignKey("districts.code"), nullable=False
     )
-    name = db.Column(db.String(255), nullable=False)
+    name: str = db.Column(db.String(255), nullable=False)
     district = db.relationship("Districts", backref=db.backref("villages", lazy=True))
