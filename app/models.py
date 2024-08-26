@@ -22,6 +22,7 @@ class Regencies(db.Model):
         code (str): Code Unique untuk Kabupaten/Kota (primary key).
         province_code (str): Kode Provinsi yang merupakan foreign key dari tabel "provinces".
         name (str): Nama Kabupaten/Kota yang tidak boleh kosong.
+        province (RelasionshipProperty): Relationship ke object Provinces.
     """
 
     code: str = db.Column(db.String(5), primary_key=True)
@@ -40,6 +41,7 @@ class Districts(db.Model):
         code (str): Code Unique untuk Kecamatan (primary key).
         regency_code (str): Kode Kabupaten/Kota yang merupakan foreign key dari tabel "regencies".
         name (str): Nama Kecamatan yang tidak boleh kosong.
+        regency (RelasionshipProperty): Relationship ke object Regencies.
     """
 
     code: str = db.Column(db.String(8), primary_key=True)
@@ -58,6 +60,7 @@ class Villages(db.Model):
         code (str): Code Unique untuk Desa (primary key).
         district_code (str): Kode Kecamatan yang merupakan foreign key dari tabel "districts".
         name (str): Nama Desa yang tidak boleh kosong.
+        district (RelasionshipProperty): Relationship ke object Districts.
     """
 
     code: str = db.Column(db.String(13), primary_key=True)
