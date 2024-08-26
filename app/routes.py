@@ -10,9 +10,9 @@ village_bp = Blueprint("villages", __name__)
 
 @province_bp.route("/api/provinces", methods=["GET"])
 def get_provinces():
-    show_all = request.args.get("show_all", "false").lower() == "true"
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
+    show_all: bool = request.args.get("show_all", "false").lower() == "true"
+    page: int = request.args.get("page", 1, type=int)
+    per_page: int = request.args.get("per_page", 10, type=int)
     if per_page <= 0:
         return jsonify({"error": "invalid per_page value"}), 400
     if show_all:
@@ -33,10 +33,10 @@ def get_provinces():
 
 @regency_bp.route("/api/regencies", methods=["GET"])
 def get_regencies():
-    show_all = request.args.get("show_all", "false").lower() == "true"
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
-    province_code = request.args.get("province_code")
+    show_all: bool = request.args.get("show_all", "false").lower() == "true"
+    page: int = request.args.get("page", 1, type=int)
+    per_page: int = request.args.get("per_page", 10, type=int)
+    province_code: str | None = request.args.get("province_code")
 
     if show_all:
         if province_code:
@@ -61,10 +61,10 @@ def get_regencies():
 
 @district_bp.route("/api/districts", methods=["GET"])
 def get_districts():
-    show_all = request.args.get("show_all", "false").lower() == "true"
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
-    regency_code = request.args.get("regency_code")
+    show_all: bool = request.args.get("show_all", "false").lower() == "true"
+    page: int = request.args.get("page", 1, type=int)
+    per_page: int = request.args.get("per_page", 10, type=int)
+    regency_code: str | None = request.args.get("regency_code")
 
     if show_all:
         if regency_code:
@@ -89,10 +89,10 @@ def get_districts():
 
 @village_bp.route("/api/villages", methods=["GET"])
 def get_villages():
-    show_all = request.args.get("show_all", "false").lower() == "true"
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
-    district_code = request.args.get("district_code")
+    show_all: bool = request.args.get("show_all", "false").lower() == "true"
+    page: int = request.args.get("page", 1, type=int)
+    per_page: int = request.args.get("per_page", 10, type=int)
+    district_code: str | None = request.args.get("district_code")
 
     if show_all:
         if district_code:
