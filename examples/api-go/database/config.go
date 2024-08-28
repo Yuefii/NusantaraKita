@@ -17,7 +17,7 @@ func InitDB() (*gorm.DB, error) {
 	user := os.Getenv("MYSQL_USER")
 	password := os.Getenv("MYSQL_PASSWORD")
 	host := os.Getenv("MYSQL_HOST")
-	name := os.Getenv("MYSQL_NAME")
+	name := os.Getenv("MYSQL_DATABASE")
 
 	dsn := user + ":" + password + "@tcp(" + host + ":3306)/" + name + "?charset=utf8mb4&parseTime=True&loc=Local"
 

@@ -6,14 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/yuefii/NusantaraKita/examples/api-go/database"
+	"github.com/yuefii/NusantaraKita/examples/api-go/routes"
 )
 
 func main() {
-	_, err := database.InitDB()
+	db, err := database.InitDB()
 	if err != nil {
 		panic("failed to connect database.")
 	}
 	router := gin.Default()
+	routes.SetupRoutes(router, db)
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": "project is running"})
 	})
