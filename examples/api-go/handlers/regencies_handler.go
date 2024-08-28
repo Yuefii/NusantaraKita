@@ -9,8 +9,8 @@ import (
 	"github.com/yuefii/NusantaraKita/examples/api-go/models"
 )
 
-func (handler *Handler) GetProvinces(ctx *gin.Context) {
-	var province []models.Provinces
+func (handler *Handler) GetRegencies(ctx *gin.Context) {
+	var regency []models.Regencies
 	var totalItems int64
 
 	showAll := ctx.Query("show_all") == "true"
@@ -25,6 +25,7 @@ func (handler *Handler) GetProvinces(ctx *gin.Context) {
 			page = p
 		}
 	}
+
 	if perPageStr != "" {
 		if pp, err := strconv.Atoi(perPageStr); err == nil && pp > 0 {
 			perPage = pp
@@ -33,43 +34,44 @@ func (handler *Handler) GetProvinces(ctx *gin.Context) {
 
 	if showAll {
 
-		result := handler.db.Find(&province)
+		result := handler.db.Find(&regency)
 		if result.Error != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 			return
 		}
-		totalItems = int64(len(province))
+		totalItems = int64(len(regency))
 
-		var provinceDTOs []dtos.ApiDTO
-		for _, r := range province {
-			provinceDTOs = append(provinceDTOs, dtos.ApiDTO{
-				Code: r.Code,
-				Name: r.Name,
+		var regenciesDTOs []dtos.ApiDTO
+		for _, response := range regency {
+			regenciesDTOs = append(regenciesDTOs, dtos.ApiDTO{
+				Code: response.Code,
+				Name: response.Name,
 			})
 		}
 
 		response := gin.H{
-			"data": provinceDTOs,
+			"data": regenciesDTOs,
 		}
+
 		ctx.JSON(http.StatusOK, response)
 		return
 	}
 
-	result := handler.db.Model(&models.Provinces{}).Count(&totalItems)
+	result := handler.db.Model(&models.Regencies{}).Count(&totalItems)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
-	result = handler.db.Offset((page - 1) * perPage).Limit(perPage).Find(&province)
+	result = handler.db.Offset((page - 1) * perPage).Limit(perPage).Find(&regency)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
-	var provinceDTOs []dtos.ApiDTO
-	for _, response := range province {
-		provinceDTOs = append(provinceDTOs, dtos.ApiDTO{
+	var regenciesDTOs []dtos.ApiDTO
+	for _, response := range regency {
+		regenciesDTOs = append(regenciesDTOs, dtos.ApiDTO{
 			Code: response.Code,
 			Name: response.Name,
 		})
@@ -81,7 +83,7 @@ func (handler *Handler) GetProvinces(ctx *gin.Context) {
 	}
 
 	response := dtos.ResponseDTO{
-		Data: provinceDTOs,
+		Data: regenciesDTOs,
 		Pagination: dtos.PaginationDTO{
 			CurrentPage: page,
 			PerPage:     perPage,
@@ -89,6 +91,5 @@ func (handler *Handler) GetProvinces(ctx *gin.Context) {
 			TotalPages:  totalPages,
 		},
 	}
-
 	ctx.JSON(http.StatusOK, response)
 }
