@@ -1,0 +1,73 @@
+name: Test Flask API
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      MYSQL_HOST: localhost
+      MYSQL_USER: root
+      MYSQL_PASSWORD: testing
+      MYSQL_DATABASE: testing
+      DATABASE_URL: mysql+mysqlconnector://root:testing@localhost/testing
+    services:
+      mysql:
+        image: mysql:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: testing
+          MYSQL_DATABASE: testing
+          MYSQL_USER: testing
+          MYSQL_PASSWORD: testing
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set Up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Set Up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.*"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Flask API
+        run: |
+          nohup python main.py &> flask.log &
+          echo $! > flask.pid
+
+      - name: Wait for Flask API
+        run: |
+          for i in {1..30}; do
+            if curl -sSf http://localhost:5000/; then
+              echo "Flask API is up and running."
+              exit 0
+            else
+              echo "Waiting for Flask API..."
+              sleep 5
+            fi
+          done
+          echo "Flask API did not start in time."
+          exit 1
+
+      - name: Check Flask API logs
+        run: |
+          cat flask.log
