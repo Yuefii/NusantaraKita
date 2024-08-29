@@ -11,4 +11,5 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 
 	router.GET("/api/provinces", handler.GetProvinces)
 	router.GET("/api/regencies", handler.GetRegencies)
+	router.GET("api/districts", handler.GetDistricts)
 }
