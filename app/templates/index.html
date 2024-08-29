@@ -23,20 +23,21 @@
     <div class="row content">
       <a class="right" style="text-decoration: underline" href="#"><i
           class="fa-solid fa-book"></i>&nbsp;Documentation</a>
-      <a class="right" href="https://github.com/yuefii/NusantaraKita" target="_blank"><i class="fa-brands fa-github"></i>&nbsp;Github</a>
+      <a class="right" href="https://github.com/yuefii/NusantaraKita" target="_blank"><i
+          class="fa-brands fa-github"></i>&nbsp;Github</a>
     </div>
   </div>
 
   <div class="container clear">
     <div class="row wrapper">
       <div class="sidepanel">
-        <a class="title" href="#">Documentation</a>
-        <a class="section" href="#">Getting Started</a>
-        <a class="section" href="#">Installation</a>
+        <a class="title">Documentation</a>
+        <a class="section" href="#GettingStarted">Getting Started</a>
+        <a class="section" href="#Installation">Installation</a>
         <a class="section" href="#">Contribution</a>
         <div class="space double"></div>
 
-        <a class="title" href="#">Endpoints</a>
+        <a class="title">Endpoints</a>
         <a class="section" href="#">Provinsi</a>
         <a class="section" href="#">Kabupaten</a>
         <a class="section" href="#">Kecamatan</a>
@@ -44,56 +45,71 @@
         <div class="space double"></div>
       </div>
 
-      <div class="right-col">
+      <div id="GettingStarted"></div>
+      <div  class="right-col">
         <h1>Introduction</h1>
 
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-          ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
+          Nusantara Kita adalah API yang menyediakan data wilayah Indonesia untuk berbagai aplikasi yang memerlukan
+          informasi geospasial. Project ini adalah pembaruan dari versi sebelumnya, dengan peningkatan signifikan dalam
+          cara penyimpanan dan pengelolaan data.
+        </p>
+
+        <p>
+          Sebelumnya, data wilayah dihasilkan dari file CSV, namun kini Nusantara Kita menggunakan database modern untuk
+          meningkatkan performa dan fleksibilitas. Anda sekarang dapat memilih dari tiga opsi database yang didukung:
+          MySQL, PostgreSQL, dan MongoDB. Dengan perubahan ini, API tidak hanya menjadi lebih efisien tetapi juga lebih
+          mudah diintegrasikan ke dalam berbagai sistem.
         </p>
 
         <h2>Versions:</h2>
 
-        <p>API Version 2.0</p>
+        <p id="Installation">API Version 2.0</p>
 
         <h2>Installation</h2>
 
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          bagaimana menjalankan projectnya dilokal?
         </p>
 
         <ol>
-          <li>Lorem ipsum dolor sit amet.</li>
+
+          <li>Clone Repository:
+            <div class="box">
+              git clone https://github.com/username/NusantaraKita.git
+              <br>
+              cd NusantaraKita
+            </div>
+          </li>
           <br />
-          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Setup Environment:
+            <div class="box">
+              mv env.example .env
+            </div>
+            lalu kemudian kalian isi sesuai database kalian.
+          </li>
           <br />
-          <li>Lorem ipsum dolor sit amet.</li>
+          <li>Install Requirements:
+            <div class="box">
+              pip install -r requirements.txt
+            </div>
+          </li>
+          <br />
+          <li>Menjalankan Jupyter Notebook nya:
+            <div class="box">
+              jupyter notebook
+            </div>
+            jalankan semua code yang ada di notebook untuk merubah dataset csv menjadi sql yang akan langsung diinsert ke database kalian.
+          </li>
+          <br />
+          <li>Menjalankan API nya:
+            <div class="box">
+              python main.py
+            </div>
+          </li>
           <br />
         </ol>
 
-        <h2>Running project</h2>
-
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
-
-        <ol>
-          <li>Lorem ipsum dolor sit amet.</li>
-          <br />
-          <li>Lorem ipsum dolor sit amet.</li>
-          <br />
-          <li>Lorem ipsum dolor sit amet.</li>
-          <br />
-          <li>Lorem ipsum dolor sit amet.</li>
-          <br />
-        </ol>
       </div>
     </div>
 </body>
