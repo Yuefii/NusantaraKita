@@ -16,6 +16,7 @@ func (handler *Handler) GetDistricts(ctx *gin.Context) {
 	showAll := ctx.Query("show_all") == "true"
 	pageStr := ctx.Query("page")
 	perPageStr := ctx.Query("per_page")
+	regencyCode := ctx.Query("regency_code")
 
 	page := 1
 	perPage := 10
@@ -34,10 +35,18 @@ func (handler *Handler) GetDistricts(ctx *gin.Context) {
 
 	if showAll {
 
-		result := handler.db.Find(&district)
-		if result.Error != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-			return
+		if regencyCode != "" {
+			result := handler.db.Preload("Regency").Where("regency_code = ?", regencyCode).Find(&district)
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+				return
+			}
+		} else {
+			result := handler.db.Preload("Regency").Find(&district)
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+				return
+			}
 		}
 		totalItems = int64(len(district))
 
@@ -57,13 +66,18 @@ func (handler *Handler) GetDistricts(ctx *gin.Context) {
 		return
 	}
 
-	result := handler.db.Model(&models.Districts{}).Count(&totalItems)
+	query := handler.db.Model(&models.Districts{})
+	if regencyCode != "" {
+		query = query.Where("regency_code = ?", regencyCode)
+	}
+
+	result := query.Count(&totalItems)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
-	result = handler.db.Offset((page - 1) * perPage).Limit(perPage).Find(&district)
+	result = query.Preload("Regency").Offset((page - 1) * perPage).Limit(perPage).Find(&district)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
