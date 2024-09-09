@@ -16,6 +16,7 @@ func (handler *Handler) GetVillages(ctx *gin.Context) {
 	showAll := ctx.Query("show_all") == "true"
 	pageStr := ctx.Query("page")
 	perPageStr := ctx.Query("per_page")
+	districtCode := ctx.Query("district_code")
 
 	page := 1
 	perPage := 10
@@ -34,10 +35,18 @@ func (handler *Handler) GetVillages(ctx *gin.Context) {
 
 	if showAll {
 
-		result := handler.db.Find(&village)
-		if result.Error != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-			return
+		if districtCode != "" {
+			result := handler.db.Preload("District").Where("district_code = ?", districtCode).Find(&village)
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+				return
+			}
+		} else {
+			result := handler.db.Preload("District").Find(&village)
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+				return
+			}
 		}
 		totalItems = int64(len(village))
 
@@ -57,13 +66,18 @@ func (handler *Handler) GetVillages(ctx *gin.Context) {
 		return
 	}
 
-	result := handler.db.Model(&models.Villages{}).Count(&totalItems)
+	query := handler.db.Model(&models.Villages{})
+	if districtCode != "" {
+		query = query.Where("district_code = ?", districtCode)
+	}
+
+	result := query.Count(&totalItems)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
-	result = handler.db.Offset((page - 1) * perPage).Limit(perPage).Find(&village)
+	result = query.Preload("District").Offset((page - 1) * perPage).Limit(perPage).Find(&village)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
