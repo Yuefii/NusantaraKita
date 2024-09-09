@@ -16,6 +16,7 @@ func (handler *Handler) GetRegencies(ctx *gin.Context) {
 	showAll := ctx.Query("show_all") == "true"
 	pageStr := ctx.Query("page")
 	perPageStr := ctx.Query("per_page")
+	provinceCode := ctx.Query("province_code")
 
 	page := 1
 	perPage := 10
@@ -34,10 +35,18 @@ func (handler *Handler) GetRegencies(ctx *gin.Context) {
 
 	if showAll {
 
-		result := handler.db.Find(&regency)
-		if result.Error != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-			return
+		if provinceCode != "" {
+			result := handler.db.Preload("Province").Where("province_code = ?", provinceCode).Find(&regency)
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+				return
+			}
+		} else {
+			result := handler.db.Preload("Province").Find(&regency)
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+				return
+			}
 		}
 		totalItems = int64(len(regency))
 
@@ -57,13 +66,18 @@ func (handler *Handler) GetRegencies(ctx *gin.Context) {
 		return
 	}
 
-	result := handler.db.Model(&models.Regencies{}).Count(&totalItems)
+	query := handler.db.Model(&models.Regencies{})
+	if provinceCode != "" {
+		query = query.Where("province_code = ?", provinceCode)
+	}
+
+	result := query.Count(&totalItems)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
 
-	result = handler.db.Offset((page - 1) * perPage).Limit(perPage).Find(&regency)
+	result = query.Preload("Province").Offset((page - 1) * perPage).Limit(perPage).Find(&regency)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
