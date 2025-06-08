@@ -5,11 +5,11 @@
 <div align="center">
 
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
-![Express.js](https://img.shields.io/badge/Express.js-000000?style=flat-square&logo=express&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
 ![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 
 </div>
 
@@ -18,10 +18,12 @@ Nusantara Kita adalah sebuah API yang menyediakan data wilayah Indonesia. Projec
 </p>
 
 URL:
+
 - API = [https://api.nusakita.yuefii.site](https://api.nusakita.yuefii.site)
 - DOKUMENTASI = [https://nusakita.yuefii.site](https://nusakita.yuefii.site)
 
 ENDPOINT:
+
 - `/v2/provinsi`
 - `/v2/kab-kota`
 - `/v2/kecamatan`
@@ -61,23 +63,28 @@ cd api
 ```
 
 Setup Environmentnya:
+
 ```bash
 cp env.example .env
 ```
 
-Menjalankan Projectnya menggunakan `YARN`
+Menjalankan Projectnya menggunakan `pip`
 
+- create virtual environment:
+  ```bash
+  python3 -m venv venv
+  ```
+- activate virtual environment:
+  ```bash
+  source venv/bin/activate
+  ```
 - install dependencies:
   ```bash
-  yarn install
+  pip install -r requirements.txt
   ```
-- Generate Prisma:
+- Running project:
   ```
-  yarn prisma generate
-  ```
-- jalankan projectnya:
-  ```
-  yarn dev
+  uvicorn generate:app --reload
   ```
 
 ## ⚙️ License
