@@ -1,0 +1,89 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+
+# FastAPI / Uvicorn specific
+*.db
+instance/
+*.sqlite3
+
+# VS Code / JetBrains IDE
+.vscode/
+.idea/
+
+# mypy / pyright / other tooling
+.mypy_cache/
+.pyright/
+.dmypy.json
+.pyre/
+
+# Pyre type checker
+.pyre/
+
+# dotenv
+.env
+.env.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Deployment configs
+*.pem
+*.key
+
+# Vercel
+.vercel/
+

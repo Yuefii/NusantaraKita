@@ -1,0 +1,5 @@
+{
+  "typeCheckingMode": "basic",
+  "reportMissingImports": true,
+  "extraPaths": ["./", "./routers/", "./services/"]
+}
