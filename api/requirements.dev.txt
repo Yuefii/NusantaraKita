@@ -3,7 +3,7 @@ annotated-types==0.7.0
 anyio==4.9.0
 cffi==1.17.1
 click==8.2.1
-cryptography==45.0.3
+cryptography==45.0.4
 dotenv==0.9.9
 fastapi==0.115.12
 h11==0.16.0
