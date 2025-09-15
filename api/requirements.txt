@@ -9,7 +9,7 @@ fastapi==0.115.12
 h11==0.16.0
 idna==3.10
 pycparser==2.22
-pydantic==2.11.5
+pydantic==2.11.9
 pydantic_core==2.33.2
 PyMySQL==1.1.1
 python-dotenv==1.1.0
