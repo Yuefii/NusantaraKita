@@ -71,7 +71,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "nomor halaman tidak valid, halaman harus lebih besar dari 0" },
       null,
-      2,
+      2
     ),
   },
   {
@@ -80,7 +80,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "tidak ditemukan data kecamatan" },
       null,
-      2,
+      2
     ),
   },
   {
@@ -89,7 +89,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "Gagal mengambil data: [error detail]" },
       null,
-      2,
+      2
     ),
   },
 ];
@@ -127,7 +127,7 @@ export const GetKecamatan = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kecamatan"
+            url="https://api-nusakita.vercel.app/v2/kecamatan"
           />
         </div>
 
@@ -137,7 +137,7 @@ export const GetKecamatan = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/{kodeKabKota}/kecamatan"
+            url="https://api-nusakita.vercel.app/v2/{kodeKabKota}/kecamatan"
           />
           <span className="text-sm mt-1 block">
             Ganti {"{"}kodeKabKota{"}"} dengan kode kabupaten/kota yang valid
@@ -176,7 +176,7 @@ export const GetKecamatan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kecamatan"
+            url="https://api-nusakita.vercel.app/v2/kecamatan"
           />
         </div>
 
@@ -186,7 +186,7 @@ export const GetKecamatan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kecamatan?pagination=false"
+            url="https://api-nusakita.vercel.app/v2/kecamatan?pagination=false"
           />
         </div>
 
@@ -196,7 +196,7 @@ export const GetKecamatan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kecamatan?limit=20"
+            url="https://api-nusakita.vercel.app/v2/kecamatan?limit=20"
           />
         </div>
 
@@ -206,7 +206,7 @@ export const GetKecamatan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kecamatan?page=2"
+            url="https://api-nusakita.vercel.app/v2/kecamatan?page=2"
           />
         </div>
 
@@ -216,7 +216,7 @@ export const GetKecamatan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/11.01/kecamatan"
+            url="https://api-nusakita.vercel.app/v2/11.01/kecamatan"
           />
         </div>
 
@@ -226,7 +226,7 @@ export const GetKecamatan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kecamatan?pagination=true&limit=5&page=3"
+            url="https://api-nusakita.vercel.app/v2/kecamatan?pagination=true&limit=5&page=3"
           />
         </div>
       </div>

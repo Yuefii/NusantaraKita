@@ -71,7 +71,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "nomor halaman tidak valid, halaman harus lebih besar dari 0" },
       null,
-      2,
+      2
     ),
   },
   {
@@ -80,7 +80,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "tidak ditemukan data desa/kelurahan" },
       null,
-      2,
+      2
     ),
   },
   {
@@ -89,7 +89,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "Gagal mengambil data: [error detail]" },
       null,
-      2,
+      2
     ),
   },
 ];
@@ -127,7 +127,7 @@ export const GetDesaKelurahan = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/desa-kel"
+            url="https://api-nusakita.vercel.app/v2/desa-kel"
           />
         </div>
 
@@ -137,7 +137,7 @@ export const GetDesaKelurahan = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/{kodeKecamatan}/desa-kel"
+            url="https://api-nusakita.vercel.app/v2/{kodeKecamatan}/desa-kel"
           />
           <span className="text-sm mt-1 block">
             Ganti {"{"}kodeKecamatan{"}"} dengan kode Kecamatan yang valid
@@ -176,7 +176,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/desa-kel"
+            url="https://api-nusakita.vercel.app/v2/desa-kel"
           />
         </div>
 
@@ -186,7 +186,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/desa-kel?pagination=false"
+            url="https://api-nusakita.vercel.app/v2/desa-kel?pagination=false"
           />
         </div>
 
@@ -196,7 +196,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/desa-kel?limit=20"
+            url="https://api-nusakita.vercel.app/v2/desa-kel?limit=20"
           />
         </div>
 
@@ -206,7 +206,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/desa-kel?page=2"
+            url="https://api-nusakita.vercel.app/v2/desa-kel?page=2"
           />
         </div>
 
@@ -216,7 +216,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/11.01/desa-kel"
+            url="https://api-nusakita.vercel.app/v2/11.01/desa-kel"
           />
         </div>
 
@@ -226,7 +226,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/desa-kel?pagination=true&limit=5&page=3"
+            url="https://api-nusakita.vercel.app/v2/desa-kel?pagination=true&limit=5&page=3"
           />
         </div>
       </div>
@@ -253,7 +253,7 @@ export const GetDesaKelurahan = () => {
           content={JSON.stringify(
             { data: getDesaKelurahanExampleResponse.data },
             null,
-            2,
+            2
           )}
           showCopyButton
         />

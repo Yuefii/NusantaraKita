@@ -71,7 +71,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "nomor halaman tidak valid, halaman harus lebih besar dari 0" },
       null,
-      2,
+      2
     ),
   },
   {
@@ -80,7 +80,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "tidak ditemukan data kabupaten/kota" },
       null,
-      2,
+      2
     ),
   },
   {
@@ -89,7 +89,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "Gagal mengambil data: [error detail]" },
       null,
-      2,
+      2
     ),
   },
 ];
@@ -127,7 +127,7 @@ export const GetKabupatenKota = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kab-kota"
+            url="https://api-nusakita.vercel.app/v2/kab-kota"
           />
         </div>
 
@@ -137,7 +137,7 @@ export const GetKabupatenKota = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/{kodeProvinsi}/kab-kota"
+            url="https://api-nusakita.vercel.app/v2/{kodeProvinsi}/kab-kota"
           />
           <span className="text-sm mt-1 block">
             Ganti {"{"}kodeProvinsi{"}"} dengan kode provinsi yang valid
@@ -176,7 +176,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kab-kota"
+            url="https://api-nusakita.vercel.app/v2/kab-kota"
           />
         </div>
 
@@ -186,7 +186,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kab-kota?pagination=false"
+            url="https://api-nusakita.vercel.app/v2/kab-kota?pagination=false"
           />
         </div>
 
@@ -196,7 +196,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kab-kota?limit=20"
+            url="https://api-nusakita.vercel.app/v2/kab-kota?limit=20"
           />
         </div>
 
@@ -206,7 +206,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kab-kota?page=2"
+            url="https://api-nusakita.vercel.app/v2/kab-kota?page=2"
           />
         </div>
 
@@ -216,7 +216,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/11/kab-kota"
+            url="https://api-nusakita.vercel.app/v2/11/kab-kota"
           />
         </div>
 
@@ -226,7 +226,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/kab-kota?pagination=true&limit=5&page=3"
+            url="https://api-nusakita.vercel.app/v2/kab-kota?pagination=true&limit=5&page=3"
           />
         </div>
       </div>

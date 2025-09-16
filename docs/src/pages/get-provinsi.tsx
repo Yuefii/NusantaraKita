@@ -44,7 +44,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "nomor halaman tidak valid, halaman harus lebih besar dari 0" },
       null,
-      2,
+      2
     ),
   },
   {
@@ -58,7 +58,7 @@ const errorHandlingTableRows = [
     Example: JSON.stringify(
       { error: "Gagal mengambil data: [error detail]" },
       null,
-      2,
+      2
     ),
   },
 ];
@@ -154,7 +154,7 @@ export const GetProvinsi = () => {
         </h2>
         <EndpointUrl
           method="GET"
-          url="https://api.nusakita.yuefii.site/v2/provinsi"
+          url="https://api-nusakita.vercel.app/v2/provinsi"
         />
       </div>
 
@@ -188,7 +188,7 @@ export const GetProvinsi = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/provinsi"
+            url="https://api-nusakita.vercel.app/v2/provinsi"
           />
         </div>
 
@@ -198,7 +198,7 @@ export const GetProvinsi = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/provinsi?pagination=false"
+            url="https://api-nusakita.vercel.app/v2/provinsi?pagination=false"
           />
         </div>
 
@@ -208,7 +208,7 @@ export const GetProvinsi = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/provinsi?limit=20"
+            url="https://api-nusakita.vercel.app/v2/provinsi?limit=20"
           />
         </div>
 
@@ -218,7 +218,7 @@ export const GetProvinsi = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/provinsi?halaman=2"
+            url="https://api-nusakita.vercel.app/v2/provinsi?halaman=2"
           />
         </div>
 
@@ -228,7 +228,7 @@ export const GetProvinsi = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api.nusakita.yuefii.site/v2/provinsi?pagination=true&limit=5&halaman=3"
+            url="https://api-nusakita.vercel.app/v2/provinsi?pagination=true&limit=5&halaman=3"
           />
         </div>
       </div>
