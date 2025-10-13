@@ -12,7 +12,7 @@ iniconfig==2.1.0
 packaging==25.0
 pluggy==1.6.0
 pycparser==2.22
-pydantic==2.11.5
+pydantic==2.12.0
 pydantic_core==2.33.2
 Pygments==2.19.1
 PyMySQL==1.1.1
