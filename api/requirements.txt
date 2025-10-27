@@ -5,7 +5,7 @@ cffi==1.17.1
 click==8.2.1
 cryptography==45.0.4
 dotenv==0.9.9
-fastapi==0.115.12
+fastapi==0.120.1
 h11==0.16.0
 idna==3.10
 pycparser==2.22
