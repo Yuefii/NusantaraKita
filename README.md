@@ -1,8 +1,7 @@
-<div align="center">
-<img src=".github/assets/logo.png" width="150" alt="logo">
-</div>
+# Nusantara Kita
 
-<div align="center">
+![GitHub stars](https://img.shields.io/github/stars/Yuefii/NusantaraKita.svg?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Yuefii/NusantaraKita.svg?style=social)
 
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
@@ -12,16 +11,14 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 
-</div>
+<img src=".github/assets/logo.png" width="200" alt="logo">
 
-<p align="center">
 Nusantara Kita adalah sebuah API yang menyediakan data wilayah Indonesia. Project ini dirancang untuk memudahkan akses dan penggunaan data geospasial terkait wilayah-wilayah di Indonesia. API ini dapat digunakan untuk berbagai aplikasi yang memerlukan informasi seperti batas wilayah, data administratif, dan lain-lain. Semoga API ini bisa bermanfaat untuk kalian, dan selamat mencoba.
-</p>
 
 URL:
 
 - API = [https://api-nusakita.vercel.app](https://api-nusakita.vercel.app)
-- DOKUMENTASI = [https://api-nusakita.vercel.app](https://api-nusakita.vercel.app)
+- DOKUMENTASI = [https://nusakita.vercel.app](https://nusakita.vercel.app)
 
 ENDPOINT:
 
@@ -43,14 +40,6 @@ API ini berisi seluruh data wilayah indonesia beserta lokasinya mulai dari:
 - Kabupaten/Kota
 - Kecamatan
 - Desa/Kelurahan
-
-## Peformance testing API with K6
-
-Overview:
-![overview](./.github/assets/overview.png)
-
-Summary:
-![summary](./.github/assets/summary.png)
 
 ## Instalasi
 
@@ -108,6 +97,12 @@ Dataset yang digunakan dalam project ini berasal dari:
 
 Kami sangat menghargai pembuat dataset ini. Tanpa adanya data tersebut, project ini tidak akan bisa dikembangkan.
 
-## ⚙️ License
+## Berkontribusi & Kode Etik
+
+Baca [panduan kontribusi](./CONTRIBUTING.md) kami untuk mempelajari cara berkontribusi pada proyek kami.
+
+Pastikan untuk mematuhi [kode etik](./CODE_OF_CONDUCT.md) kami.
+
+## License
 
 Project ini dilisensikan di bawah Lisensi MIT - lihat [LICENSE](/LICENSE) untuk detailnya.
