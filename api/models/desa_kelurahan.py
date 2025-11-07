@@ -12,6 +12,7 @@ class DesaKelurahan(TypedDict):
         lat (float): Latitude dari lokasi desa/kelurahan.
         lng (float): Longitude dari lokasi desa/kelurahan.
         kode_kecamatan (str): Kode kecamatan tempat desa/kelurahan berada.
+        geojson_url (str): URL file GeoJSON dari desa/kelurahan.
     """
 
     kode: str
@@ -20,6 +21,7 @@ class DesaKelurahan(TypedDict):
     lng: float
     kode_kecamatan: str
     kode_pos: str
+    geojson_url: str
 
 
 class PaginatedDesaKelurahanResponse(TypedDict):

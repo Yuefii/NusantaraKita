@@ -1,6 +1,7 @@
 import aiomysql
 from typing import List, Union
 from config import get_connection
+from helpers.cdn import CDN_PATHS
 from models.provinsi import Provinsi, ProvinsiListResponse, PaginatedProvinsiResponse
 
 
@@ -18,6 +19,12 @@ class ProvinsiService:
                     data: List[Provinsi] = await cursor.fetchall()
                     if not data:
                         raise Exception("tidak ditemukan data")
+
+                    for prov in data:
+                        prov["geojson_url"] = (
+                            f"{CDN_PATHS['provinsi']}/{prov['kode']}.geojson"
+                        )
+
                     return {"data": data}
 
                 if halaman <= 0:
@@ -43,6 +50,11 @@ class ProvinsiService:
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
+
+                for prov in data:
+                    prov["geojson_url"] = (
+                        f"{CDN_PATHS['provinsi']}/{prov['kode']}.geojson"
+                    )
 
                 return {
                     "pagination": {

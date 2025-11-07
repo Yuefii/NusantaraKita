@@ -1,6 +1,7 @@
 import aiomysql
 from typing import List, Union
 from config import get_connection
+from helpers.cdn import CDN_PATHS
 from models.desa_kelurahan import (
     DesaKelurahan,
     DesaKelurahanListResponse,
@@ -22,6 +23,10 @@ class DesaKelurahanService:
                     data: List[DesaKelurahan] = await cursor.fetchall()
                     if not data:
                         raise Exception("tidak ditemukan data")
+                    for desa_kel in data:
+                        desa_kel["geojson_url"] = (
+                            f"{CDN_PATHS['desa_kelurahan']}/{desa_kel['kode']}.geojson"
+                        )
                     return {"data": data}
 
                 if halaman <= 0:
@@ -47,6 +52,11 @@ class DesaKelurahanService:
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
+
+                for desa_kel in data:
+                    desa_kel["geojson_url"] = (
+                        f"{CDN_PATHS['desa_kelurahan']}/{desa_kel['kode']}.geojson"
+                    )
 
                 return {
                     "pagination": {
@@ -76,6 +86,10 @@ class DesaKelurahanService:
                         raise Exception(
                             "tidak ditemukan data untuk kode provinsi tersebut"
                         )
+                    for desa_kel in data:
+                        desa_kel["geojson_url"] = (
+                            f"{CDN_PATHS['desa_kelurahan']}/{desa_kel['kode']}.geojson"
+                        )
                     return {"data": data}
 
                 if halaman <= 0:
@@ -104,6 +118,11 @@ class DesaKelurahanService:
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
+
+                for desa_kel in data:
+                    desa_kel["geojson_url"] = (
+                        f"{CDN_PATHS['desa_kelurahan']}/{desa_kel['kode']}.geojson"
+                    )
 
                 return {
                     "pagination": {

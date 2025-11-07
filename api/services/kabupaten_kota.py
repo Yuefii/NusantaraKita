@@ -1,6 +1,7 @@
 import aiomysql
 from typing import List, Union
 from config import get_connection
+from helpers.cdn import CDN_PATHS
 from models.kabupaten_kota import (
     KabupatenKota,
     PaginatedKabupatenKotaResponse,
@@ -22,6 +23,12 @@ class KabupatenKotaService:
                     data: List[KabupatenKota] = await cursor.fetchall()
                     if not data:
                         raise Exception("tidak ditemukan data")
+
+                    for kab_kota in data:
+                        kab_kota["geojson_url"] = (
+                            f"{CDN_PATHS['kabupaten_kota']}/{kab_kota['kode']}.geojson"
+                        )
+
                     return {"data": data}
 
                 if halaman <= 0:
@@ -47,6 +54,11 @@ class KabupatenKotaService:
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
+
+                for kab_kota in data:
+                    kab_kota["geojson_url"] = (
+                        f"{CDN_PATHS['kabupaten_kota']}/{kab_kota['kode']}.geojson"
+                    )
 
                 return {
                     "pagination": {
@@ -76,6 +88,12 @@ class KabupatenKotaService:
                         raise Exception(
                             "tidak ditemukan data untuk kode provinsi tersebut"
                         )
+
+                    for kab_kota in data:
+                        kab_kota["geojson_url"] = (
+                            f"{CDN_PATHS['kabupaten_kota']}/{kab_kota['kode']}.geojson"
+                        )
+
                     return {"data": data}
 
                 if halaman <= 0:
@@ -104,6 +122,11 @@ class KabupatenKotaService:
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
+
+                for kab_kota in data:
+                    kab_kota["geojson_url"] = (
+                        f"{CDN_PATHS['kabupaten_kota']}/{kab_kota['kode']}.geojson"
+                    )
 
                 return {
                     "pagination": {

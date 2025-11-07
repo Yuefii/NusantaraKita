@@ -1,6 +1,7 @@
 import aiomysql
 from typing import List, Union
 from config import get_connection
+from helpers.cdn import CDN_PATHS
 from models.kecamatan import (
     Kecamatan,
     KecamatanListResponse,
@@ -22,6 +23,12 @@ class KecamatanService:
                     data: List[Kecamatan] = await cursor.fetchall()
                     if not data:
                         raise Exception("tidak ditemukan data")
+
+                    for kec in data:
+                        kec["geojson_url"] = (
+                            f"{CDN_PATHS['kabupaten_kota']}/{kec['kode']}.geojson"
+                        )
+
                     return {"data": data}
 
                 if halaman <= 0:
@@ -47,6 +54,11 @@ class KecamatanService:
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
+
+                for kec in data:
+                    kec["geojson_url"] = (
+                        f"{CDN_PATHS['kabupaten_kota']}/{kec['kode']}.geojson"
+                    )
 
                 return {
                     "pagination": {
@@ -76,6 +88,12 @@ class KecamatanService:
                         raise Exception(
                             "tidak ditemukan data untuk kode provinsi tersebut"
                         )
+
+                    for kec in data:
+                        kec["geojson_url"] = (
+                            f"{CDN_PATHS['kecamatan']}/{kec['kode']}.geojson"
+                        )
+
                     return {"data": data}
 
                 if halaman <= 0:
@@ -104,6 +122,11 @@ class KecamatanService:
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
+
+                for kec in data:
+                    kec["geojson_url"] = (
+                        f"{CDN_PATHS['kecamatan']}/{kec['kode']}.geojson"
+                    )
 
                 return {
                     "pagination": {

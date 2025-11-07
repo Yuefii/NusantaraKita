@@ -12,6 +12,7 @@ class Kecamatan(TypedDict):
         lat (float): Latitude dari lokasi kecamatan.
         lng (float): Longitude dari lokasi kecamatan.
         kode_kabupaten_kota (str): Kode kabupaten/kota tempat kecamatan berada.
+        geojson_url (str): URL file GeoJSON dari kecamatan.
     """
 
     kode: str
@@ -19,6 +20,7 @@ class Kecamatan(TypedDict):
     lat: float
     lng: float
     kode_kabupaten_kota: str
+    geojson_url: str
 
 
 class PaginatedKecamatanResponse(TypedDict):

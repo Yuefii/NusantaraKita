@@ -11,12 +11,14 @@ class Provinsi(TypedDict):
         nama (str): Nama provinsi.
         lat (float): Latitude dari lokasi provinsi.
         lng (float): Longitude dari lokasi provinsi.
+        geojson_url (str): URL file GeoJSON dari provinsi.
     """
 
     kode: str
     nama: str
     lat: float
     lng: float
+    geojson_url: str
 
 
 class PaginatedProvinsiResponse(TypedDict):

@@ -12,6 +12,7 @@ class KabupatenKota(TypedDict):
         lat (float): Latitude dari lokasi kabupaten/kota.
         lng (float): Longitude dari lokasi kabupaten/kota.
         kode_provinsi (str): Kode provinsi tempat kabupaten/kota berada.
+        geojson_url (str): URL file GeoJSON dari kabupaten/kota.
     """
 
     kode: str
@@ -19,6 +20,7 @@ class KabupatenKota(TypedDict):
     lat: float
     lng: float
     kode_provinsi: str
+    geojson_url: str
 
 
 class PaginatedKabupatenKotaResponse(TypedDict):
