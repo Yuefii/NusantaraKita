@@ -9,6 +9,7 @@ mock_data = [
         "nama": "Bakongan",
         "lat": 2.960325743420683,
         "lng": 97.46087307098534,
+        "geojson_url": "https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kecamatan/11.01.01.geojson",
     },
     {
         "kode": "11.02",
@@ -16,6 +17,7 @@ mock_data = [
         "nama": "Kluet Utara",
         "lat": 3.123248075034301,
         "lng": 97.34619985236354,
+        "geojson_url": "https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kecamatan/11.01.02.geojson",
     },
 ]
 
@@ -40,6 +42,7 @@ async def test_get_without_pagination():
         assert isinstance(result["data"][0]["nama"], str)
         assert isinstance(result["data"][0]["lat"], float)
         assert isinstance(result["data"][0]["lng"], float)
+        assert isinstance(result["data"][0]["geojson_url"], str)
 
 
 @pytest.mark.asyncio

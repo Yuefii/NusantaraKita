@@ -3,12 +3,19 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from services.provinsi import ProvinsiService
 
 mock_data = [
-    {"kode": "11", "nama": "Aceh", "lat": 4.225728583038235, "lng": 96.9063499723947},
+    {
+        "kode": "11",
+        "nama": "Aceh",
+        "lat": 4.225728583038235,
+        "lng": 96.9063499723947,
+        "geojson_url": "https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/provinsi/11.geojson",
+    },
     {
         "kode": "12",
         "nama": "Sumatera Utara",
         "lat": 2.1884379790819697,
         "lng": 99.63567390209315,
+        "geojson_url": "https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/provinsi/12.geojson",
     },
 ]
 
@@ -33,6 +40,7 @@ async def test_get_without_pagination():
         assert isinstance(result["data"][0]["nama"], str)
         assert isinstance(result["data"][0]["lat"], float)
         assert isinstance(result["data"][0]["lng"], float)
+        assert isinstance(result["data"][0]["geojson_url"], str)
 
 
 @pytest.mark.asyncio
