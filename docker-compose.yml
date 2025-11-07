@@ -3,11 +3,11 @@ version: '3.8'
 services:
   db:
     image: mysql:8.0
-    container_name: nusakita_db
+    container_name: nusantarakita_db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: nusakita
+      MYSQL_DATABASE: nusantarakita
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
@@ -24,7 +24,7 @@ services:
     build:
       context: ./api
       network: host
-    container_name: nusakita_api
+    container_name: nusantarakita_api
     restart: always
     ports:
       - "8000:8000"
@@ -33,7 +33,7 @@ services:
       MYSQL_PORT: 3306
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-      MYSQL_DB: nusakita
+      MYSQL_DB: nusantarakita
     depends_on:
       db:
         condition: service_healthy
