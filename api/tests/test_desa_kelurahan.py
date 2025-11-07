@@ -9,6 +9,7 @@ mock_data = [
         "nama": "Keude Bakongan",
         "lat": 2.931094803160483,
         "lng": 97.48458404258515,
+        "kode_pos": "23773",
     },
     {
         "kode": "11.01.01.2002",
@@ -16,6 +17,7 @@ mock_data = [
         "nama": "Ujong Mangki",
         "lat": 2.9527245335971086,
         "lng": 97.43761867741745,
+        "kode_pos": "23773",
     },
 ]
 
@@ -40,6 +42,7 @@ async def test_get_without_pagination():
         assert isinstance(result["data"][0]["nama"], str)
         assert isinstance(result["data"][0]["lat"], float)
         assert isinstance(result["data"][0]["lng"], float)
+        assert isinstance(result["data"][0]["kode_pos"], str)
 
 
 @pytest.mark.asyncio

@@ -19,6 +19,7 @@ class DesaKelurahan(TypedDict):
     lat: float
     lng: float
     kode_kecamatan: str
+    kode_pos: str
 
 
 class PaginatedDesaKelurahanResponse(TypedDict):

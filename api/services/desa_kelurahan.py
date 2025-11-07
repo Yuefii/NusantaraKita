@@ -17,7 +17,7 @@ class DesaKelurahanService:
             try:
                 if not pagination:
                     await cursor.execute(
-                        "SELECT kode, nama, lat, lng, kode_kecamatan FROM nk_desa_kelurahan"
+                        "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan"
                     )
                     data: List[DesaKelurahan] = await cursor.fetchall()
                     if not data:
@@ -40,7 +40,7 @@ class DesaKelurahanService:
 
                 offset: int = (halaman - 1) * limit
                 await cursor.execute(
-                    "SELECT kode, nama, lat, lng, kode_kecamatan FROM nk_desa_kelurahan LIMIT %s OFFSET %s",
+                    "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan LIMIT %s OFFSET %s",
                     (limit, offset),
                 )
                 data: List[DesaKelurahan] = await cursor.fetchall()
@@ -68,7 +68,7 @@ class DesaKelurahanService:
             try:
                 if not pagination:
                     await cursor.execute(
-                        "SELECT kode, nama, lat, lng, kode_kecamatan FROM nk_desa_kelurahan WHERE kode_kecamatan = %s",
+                        "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = %s",
                         (kode_kecamatan,),
                     )
                     data: List[DesaKelurahan] = await cursor.fetchall()
@@ -97,7 +97,7 @@ class DesaKelurahanService:
 
                 offset: int = (halaman - 1) * limit
                 await cursor.execute(
-                    "SELECT kode, nama, lat, lng, kode_kecamatan FROM nk_desa_kelurahan WHERE kode_kecamatan = %s LIMIT %s OFFSET %s",
+                    "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = %s LIMIT %s OFFSET %s",
                     (kode_kecamatan, limit, offset),
                 )
                 data: List[DesaKelurahan] = await cursor.fetchall()
