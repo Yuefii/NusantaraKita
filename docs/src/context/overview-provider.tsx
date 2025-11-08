@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, type ReactNode } from 'react';
 
 // State type
-interface MapState {
+export interface MapState {
   isShowEndpoints: boolean;
   selected: {
     province: ProvinsiApi | null;
