@@ -16,6 +16,7 @@ type ProvinsiApi = {
   nama: string; // (string) - Nama provinsi
   lat: number; // (double) - Koordinat latitude
   lng: number; // (double) - Koordinat longitude
+  geojson_url: string; // (string) - CDN URL file GeoJSON provinsi
 };
 
 type KabKotaApi = {
@@ -24,6 +25,7 @@ type KabKotaApi = {
   kode_provinsi: string; // Kode provinsi induk
   lat: number; // Koordinat latitude
   lng: number; // Koordinat longitude
+  geojson_url: string; // CDN URL file GeoJSON kabupaten/kota
 };
 
 type KecamatanApi = {
@@ -32,6 +34,7 @@ type KecamatanApi = {
   kode_kabupaten_kota: string; // Kode kabupaten/kota induk
   lat: number; // Koordinat latitude
   lng: number; // Koordinat longitude
+  geojson_url: string; // CDN URL file GeoJSON kecamatan
 };
 
 type DesaKelApi = {
@@ -40,6 +43,7 @@ type DesaKelApi = {
   lat: number; // Koordinat latitude
   lng: number; // Koordinat longitude
   kode_kecamatan: string; // Kode Kecamatan induk
+  geojson_url: string; // CDN URL file GeoJSON Desa/Kelurahan
 };
 
 type ApiResponse<T> = {
