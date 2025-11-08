@@ -9,10 +9,41 @@ import { cn } from '@/lib/utils';
 import 'leaflet/dist/leaflet.css';
 
 const Overview = () => {
-  const { state } = useOverview();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const { state } = useOverview();
   const isSmallScreen = isMobile || isTablet;
+
+  const { province, kabKota, kecamatan, desaKel } = state.selected;
+
+  const endpoints = [
+    {
+      label: 'Provinsi',
+      condition: true,
+      url: 'https://api-nusakita.vercel.app/v2/provinsi?pagination=true&limit=15',
+    },
+    {
+      label: 'Kab/Kota',
+      condition: province && kabKota,
+      url: province
+        ? `https://api-nusakita.vercel.app/v2/${province.kode}/kab-kota?pagination=true&limit=15`
+        : '',
+    },
+    {
+      label: 'Kecamatan',
+      condition: province && kabKota && kecamatan,
+      url: kabKota
+        ? `https://api-nusakita.vercel.app/v2/${kabKota.kode}/kecamatan?pagination=true&limit=15`
+        : '',
+    },
+    {
+      label: 'Desa/Kelurahan',
+      condition: province && kabKota && kecamatan && desaKel,
+      url: kecamatan
+        ? `https://api-nusakita.vercel.app/v2/${kecamatan.kode}/desa-kel?pagination=true&limit=15`
+        : '',
+    },
+  ];
 
   return (
     <section
@@ -23,51 +54,33 @@ const Overview = () => {
     >
       <h1 className="mb-10 text-3xl font-bold text-gray-700">Overview</h1>
 
+      {/* Map Section */}
       <div className="mb-10">
         <OverviewDescription
           title="Map View"
-          description="Menampilkan Posisi Wilayah Yang dipilih"
+          description="Menampilkan posisi wilayah yang dipilih"
         />
         <OverViewSelects />
         <OverviewMap />
       </div>
 
+      {/* Endpoint Section */}
       {state.isShowEndpoints && (
         <div className="mb-10">
           <OverviewDescription
             title="Endpoint"
-            description="Menampilkan Endpoint berdasarkan data yang dipilih"
+            description="Menampilkan endpoint berdasarkan data yang dipilih"
           />
           <div className="flex flex-col gap-5">
-            {/* Provinsi */}
-            <EndpointUrl
-              method="GET"
-              url="https://api-nusakita.vercel.app/v2/provinsi?pagination=true&limit=15"
-            />
-
-            {/* Kab/Kota */}
-            {state.selected.province && (
-              <EndpointUrl
-                method="GET"
-                url={`https://api-nusakita.vercel.app/v2/${state.selected.province.kode}/kab-kota?pagination=true&limit=15`}
-              />
-            )}
-
-            {/* Kecamatan */}
-            {state.selected.kabKota && (
-              <EndpointUrl
-                method="GET"
-                url={`https://api-nusakita.vercel.app/v2/${state.selected.kabKota.kode}/kecamatan?pagination=true&limit=15`}
-              />
-            )}
-
-            {/* Desa / Kelurahan */}
-            {state.selected.kecamatan && (
-              <EndpointUrl
-                method="GET"
-                url={`https://api-nusakita.vercel.app/v2/${state.selected.kecamatan.kode}/desa-kel?pagination=true&limit=15`}
-              />
-            )}
+            {endpoints
+              .filter((endpoint) => endpoint.condition)
+              .map((endpoint) => (
+                <EndpointUrl
+                  key={endpoint.label}
+                  method="GET"
+                  url={endpoint.url}
+                />
+              ))}
           </div>
         </div>
       )}
