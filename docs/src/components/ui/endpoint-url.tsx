@@ -73,7 +73,9 @@ const EndpointUrl: React.FC<EndpointUrlProps> = ({
   return (
     <div className={componentClasses.trim().replace(/\s+/g, ' ')}>
       <span className={methodClasses}>{method}</span>
-      <code className="mr-2 line-clamp-1">{url}</code>
+      <div className="w-full overflow-x-auto">
+        <code className="mr-2 block min-w-fit whitespace-nowrap">{url}</code>
+      </div>
 
       {showCopyButton && (
         <Button
