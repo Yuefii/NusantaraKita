@@ -2,97 +2,20 @@ import Code from '@/components/ui/code';
 import EndpointUrl from '@/components/ui/endpoint-url';
 import { Notes, type NotesProps } from '@/components/ui/notes';
 import TableWithTitle from '@/components/ui/query-table-parameters';
-import type { ResponseJsonListItem } from '@/components/ui/response-json-structure';
 import ResponseSuccess from '@/components/ui/response-success';
+import {
+  errorHandlingTableRows,
+  getKecamatanResponseStructureData,
+  kecamatanResponse,
+} from '@/constant/get-kecamatan.constant';
+import {
+  errorHandlingTableHeaders,
+  queryTableHeaders,
+  queryTableRows,
+} from '@/constant/get-provinsi.constant';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useIsTablet } from '@/hooks/use-tablet';
 import { cn } from '@/lib/utils';
-import { queryTableHeaders, queryTableRows } from './get-provinsi';
-
-const getKecamatanResponseStructureData: ResponseJsonListItem[] = [
-  {
-    name: 'pagination',
-    details: '(object) - Hanya muncul jika pagination=true :',
-    children: [
-      { name: 'total_item', details: '(integer) - Total seluruh kecamatan' },
-      {
-        name: 'total_halaman',
-        details: '(integer) - Total halaman berdasarkan limit',
-      },
-      {
-        name: 'halaman_saat_ini',
-        details: '(integer) - Halaman yang sedang diakses',
-      },
-      {
-        name: 'ukuran_halaman',
-        details: '(integer) - Jumlah item per halaman',
-      },
-    ],
-  },
-  {
-    name: 'data',
-    details: '(array) - Daftar kecamatan:',
-    children: [
-      { name: 'kode', details: '(string) - Kode unik kecamatan' },
-      { name: 'nama', details: '(string) - Nama kecamatan' },
-      {
-        name: 'kode_kabupaten_kota',
-        details: '(string) - Kode kabupaten/kota induk',
-      },
-      { name: 'lat', details: '(double) - Koordinat latitude' },
-      { name: 'lng', details: '(double) - Koordinat longitude' },
-    ],
-  },
-];
-
-const kecamatanResponse = {
-  pagination: {
-    total_item: 516,
-    total_halaman: 52,
-    halaman_saat_ini: 1,
-    ukuran_halaman: 10,
-  },
-  data: [
-    {
-      kode: '11.01.01',
-      nama: 'Bakongan',
-      lat: 2.960325743420683,
-      lng: 97.46087307098534,
-      kode_kabupaten_kota: '11.01',
-    },
-  ],
-};
-
-const errorHandlingTableHeaders = ['Code', 'Description', 'Example'];
-const errorHandlingTableRows = [
-  {
-    Code: '400',
-    Description: 'Parameter tidak valid',
-    Example: JSON.stringify(
-      { error: 'nomor halaman tidak valid, halaman harus lebih besar dari 0' },
-      null,
-      2,
-    ),
-  },
-  {
-    Code: '404',
-    Description: 'Data tidak ditemukan',
-    Example: JSON.stringify(
-      { error: 'tidak ditemukan data kecamatan' },
-      null,
-      2,
-    ),
-  },
-  {
-    Code: '500',
-    Description: 'Server Error',
-    Example: JSON.stringify(
-      { error: 'Gagal mengambil data: [error detail]' },
-      null,
-      2,
-    ),
-  },
-];
 
 const notesItems: NotesProps['items'] = [
   <>
