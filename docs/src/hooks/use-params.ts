@@ -20,10 +20,12 @@ const useParams = () => {
     (newParams: Partial<ParamsApi>) => {
       const updatedParams = new URLSearchParams(searchParams);
 
-      if (newParams.limit !== undefined)
+      if (newParams.limit !== undefined) {
         updatedParams.set('limit', String(newParams.limit));
-      if (newParams.halaman !== undefined)
+        updatedParams.set('halaman', '1');
+      } else if (newParams.halaman !== undefined) {
         updatedParams.set('halaman', String(newParams.halaman));
+      }
 
       setSearchParams(updatedParams);
     },
