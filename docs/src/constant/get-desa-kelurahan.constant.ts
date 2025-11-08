@@ -32,6 +32,7 @@ const getDesaKelurahanResponseStructureData: ResponseJsonListItem[] = [
       { name: 'lat', details: '(double) - Koordinat latitude' },
       { name: 'lng', details: '(double) - Koordinat longitude' },
       { name: 'kode_kecamatan', details: '(string) - Kode Kecamatan induk' },
+      { name: 'geojson_url', details: '(string) - URL GeoJSON Desa/Kelurahan' },
     ],
   },
 ];
@@ -50,6 +51,8 @@ const getDesaKelurahanExampleResponse = {
       lat: 2.931094803160483,
       lng: 97.48458404258515,
       kode_kecamatan: '11.01.01',
+      geojson_url:
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/desa_kelurahan/11.01.01.2001.geojson',
     },
   ],
 };

@@ -32,6 +32,7 @@ const getKecamatanResponseStructureData: ResponseJsonListItem[] = [
       },
       { name: 'lat', details: '(double) - Koordinat latitude' },
       { name: 'lng', details: '(double) - Koordinat longitude' },
+      { name: 'geojson_url', details: '(string) - URL GeoJSON kecamatan' },
     ],
   },
 ];
@@ -50,6 +51,8 @@ const kecamatanResponse = {
       lat: 2.960325743420683,
       lng: 97.46087307098534,
       kode_kabupaten_kota: '11.01',
+      geojson_url:
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kabupaten_kota/11.01.01.geojson',
     },
   ],
 };

@@ -83,6 +83,7 @@ export const getProvinsiResponseStructureData: ResponseJsonListItem[] = [
       { name: 'nama', details: '(string) - Nama provinsi' },
       { name: 'lat', details: '(double) - Koordinat latitude' },
       { name: 'lng', details: '(double) - Koordinat longitude' },
+      { name: 'geojson_url', details: '(string) - URL GeoJSON provinsi' },
     ],
   },
 ];
@@ -100,6 +101,8 @@ export const responseExampleDefault = {
       nama: 'Aceh',
       lat: 4.225728583038235,
       lng: 96.91187408609952,
+      geojson_url:
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/provinsi/11.geojson',
     },
   ],
 };

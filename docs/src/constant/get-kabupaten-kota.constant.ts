@@ -32,6 +32,7 @@ const getKabKotaResponseStructureData: ResponseJsonListItem[] = [
       { name: 'kode_provinsi', details: '(string) - Kode provinsi induk' },
       { name: 'lat', details: '(double) - Koordinat latitude' },
       { name: 'lng', details: '(double) - Koordinat longitude' },
+      { name: 'geojson_url', details: '(string) - URL GeoJSON kabupaten/kota' },
     ],
   },
 ];
@@ -50,6 +51,8 @@ const kabKotaResponse = {
       lat: 3.161853840894135,
       lng: 97.43651771865193,
       kode_provinsi: '11',
+      geojson_url:
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kabupaten_kota/11.01.geojson',
     },
   ],
 };
@@ -85,7 +88,7 @@ const errorHandlingTableRows = [
 ];
 
 export {
+  errorHandlingTableRows,
   getKabKotaResponseStructureData,
   kabKotaResponse,
-  errorHandlingTableRows,
 };
