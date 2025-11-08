@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const axiosInstace = axios.create({
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
   headers: { 'Content-Type': 'application/json' },
-  baseURL: 'https://api-nusakita.vercel.app/v2/',
 });
 
-export default axiosInstace;
+export default axiosInstance;
