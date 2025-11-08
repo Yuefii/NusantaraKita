@@ -19,10 +19,18 @@ export const CardItem: React.FC<CardItemProps> = ({ items }) => {
           key={index}
           className="flex items-center gap-2 text-[#4A4A4A]"
         >
-          <item.icon />
-          <span className="font-medium">
-            {item.title ? `${item.title}: ` : ''} {item.value}
-          </span>
+          <div className="w-6 h-6 flex items-center justify-center">
+            <item.icon />
+          </div>
+          <div
+            className="flex gap-1 overflow-hidden font-medium"
+            title={item.value}
+          >
+            <span className="whitespace-nowrap">
+              {item.title ? `${item.title}:` : ''}
+            </span>
+            <span className="truncate  italic">{item.value}</span>
+          </div>
         </div>
       ))}
     </div>

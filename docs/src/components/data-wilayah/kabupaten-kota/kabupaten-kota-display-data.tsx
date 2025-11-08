@@ -16,6 +16,7 @@ import { CardListSkeleton } from '../../ui/skelekton-card-list';
 import SkeletonTable from '../../ui/skelekton-table';
 import { Skeleton } from '../../ui/skeleton';
 import Table from '../../ui/table';
+import { Globe } from 'lucide-react';
 
 interface KabKotaProps {
   data: KabKotaApiRes | undefined;
@@ -31,6 +32,7 @@ const KabKotaTableHeaders = [
   'Nama Kab/Kota',
   'Latitude',
   'Longitude',
+  'geojson_url',
 ];
 
 const parseKabKotaTable = (kabKota: KabKotaApi) => ({
@@ -39,6 +41,7 @@ const parseKabKotaTable = (kabKota: KabKotaApi) => ({
   'Nama Kab/Kota': kabKota.nama,
   Latitude: kabKota.lat,
   Longitude: kabKota.lng,
+  geojson_url: kabKota.geojson_url,
 });
 
 const parseKabKotCard = (kabKota: KabKotaApi) => [
@@ -66,6 +69,11 @@ const parseKabKotCard = (kabKota: KabKotaApi) => [
     icon: FaArrowsAltH,
     title: 'Longitude',
     value: kabKota.lng.toString(),
+  },
+  {
+    icon: Globe,
+    title: 'geojson_url',
+    value: kabKota.geojson_url.toString(),
   },
 ];
 

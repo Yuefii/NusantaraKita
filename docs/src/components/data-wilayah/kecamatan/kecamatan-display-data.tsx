@@ -16,6 +16,7 @@ import { CardListSkeleton } from '../../ui/skelekton-card-list';
 import SkeletonTable from '../../ui/skelekton-table';
 import { Skeleton } from '../../ui/skeleton';
 import Table from '../../ui/table';
+import { Globe } from 'lucide-react';
 
 interface KecamatanProps {
   data: KecamatanApiRes | undefined;
@@ -31,6 +32,7 @@ const KecamatanTableHeaders = [
   'Nama Kecamatan',
   'Latitude',
   'Longitude',
+  'geojson_url',
 ];
 
 const parseKecamatanTable = (kecamatan: KecamatanApi) => ({
@@ -39,6 +41,7 @@ const parseKecamatanTable = (kecamatan: KecamatanApi) => ({
   'Nama Kecamatan': kecamatan.nama,
   Latitude: kecamatan.lat,
   Longitude: kecamatan.lng,
+  geojson_url: kecamatan.geojson_url,
 });
 
 const parseKecamatanCard = (kecamatan: KecamatanApi) => [
@@ -67,6 +70,11 @@ const parseKecamatanCard = (kecamatan: KecamatanApi) => [
     icon: FaArrowsAltH,
     title: 'Longitude',
     value: kecamatan.lng.toString(),
+  },
+  {
+    icon: Globe,
+    title: 'geojson_url',
+    value: kecamatan.geojson_url.toString(),
   },
 ];
 

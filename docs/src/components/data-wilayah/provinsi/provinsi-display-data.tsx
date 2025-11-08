@@ -5,6 +5,7 @@ import { CardListSkeleton } from '@/components/ui/skelekton-card-list';
 import SkeletonTable from '@/components/ui/skelekton-table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Globe } from 'lucide-react';
 import { useMemo } from 'react';
 import {
   FaArrowsAltH,
@@ -24,13 +25,20 @@ interface ProvinsiDataProps {
   isPending: boolean;
 }
 
-const provinsiTableHeaders = ['Kode', 'Provinsi', 'Latitude', 'Longitude'];
+const provinsiTableHeaders = [
+  'Kode',
+  'Provinsi',
+  'Latitude',
+  'Longitude',
+  'geojson_url',
+];
 
 const parseProvinsi = (provinsi: ProvinsiApi) => ({
   Kode: provinsi.kode,
   Provinsi: provinsi.nama,
   Latitude: provinsi.lat,
   Longitude: provinsi.lng,
+  geojson_url: provinsi.geojson_url,
 });
 
 const parseProvinsiCard = (provinsi: ProvinsiApi) => [
@@ -53,6 +61,11 @@ const parseProvinsiCard = (provinsi: ProvinsiApi) => [
     icon: FaArrowsAltH,
     title: 'Longitude',
     value: provinsi.lng.toString(),
+  },
+  {
+    icon: Globe,
+    title: 'geojson_url',
+    value: provinsi.geojson_url.toString(),
   },
 ];
 

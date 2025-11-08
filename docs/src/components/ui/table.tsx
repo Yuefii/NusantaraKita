@@ -8,7 +8,8 @@ export interface TableProps {
 const Table: React.FC<TableProps> = ({ columnHeaders, rowData }) => {
   const headerStyle = 'bg-[#4A4A4A] text-white text-left';
   const thStyle = 'py-3 px-4 font-semibold';
-  const tdStyle = 'py-3 px-4 border-b border-gray-200 text-gray-700';
+  const tdStyle =
+    'py-3 px-4 border-b border-gray-200 text-gray-700 max-w-[250px] truncate';
 
   return (
     <div className="overflow-x-auto rounded-lg shadow-md">
@@ -18,7 +19,7 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowData }) => {
             {columnHeaders.map((header, index) => (
               <th
                 key={index}
-                className={thStyle}
+                className={`${thStyle} max-w-[250px] truncate`}
               >
                 {header}
               </th>
@@ -35,6 +36,7 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowData }) => {
                 <td
                   key={cellIndex}
                   className={tdStyle}
+                  title={String(row[headerKey] ?? '')}
                 >
                   {row[headerKey]}
                 </td>

@@ -1,4 +1,5 @@
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Globe } from 'lucide-react';
 import { useMemo } from 'react';
 import {
   FaArrowsAltH,
@@ -31,6 +32,7 @@ const DesaKelTableHeaders = [
   'Nama Desa/Kel',
   'Latitude',
   'Longitude',
+  'geojson_url',
 ];
 
 const parseDesaKelTable = (kabKota: DesaKelApi) => ({
@@ -39,6 +41,7 @@ const parseDesaKelTable = (kabKota: DesaKelApi) => ({
   'Nama Desa/Kel': kabKota.nama,
   Latitude: kabKota.lat,
   Longitude: kabKota.lng,
+  geojson_url: kabKota.geojson_url,
 });
 
 const parseDesaKelCard = (kabKota: DesaKelApi) => [
@@ -66,6 +69,11 @@ const parseDesaKelCard = (kabKota: DesaKelApi) => [
     icon: FaArrowsAltH,
     title: 'Longitude',
     value: kabKota.lng.toString(),
+  },
+  {
+    icon: Globe,
+    title: 'geojson_url',
+    value: kabKota.geojson_url.toString(),
   },
 ];
 
