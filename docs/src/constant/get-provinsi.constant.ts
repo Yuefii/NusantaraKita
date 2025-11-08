@@ -114,6 +114,8 @@ export const responseExampleWithPagination = {
       nama: 'Aceh',
       lat: 4.225728583038235,
       lng: 96.91187408609952,
+      geojson_url:
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/provinsi/11.geojson',
     },
   ],
 };
