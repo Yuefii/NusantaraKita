@@ -5,6 +5,7 @@ const MainFeatures = () => {
     'Menyediakan endpoint untuk mendapatkan data berdasarkan jenis wilayah atau nama wilayah tertentu.',
     'Dukungan untuk format data JSON yang mudah digunakan di berbagai platform dan bahasa pemrograman.',
     'Akses ke data yang selalu diperbarui untuk memastikan akurasi informasi yang diberikan.',
+    'Mendukung fitur GeoJSON wilayah dari tingkat provinsi hingga desa/kelurahan untuk visualisasi peta interaktif.',
   ];
 
   const kelebihanApiData = [
@@ -12,7 +13,6 @@ const MainFeatures = () => {
     'Dokumentasi API yang jelas dan mudah diikuti untuk pengembang.',
     'Didukung oleh sistem yang scalable, cocok untuk aplikasi besar dengan kebutuhan data tinggi.',
     'Penggunaan yang mudah di berbagai platform, termasuk mobile dan web applications.',
-    'Mendukung fitur GeoJSON wilayah dari tingkat provinsi hingga desa/kelurahan untuk visualisasi peta interaktif.',
   ];
 
   const informasiText =
