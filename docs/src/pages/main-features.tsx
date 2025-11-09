@@ -12,6 +12,7 @@ const MainFeatures = () => {
     'Dokumentasi API yang jelas dan mudah diikuti untuk pengembang.',
     'Didukung oleh sistem yang scalable, cocok untuk aplikasi besar dengan kebutuhan data tinggi.',
     'Penggunaan yang mudah di berbagai platform, termasuk mobile dan web applications.',
+    'Mendukung fitur GeoJSON wilayah dari tingkat provinsi hingga desa/kelurahan untuk visualisasi peta interaktif.',
   ];
 
   const informasiText =
