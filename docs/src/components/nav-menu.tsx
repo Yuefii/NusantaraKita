@@ -13,6 +13,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 import type { IconType } from 'react-icons/lib';
@@ -35,6 +36,12 @@ export interface NavMenuProps {
 }
 
 export function NavMenu({ items }: NavMenuProps) {
+  const { setOpen, open } = useSidebar();
+
+  const handleSidebarItemClick = () => {
+    if (!open) setOpen(true);
+  };
+
   return (
     <SidebarGroup>
       <SidebarMenu>
@@ -47,7 +54,10 @@ export function NavMenu({ items }: NavMenuProps) {
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  onClick={handleSidebarItemClick}
+                >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
