@@ -1,4 +1,5 @@
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Globe } from 'lucide-react';
 import { useMemo } from 'react';
 import {
   FaArrowsAltH,
@@ -16,7 +17,6 @@ import { CardListSkeleton } from '../../ui/skelekton-card-list';
 import SkeletonTable from '../../ui/skelekton-table';
 import { Skeleton } from '../../ui/skeleton';
 import Table from '../../ui/table';
-import { Globe } from 'lucide-react';
 
 interface KecamatanProps {
   data: KecamatanApiRes | undefined;

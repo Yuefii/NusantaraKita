@@ -19,7 +19,7 @@ export const CardItem: React.FC<CardItemProps> = ({ items }) => {
           key={index}
           className="flex items-center gap-2 text-[#4A4A4A]"
         >
-          <div className="w-6 h-6 flex items-center justify-center">
+          <div className="flex h-6 w-6 items-center justify-center">
             <item.icon />
           </div>
           <div
@@ -29,7 +29,7 @@ export const CardItem: React.FC<CardItemProps> = ({ items }) => {
             <span className="whitespace-nowrap">
               {item.title ? `${item.title}:` : ''}
             </span>
-            <span className="truncate  italic">{item.value}</span>
+            <span className="truncate italic">{item.value}</span>
           </div>
         </div>
       ))}
