@@ -1,4 +1,4 @@
-CDN_BASE_URL = "https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson"
+CDN_BASE_URL = "https://cdn.jsdelivr.net/gh/mushonnip/NusantaraKita@main/geojson"
 
 CDN_PATHS = {
     "provinsi": f"{CDN_BASE_URL}/provinsi",
