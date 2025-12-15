@@ -21,7 +21,9 @@ services:
       retries: 10
 
   api:
-    image: yuefii/nusantarakita-api:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile
     container_name: nusantarakita_api
     restart: always
     ports:
