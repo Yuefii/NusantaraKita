@@ -8,7 +8,7 @@ class RegionDetailService:
     def _determine_region_level(self, code: str) -> str:
         """
         Determine the region level based on code format.
-        
+
         Format:
         - Provinsi: XX (e.g., "11", "32")
         - Kabupaten/Kota: XX.XX (e.g., "11.01", "32.11")
@@ -16,7 +16,7 @@ class RegionDetailService:
         - Desa/Kelurahan: XX.XX.XX.XXXX (e.g., "11.01.01.2001")
         """
         parts = code.split(".")
-        
+
         if len(parts) == 1:
             return "provinsi"
         elif len(parts) == 2:
@@ -59,10 +59,10 @@ class RegionDetailService:
     async def get_region_details(self, codes: List[str]) -> RegionDetailResponse:
         """
         Get region details for multiple codes.
-        
+
         Args:
             codes: List of region codes
-            
+
         Returns:
             RegionDetailResponse containing list of region details
         """
@@ -74,7 +74,7 @@ class RegionDetailService:
                 for code in codes:
                     code = code.strip()
                     region_level = self._determine_region_level(code)
-                    
+
                     detail: RegionDetail = {
                         "kode": code,
                         "desa_kelurahan": None,
@@ -87,49 +87,75 @@ class RegionDetailService:
                         # Get provinsi name
                         detail["provinsi"] = await self._get_provinsi_name(cursor, code)
                         if not detail["provinsi"]:
-                            raise Exception(f"Provinsi dengan kode {code} tidak ditemukan")
+                            raise Exception(
+                                f"Provinsi dengan kode {code} tidak ditemukan"
+                            )
 
                     elif region_level == "kabupaten_kota":
                         # Get kabupaten/kota name
-                        detail["kabupaten_kota"] = await self._get_kabupaten_kota_name(cursor, code)
+                        detail["kabupaten_kota"] = await self._get_kabupaten_kota_name(
+                            cursor, code
+                        )
                         if not detail["kabupaten_kota"]:
-                            raise Exception(f"Kabupaten/Kota dengan kode {code} tidak ditemukan")
-                        
+                            raise Exception(
+                                f"Kabupaten/Kota dengan kode {code} tidak ditemukan"
+                            )
+
                         # Get provinsi name (first part of code)
                         kode_provinsi = code.split(".")[0]
-                        detail["provinsi"] = await self._get_provinsi_name(cursor, kode_provinsi)
+                        detail["provinsi"] = await self._get_provinsi_name(
+                            cursor, kode_provinsi
+                        )
 
                     elif region_level == "kecamatan":
                         # Get kecamatan name
-                        detail["kecamatan"] = await self._get_kecamatan_name(cursor, code)
+                        detail["kecamatan"] = await self._get_kecamatan_name(
+                            cursor, code
+                        )
                         if not detail["kecamatan"]:
-                            raise Exception(f"Kecamatan dengan kode {code} tidak ditemukan")
-                        
+                            raise Exception(
+                                f"Kecamatan dengan kode {code} tidak ditemukan"
+                            )
+
                         # Get kabupaten/kota name (first two parts)
                         parts = code.split(".")
                         kode_kabupaten_kota = f"{parts[0]}.{parts[1]}"
-                        detail["kabupaten_kota"] = await self._get_kabupaten_kota_name(cursor, kode_kabupaten_kota)
-                        
+                        detail["kabupaten_kota"] = await self._get_kabupaten_kota_name(
+                            cursor, kode_kabupaten_kota
+                        )
+
                         # Get provinsi name
-                        detail["provinsi"] = await self._get_provinsi_name(cursor, parts[0])
+                        detail["provinsi"] = await self._get_provinsi_name(
+                            cursor, parts[0]
+                        )
 
                     elif region_level == "desa_kelurahan":
                         # Get desa/kelurahan name
-                        detail["desa_kelurahan"] = await self._get_desa_kelurahan_name(cursor, code)
+                        detail["desa_kelurahan"] = await self._get_desa_kelurahan_name(
+                            cursor, code
+                        )
                         if not detail["desa_kelurahan"]:
-                            raise Exception(f"Desa/Kelurahan dengan kode {code} tidak ditemukan")
-                        
+                            raise Exception(
+                                f"Desa/Kelurahan dengan kode {code} tidak ditemukan"
+                            )
+
                         # Get kecamatan name (first three parts)
                         parts = code.split(".")
                         kode_kecamatan = f"{parts[0]}.{parts[1]}.{parts[2]}"
-                        detail["kecamatan"] = await self._get_kecamatan_name(cursor, kode_kecamatan)
-                        
+                        detail["kecamatan"] = await self._get_kecamatan_name(
+                            cursor, kode_kecamatan
+                        )
+
                         # Get kabupaten/kota name
                         kode_kabupaten_kota = f"{parts[0]}.{parts[1]}"
-                        detail["kabupaten_kota"] = await self._get_kabupaten_kota_name(cursor, kode_kabupaten_kota)
-                        
+                        detail["kabupaten_kota"] = await self._get_kabupaten_kota_name(
+                            cursor, kode_kabupaten_kota
+                        )
+
                         # Get provinsi name
-                        detail["provinsi"] = await self._get_provinsi_name(cursor, parts[0])
+                        detail["provinsi"] = await self._get_provinsi_name(
+                            cursor, parts[0]
+                        )
 
                     results.append(detail)
 

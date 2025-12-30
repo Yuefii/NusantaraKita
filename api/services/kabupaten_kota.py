@@ -42,7 +42,9 @@ class KabupatenKotaService:
                         "nomor halaman tidak valid, halaman harus lebih besar dari 0"
                     )
 
-                count_query = f"SELECT COUNT(*) AS total FROM nk_kabupaten_kota{where_clause}"
+                count_query = (
+                    f"SELECT COUNT(*) AS total FROM nk_kabupaten_kota{where_clause}"
+                )
                 await cursor.execute(count_query, params)
                 total_item: int = (await cursor.fetchone())["total"]
                 total_halaman: int = -(-total_item // limit) if total_item > 0 else 1
@@ -79,7 +81,12 @@ class KabupatenKotaService:
                 conn.close()
 
     async def get_by_provinsi(
-        self, kode_provinsi: str, limit: int, halaman: int, pagination: bool, search: str = None
+        self,
+        kode_provinsi: str,
+        limit: int,
+        halaman: int,
+        pagination: bool,
+        search: str = None,
     ) -> Union[KabupatenKotaListResponse, PaginatedKabupatenKotaResponse]:
         conn = await get_connection()
         async with conn.cursor(aiomysql.DictCursor) as cursor:
@@ -112,7 +119,9 @@ class KabupatenKotaService:
                         "nomor halaman tidak valid, halaman harus lebih besar dari 0"
                     )
 
-                count_query = f"SELECT COUNT(*) AS total FROM nk_kabupaten_kota{where_clause}"
+                count_query = (
+                    f"SELECT COUNT(*) AS total FROM nk_kabupaten_kota{where_clause}"
+                )
                 await cursor.execute(count_query, params)
                 total_item: int = (await cursor.fetchone())["total"]
                 total_halaman: int = -(-total_item // limit) if total_item > 0 else 1

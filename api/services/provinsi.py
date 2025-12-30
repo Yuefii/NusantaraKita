@@ -20,7 +20,9 @@ class ProvinsiService:
                     params.append(f"%{search}%")
 
                 if not pagination:
-                    query = f"SELECT kode, nama, lat, lng FROM nk_provinsi{where_clause}"
+                    query = (
+                        f"SELECT kode, nama, lat, lng FROM nk_provinsi{where_clause}"
+                    )
                     await cursor.execute(query, params)
                     data: List[Provinsi] = await cursor.fetchall()
                     if not data:

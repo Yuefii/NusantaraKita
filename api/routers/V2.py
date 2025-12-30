@@ -120,17 +120,19 @@ async def get_by_desa_kelurahan(
 
 @router.get("/v2/region/details")
 async def get_region_details(
-    ids: List[str] = Query(..., description="List of region codes (e.g., ['11', '32.11', '11.01.01.2004'])"),
+    ids: List[str] = Query(
+        ..., description="List of region codes (e.g., ['11', '32.11', '11.01.01.2004'])"
+    ),
 ):
     """
     Get region details by codes.
-    
+
     Returns hierarchical region names based on the code format:
     - Provinsi code (XX): Returns provinsi name
     - Kabupaten/Kota code (XX.XX): Returns kabupaten/kota and provinsi names
     - Kecamatan code (XX.XX.XX): Returns kecamatan, kabupaten/kota, and provinsi names
     - Desa/Kelurahan code (XX.XX.XX.XXXX): Returns desa/kelurahan, kecamatan, kabupaten/kota, and provinsi names
-    
+
     Example:
     - /v2/region/details?ids=32.11 -> Returns Kabupaten: Indramayu, Provinsi: Jawa Barat
     - /v2/region/details?ids=11.01.01.2004 -> Returns Desa/Kelurahan: Gampong Drien, Kecamatan: Bakongan, Kabupaten: Aceh Selatan, Provinsi: Aceh
