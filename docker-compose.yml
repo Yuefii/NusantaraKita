@@ -36,5 +36,19 @@ services:
       db:
         condition: service_healthy
 
+  docs:
+    build: ./docs
+    container_name: nusantarakita_docs
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    volumes:
+      - ./docs:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:8000/v2/
+
 volumes:
   db_data:
