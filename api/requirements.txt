@@ -26,4 +26,4 @@ typing_extensions==4.14.0
 uvicorn==0.38.0
 ruff==0.5.5
 pre-commit==3.8.0
-black==24.4.2
+black==26.5.1
