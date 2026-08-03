@@ -1,7 +1,7 @@
 aiomysql==0.2.0
 annotated-types==0.7.0
 anyio==4.9.0
-cffi==1.17.1
+cffi==2.1.0
 click==8.2.1
 cryptography==45.0.4
 dotenv==0.9.9
