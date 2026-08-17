@@ -1,14 +1,13 @@
 import aiomysql
-from typing import List, Union
 from config import get_connection
 from helpers.cdn import CDN_PATHS
-from models.provinsi import Provinsi, ProvinsiListResponse, PaginatedProvinsiResponse
+from models.provinsi import PaginatedProvinsiResponse, Provinsi, ProvinsiListResponse
 
 
 class ProvinsiService:
     async def get(
         self, limit: int, halaman: int, pagination: bool
-    ) -> Union[ProvinsiListResponse, PaginatedProvinsiResponse]:
+    ) -> ProvinsiListResponse | PaginatedProvinsiResponse:
         conn = await get_connection()
         async with conn.cursor(aiomysql.DictCursor) as cursor:
             try:
@@ -16,7 +15,7 @@ class ProvinsiService:
                     await cursor.execute(
                         "SELECT kode, nama, lat, lng  FROM nk_provinsi"
                     )
-                    data: List[Provinsi] = await cursor.fetchall()
+                    data: list[Provinsi] = await cursor.fetchall()
                     if not data:
                         raise Exception("tidak ditemukan data")
 
@@ -46,7 +45,7 @@ class ProvinsiService:
                     "SELECT kode, nama, lat, lng FROM nk_provinsi LIMIT %s OFFSET %s",
                     (limit, offset),
                 )
-                data: List[Provinsi] = await cursor.fetchall()
+                data: list[Provinsi] = await cursor.fetchall()
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")

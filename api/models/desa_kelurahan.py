@@ -1,4 +1,5 @@
-from typing import TypedDict, List
+from typing import TypedDict
+
 from .pagination import PaginationMeta
 
 
@@ -34,7 +35,7 @@ class PaginatedDesaKelurahanResponse(TypedDict):
     """
 
     pagination: PaginationMeta
-    data: List[DesaKelurahan]
+    data: list[DesaKelurahan]
 
 
 class DesaKelurahanListResponse(TypedDict):
@@ -45,4 +46,4 @@ class DesaKelurahanListResponse(TypedDict):
         data (List[DesaKelurahan]): Daftar desa/kelurahan.
     """
 
-    data: List[DesaKelurahan]
+    data: list[DesaKelurahan]

@@ -1,5 +1,4 @@
 import aiomysql
-from typing import List, Union
 from config import get_connection
 from helpers.cdn import CDN_PATHS
 from models.kecamatan import (
@@ -12,7 +11,7 @@ from models.kecamatan import (
 class KecamatanService:
     async def get(
         self, limit: int, halaman: int, pagination: bool
-    ) -> Union[KecamatanListResponse, PaginatedKecamatanResponse]:
+    ) -> KecamatanListResponse | PaginatedKecamatanResponse:
         conn = await get_connection()
         async with conn.cursor(aiomysql.DictCursor) as cursor:
             try:
@@ -20,7 +19,7 @@ class KecamatanService:
                     await cursor.execute(
                         "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan"
                     )
-                    data: List[Kecamatan] = await cursor.fetchall()
+                    data: list[Kecamatan] = await cursor.fetchall()
                     if not data:
                         raise Exception("tidak ditemukan data")
 
@@ -50,7 +49,7 @@ class KecamatanService:
                     "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan LIMIT %s OFFSET %s",
                     (limit, offset),
                 )
-                data: List[Kecamatan] = await cursor.fetchall()
+                data: list[Kecamatan] = await cursor.fetchall()
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
@@ -74,7 +73,7 @@ class KecamatanService:
 
     async def get_by_kabupaten_kota(
         self, kode_kabupaten_kota: str, limit: int, halaman: int, pagination: bool
-    ) -> Union[KecamatanListResponse, PaginatedKecamatanResponse]:
+    ) -> KecamatanListResponse | PaginatedKecamatanResponse:
         conn = await get_connection()
         async with conn.cursor(aiomysql.DictCursor) as cursor:
             try:
@@ -83,7 +82,7 @@ class KecamatanService:
                         "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan WHERE kode_kabupaten_kota = %s",
                         (kode_kabupaten_kota,),
                     )
-                    data: List[Kecamatan] = await cursor.fetchall()
+                    data: list[Kecamatan] = await cursor.fetchall()
                     if not data:
                         raise Exception(
                             "tidak ditemukan data untuk kode provinsi tersebut"
@@ -118,7 +117,7 @@ class KecamatanService:
                     "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan WHERE kode_kabupaten_kota = %s LIMIT %s OFFSET %s",
                     (kode_kabupaten_kota, limit, offset),
                 )
-                data: List[Kecamatan] = await cursor.fetchall()
+                data: list[Kecamatan] = await cursor.fetchall()
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
