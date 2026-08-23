@@ -7,17 +7,18 @@ type PaginationMeta struct {
 	UkuranHalaman  int `json:"ukuran_halaman"`
 }
 
+// PaginatedResponse is a generic struct for all paginated endpoints
+type PaginatedResponse[T any] struct {
+	Pagination *PaginationMeta `json:"pagination,omitempty"`
+	Data       []T             `json:"data"`
+}
+
 type Provinsi struct {
 	Kode       string  `json:"kode"`
 	Nama       string  `json:"nama"`
 	Lat        float64 `json:"lat"`
 	Lng        float64 `json:"lng"`
 	GeojsonURL string  `json:"geojson_url"`
-}
-
-type PaginatedProvinsiResponse struct {
-	Pagination *PaginationMeta `json:"pagination,omitempty"`
-	Data       []Provinsi      `json:"data"`
 }
 
 type KabupatenKota struct {
@@ -29,11 +30,6 @@ type KabupatenKota struct {
 	GeojsonURL   string  `json:"geojson_url"`
 }
 
-type PaginatedKabupatenKotaResponse struct {
-	Pagination *PaginationMeta `json:"pagination,omitempty"`
-	Data       []KabupatenKota `json:"data"`
-}
-
 type Kecamatan struct {
 	Kode              string  `json:"kode"`
 	Nama              string  `json:"nama"`
@@ -41,11 +37,6 @@ type Kecamatan struct {
 	Lng               float64 `json:"lng"`
 	KodeKabupatenKota string  `json:"kode_kabupaten_kota"`
 	GeojsonURL        string  `json:"geojson_url"`
-}
-
-type PaginatedKecamatanResponse struct {
-	Pagination *PaginationMeta `json:"pagination,omitempty"`
-	Data       []Kecamatan     `json:"data"`
 }
 
 type DesaKelurahan struct {
@@ -56,9 +47,4 @@ type DesaKelurahan struct {
 	KodeKecamatan string  `json:"kode_kecamatan"`
 	KodePos       string  `json:"kode_pos"`
 	GeojsonURL    string  `json:"geojson_url"`
-}
-
-type PaginatedDesaKelurahanResponse struct {
-	Pagination *PaginationMeta `json:"pagination,omitempty"`
-	Data       []DesaKelurahan `json:"data"`
 }

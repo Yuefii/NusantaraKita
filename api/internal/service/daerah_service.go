@@ -16,7 +16,6 @@ type DaerahService struct {
 }
 
 func NewDaerahService(repo *repository.DaerahRepository) *DaerahService {
-	// Fallback to default if not set in .env
 	cdnBaseURL := os.Getenv("CDN_BASE_URL")
 	if cdnBaseURL == "" {
 		cdnBaseURL = "https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson"
@@ -28,9 +27,14 @@ func NewDaerahService(repo *repository.DaerahRepository) *DaerahService {
 	}
 }
 
-func (s *DaerahService) processPagination(halaman, limit, totalItem int, pagination bool) (*model.PaginationMeta, error) {
+// buildResponse wraps the pagination calculation, empty data checks, and response formatting generically
+func buildResponse[T any](data []T, limit, halaman, totalItem int, pagination bool) (any, error) {
+	if len(data) == 0 {
+		return nil, errors.New("tidak ditemukan data")
+	}
+
 	if !pagination {
-		return nil, nil
+		return map[string]interface{}{"data": data}, nil
 	}
 
 	totalHalaman := (totalItem + limit - 1) / limit
@@ -38,11 +42,16 @@ func (s *DaerahService) processPagination(halaman, limit, totalItem int, paginat
 		return nil, fmt.Errorf("nomor halaman melebihi total halaman. Halaman maksimum adalah %d", totalHalaman)
 	}
 
-	return &model.PaginationMeta{
+	meta := &model.PaginationMeta{
 		TotalItem:      totalItem,
 		TotalHalaman:   totalHalaman,
 		HalamanSaatIni: halaman,
 		UkuranHalaman:  limit,
+	}
+
+	return model.PaginatedResponse[T]{
+		Pagination: meta,
+		Data:       data,
 	}, nil
 }
 
@@ -57,23 +66,7 @@ func (s *DaerahService) GetProvinsi(ctx context.Context, limit, halaman int, pag
 		data[i].GeojsonURL = fmt.Sprintf("%s/provinsi/%s.geojson", s.cdnBaseURL, data[i].Kode)
 	}
 
-	if len(data) == 0 {
-		return nil, errors.New("tidak ditemukan data")
-	}
-
-	paginationMeta, err := s.processPagination(halaman, limit, totalItem, pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	if !pagination {
-		return map[string]interface{}{"data": data}, nil
-	}
-
-	return model.PaginatedProvinsiResponse{
-		Pagination: paginationMeta,
-		Data:       data,
-	}, nil
+	return buildResponse(data, limit, halaman, totalItem, pagination)
 }
 
 func (s *DaerahService) GetKabKota(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
@@ -87,23 +80,7 @@ func (s *DaerahService) GetKabKota(ctx context.Context, limit, halaman int, pagi
 		data[i].GeojsonURL = fmt.Sprintf("%s/kabupaten_kota/%s.geojson", s.cdnBaseURL, data[i].Kode)
 	}
 
-	if len(data) == 0 {
-		return nil, errors.New("tidak ditemukan data")
-	}
-
-	paginationMeta, err := s.processPagination(halaman, limit, totalItem, pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	if !pagination {
-		return map[string]interface{}{"data": data}, nil
-	}
-
-	return model.PaginatedKabupatenKotaResponse{
-		Pagination: paginationMeta,
-		Data:       data,
-	}, nil
+	return buildResponse(data, limit, halaman, totalItem, pagination)
 }
 
 func (s *DaerahService) GetKabKotaByProvinsi(ctx context.Context, kodeProv string, limit, halaman int, pagination bool) (any, error) {
@@ -117,23 +94,7 @@ func (s *DaerahService) GetKabKotaByProvinsi(ctx context.Context, kodeProv strin
 		data[i].GeojsonURL = fmt.Sprintf("%s/kabupaten_kota/%s.geojson", s.cdnBaseURL, data[i].Kode)
 	}
 
-	if len(data) == 0 {
-		return nil, errors.New("tidak ditemukan data")
-	}
-
-	paginationMeta, err := s.processPagination(halaman, limit, totalItem, pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	if !pagination {
-		return map[string]interface{}{"data": data}, nil
-	}
-
-	return model.PaginatedKabupatenKotaResponse{
-		Pagination: paginationMeta,
-		Data:       data,
-	}, nil
+	return buildResponse(data, limit, halaman, totalItem, pagination)
 }
 
 func (s *DaerahService) GetKecamatan(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
@@ -147,23 +108,7 @@ func (s *DaerahService) GetKecamatan(ctx context.Context, limit, halaman int, pa
 		data[i].GeojsonURL = fmt.Sprintf("%s/kecamatan/%s.geojson", s.cdnBaseURL, data[i].Kode)
 	}
 
-	if len(data) == 0 {
-		return nil, errors.New("tidak ditemukan data")
-	}
-
-	paginationMeta, err := s.processPagination(halaman, limit, totalItem, pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	if !pagination {
-		return map[string]interface{}{"data": data}, nil
-	}
-
-	return model.PaginatedKecamatanResponse{
-		Pagination: paginationMeta,
-		Data:       data,
-	}, nil
+	return buildResponse(data, limit, halaman, totalItem, pagination)
 }
 
 func (s *DaerahService) GetKecamatanByKabKota(ctx context.Context, kodeKab string, limit, halaman int, pagination bool) (any, error) {
@@ -177,23 +122,7 @@ func (s *DaerahService) GetKecamatanByKabKota(ctx context.Context, kodeKab strin
 		data[i].GeojsonURL = fmt.Sprintf("%s/kecamatan/%s.geojson", s.cdnBaseURL, data[i].Kode)
 	}
 
-	if len(data) == 0 {
-		return nil, errors.New("tidak ditemukan data")
-	}
-
-	paginationMeta, err := s.processPagination(halaman, limit, totalItem, pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	if !pagination {
-		return map[string]interface{}{"data": data}, nil
-	}
-
-	return model.PaginatedKecamatanResponse{
-		Pagination: paginationMeta,
-		Data:       data,
-	}, nil
+	return buildResponse(data, limit, halaman, totalItem, pagination)
 }
 
 func (s *DaerahService) GetDesaKelurahan(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
@@ -207,23 +136,7 @@ func (s *DaerahService) GetDesaKelurahan(ctx context.Context, limit, halaman int
 		data[i].GeojsonURL = fmt.Sprintf("%s/desa_kelurahan/%s.geojson", s.cdnBaseURL, data[i].Kode)
 	}
 
-	if len(data) == 0 {
-		return nil, errors.New("tidak ditemukan data")
-	}
-
-	paginationMeta, err := s.processPagination(halaman, limit, totalItem, pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	if !pagination {
-		return map[string]interface{}{"data": data}, nil
-	}
-
-	return model.PaginatedDesaKelurahanResponse{
-		Pagination: paginationMeta,
-		Data:       data,
-	}, nil
+	return buildResponse(data, limit, halaman, totalItem, pagination)
 }
 
 func (s *DaerahService) GetDesaKelurahanByKecamatan(ctx context.Context, kodeKec string, limit, halaman int, pagination bool) (any, error) {
@@ -237,21 +150,5 @@ func (s *DaerahService) GetDesaKelurahanByKecamatan(ctx context.Context, kodeKec
 		data[i].GeojsonURL = fmt.Sprintf("%s/desa_kelurahan/%s.geojson", s.cdnBaseURL, data[i].Kode)
 	}
 
-	if len(data) == 0 {
-		return nil, errors.New("tidak ditemukan data")
-	}
-
-	paginationMeta, err := s.processPagination(halaman, limit, totalItem, pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	if !pagination {
-		return map[string]interface{}{"data": data}, nil
-	}
-
-	return model.PaginatedDesaKelurahanResponse{
-		Pagination: paginationMeta,
-		Data:       data,
-	}, nil
+	return buildResponse(data, limit, halaman, totalItem, pagination)
 }

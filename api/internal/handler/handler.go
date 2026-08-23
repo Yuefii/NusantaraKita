@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -37,7 +38,7 @@ type queryParams struct {
 	pagination bool
 }
 
-func parseQueryParams(r *http.Request) (queryParams, error) {
+func parseQueryParams(r *http.Request) queryParams {
 	q := r.URL.Query()
 
 	limit := 10
@@ -61,7 +62,7 @@ func parseQueryParams(r *http.Request) (queryParams, error) {
 		}
 	}
 
-	return queryParams{limit: limit, halaman: halaman, pagination: pagination}, nil
+	return queryParams{limit: limit, halaman: halaman, pagination: pagination}
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
@@ -75,11 +76,11 @@ func writeError(w http.ResponseWriter, status int, err error, message string) {
 	writeJSON(w, status, map[string]string{"detail": message})
 }
 
-// ---------------- Provinsi ----------------
-func (h *Handler) handleProvinsi(w http.ResponseWriter, r *http.Request) {
-	params, _ := parseQueryParams(r)
+// handleWithService is a DRY helper to parse params, call service, and handle standard errors/responses
+func (h *Handler) handleWithService(w http.ResponseWriter, r *http.Request, svcCall func(ctx context.Context, p queryParams) (any, error)) {
+	params := parseQueryParams(r)
 
-	resp, err := h.svc.GetProvinsi(r.Context(), params.limit, params.halaman, params.pagination)
+	resp, err := svcCall(r.Context(), params)
 	if err != nil {
 		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
 			writeError(w, http.StatusNotFound, err, err.Error())
@@ -90,106 +91,53 @@ func (h *Handler) handleProvinsi(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, resp)
+}
+
+// ---------------- Provinsi ----------------
+func (h *Handler) handleProvinsi(w http.ResponseWriter, r *http.Request) {
+	h.handleWithService(w, r, func(ctx context.Context, p queryParams) (any, error) {
+		return h.svc.GetProvinsi(ctx, p.limit, p.halaman, p.pagination)
+	})
 }
 
 // ---------------- Kabupaten / Kota ----------------
 func (h *Handler) handleKabKota(w http.ResponseWriter, r *http.Request) {
-	params, _ := parseQueryParams(r)
-
-	resp, err := h.svc.GetKabKota(r.Context(), params.limit, params.halaman, params.pagination)
-	if err != nil {
-		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
-			writeError(w, http.StatusNotFound, err, err.Error())
-		} else {
-			writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
-		}
-		return
-	}
-
-	writeJSON(w, http.StatusOK, resp)
+	h.handleWithService(w, r, func(ctx context.Context, p queryParams) (any, error) {
+		return h.svc.GetKabKota(ctx, p.limit, p.halaman, p.pagination)
+	})
 }
 
 func (h *Handler) handleKabKotaByProvinsi(w http.ResponseWriter, r *http.Request) {
-	params, _ := parseQueryParams(r)
 	kodeProv := r.PathValue("kode_provinsi")
-
-	resp, err := h.svc.GetKabKotaByProvinsi(r.Context(), kodeProv, params.limit, params.halaman, params.pagination)
-	if err != nil {
-		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
-			writeError(w, http.StatusNotFound, err, err.Error())
-		} else {
-			writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
-		}
-		return
-	}
-
-	writeJSON(w, http.StatusOK, resp)
+	h.handleWithService(w, r, func(ctx context.Context, p queryParams) (any, error) {
+		return h.svc.GetKabKotaByProvinsi(ctx, kodeProv, p.limit, p.halaman, p.pagination)
+	})
 }
 
 // ---------------- Kecamatan ----------------
 func (h *Handler) handleKecamatan(w http.ResponseWriter, r *http.Request) {
-	params, _ := parseQueryParams(r)
-
-	resp, err := h.svc.GetKecamatan(r.Context(), params.limit, params.halaman, params.pagination)
-	if err != nil {
-		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
-			writeError(w, http.StatusNotFound, err, err.Error())
-		} else {
-			writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
-		}
-		return
-	}
-
-	writeJSON(w, http.StatusOK, resp)
+	h.handleWithService(w, r, func(ctx context.Context, p queryParams) (any, error) {
+		return h.svc.GetKecamatan(ctx, p.limit, p.halaman, p.pagination)
+	})
 }
 
 func (h *Handler) handleKecamatanByKabKota(w http.ResponseWriter, r *http.Request) {
-	params, _ := parseQueryParams(r)
 	kodeKab := r.PathValue("kode_kabupaten_kota")
-
-	resp, err := h.svc.GetKecamatanByKabKota(r.Context(), kodeKab, params.limit, params.halaman, params.pagination)
-	if err != nil {
-		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
-			writeError(w, http.StatusNotFound, err, err.Error())
-		} else {
-			writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
-		}
-		return
-	}
-
-	writeJSON(w, http.StatusOK, resp)
+	h.handleWithService(w, r, func(ctx context.Context, p queryParams) (any, error) {
+		return h.svc.GetKecamatanByKabKota(ctx, kodeKab, p.limit, p.halaman, p.pagination)
+	})
 }
 
 // ---------------- Desa / Kelurahan ----------------
 func (h *Handler) handleDesaKel(w http.ResponseWriter, r *http.Request) {
-	params, _ := parseQueryParams(r)
-
-	resp, err := h.svc.GetDesaKelurahan(r.Context(), params.limit, params.halaman, params.pagination)
-	if err != nil {
-		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
-			writeError(w, http.StatusNotFound, err, err.Error())
-		} else {
-			writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
-		}
-		return
-	}
-
-	writeJSON(w, http.StatusOK, resp)
+	h.handleWithService(w, r, func(ctx context.Context, p queryParams) (any, error) {
+		return h.svc.GetDesaKelurahan(ctx, p.limit, p.halaman, p.pagination)
+	})
 }
 
 func (h *Handler) handleDesaKelByKecamatan(w http.ResponseWriter, r *http.Request) {
-	params, _ := parseQueryParams(r)
 	kodeKec := r.PathValue("kode_kecamatan")
-
-	resp, err := h.svc.GetDesaKelurahanByKecamatan(r.Context(), kodeKec, params.limit, params.halaman, params.pagination)
-	if err != nil {
-		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
-			writeError(w, http.StatusNotFound, err, err.Error())
-		} else {
-			writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
-		}
-		return
-	}
-
-	writeJSON(w, http.StatusOK, resp)
+	h.handleWithService(w, r, func(ctx context.Context, p queryParams) (any, error) {
+		return h.svc.GetDesaKelurahanByKecamatan(ctx, kodeKec, p.limit, p.halaman, p.pagination)
+	})
 }
