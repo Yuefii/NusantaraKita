@@ -9,6 +9,8 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"vercel-go-starter/internal/handler"
+	"vercel-go-starter/internal/repository"
+	"vercel-go-starter/internal/service"
 )
 
 func main() {
@@ -29,9 +31,12 @@ func main() {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
-	mux := http.NewServeMux()
+	// Initialize layers
+	repo := repository.NewDaerahRepository(db)
+	svc := service.NewDaerahService(repo)
+	h := handler.New(svc)
 
-	h := handler.New(db)
+	mux := http.NewServeMux()
 	h.RegisterRoutes(mux)
 
 	// Simple CORS middleware
