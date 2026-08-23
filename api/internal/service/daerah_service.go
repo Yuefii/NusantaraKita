@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -45,9 +46,9 @@ func (s *DaerahService) processPagination(halaman, limit, totalItem int, paginat
 	}, nil
 }
 
-func (s *DaerahService) GetProvinsi(limit, halaman int, pagination bool) (any, error) {
+func (s *DaerahService) GetProvinsi(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
 	offset := (halaman - 1) * limit
-	data, totalItem, err := s.repo.GetProvinsi(limit, offset, pagination)
+	data, totalItem, err := s.repo.GetProvinsi(ctx, limit, offset, pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +76,9 @@ func (s *DaerahService) GetProvinsi(limit, halaman int, pagination bool) (any, e
 	}, nil
 }
 
-func (s *DaerahService) GetKabKota(limit, halaman int, pagination bool) (any, error) {
+func (s *DaerahService) GetKabKota(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
 	offset := (halaman - 1) * limit
-	data, totalItem, err := s.repo.GetKabKota(limit, offset, pagination)
+	data, totalItem, err := s.repo.GetKabKota(ctx, limit, offset, pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -105,9 +106,9 @@ func (s *DaerahService) GetKabKota(limit, halaman int, pagination bool) (any, er
 	}, nil
 }
 
-func (s *DaerahService) GetKabKotaByProvinsi(kodeProv string, limit, halaman int, pagination bool) (any, error) {
+func (s *DaerahService) GetKabKotaByProvinsi(ctx context.Context, kodeProv string, limit, halaman int, pagination bool) (any, error) {
 	offset := (halaman - 1) * limit
-	data, totalItem, err := s.repo.GetKabKotaByProvinsi(kodeProv, limit, offset, pagination)
+	data, totalItem, err := s.repo.GetKabKotaByProvinsi(ctx, kodeProv, limit, offset, pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -135,9 +136,9 @@ func (s *DaerahService) GetKabKotaByProvinsi(kodeProv string, limit, halaman int
 	}, nil
 }
 
-func (s *DaerahService) GetKecamatan(limit, halaman int, pagination bool) (any, error) {
+func (s *DaerahService) GetKecamatan(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
 	offset := (halaman - 1) * limit
-	data, totalItem, err := s.repo.GetKecamatan(limit, offset, pagination)
+	data, totalItem, err := s.repo.GetKecamatan(ctx, limit, offset, pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -165,9 +166,9 @@ func (s *DaerahService) GetKecamatan(limit, halaman int, pagination bool) (any, 
 	}, nil
 }
 
-func (s *DaerahService) GetKecamatanByKabKota(kodeKab string, limit, halaman int, pagination bool) (any, error) {
+func (s *DaerahService) GetKecamatanByKabKota(ctx context.Context, kodeKab string, limit, halaman int, pagination bool) (any, error) {
 	offset := (halaman - 1) * limit
-	data, totalItem, err := s.repo.GetKecamatanByKabKota(kodeKab, limit, offset, pagination)
+	data, totalItem, err := s.repo.GetKecamatanByKabKota(ctx, kodeKab, limit, offset, pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -195,9 +196,9 @@ func (s *DaerahService) GetKecamatanByKabKota(kodeKab string, limit, halaman int
 	}, nil
 }
 
-func (s *DaerahService) GetDesaKelurahan(limit, halaman int, pagination bool) (any, error) {
+func (s *DaerahService) GetDesaKelurahan(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
 	offset := (halaman - 1) * limit
-	data, totalItem, err := s.repo.GetDesaKelurahan(limit, offset, pagination)
+	data, totalItem, err := s.repo.GetDesaKelurahan(ctx, limit, offset, pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -225,9 +226,9 @@ func (s *DaerahService) GetDesaKelurahan(limit, halaman int, pagination bool) (a
 	}, nil
 }
 
-func (s *DaerahService) GetDesaKelurahanByKecamatan(kodeKec string, limit, halaman int, pagination bool) (any, error) {
+func (s *DaerahService) GetDesaKelurahanByKecamatan(ctx context.Context, kodeKec string, limit, halaman int, pagination bool) (any, error) {
 	offset := (halaman - 1) * limit
-	data, totalItem, err := s.repo.GetDesaKelurahanByKecamatan(kodeKec, limit, offset, pagination)
+	data, totalItem, err := s.repo.GetDesaKelurahanByKecamatan(ctx, kodeKec, limit, offset, pagination)
 	if err != nil {
 		return nil, err
 	}

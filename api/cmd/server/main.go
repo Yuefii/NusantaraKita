@@ -1,10 +1,15 @@
 package main
 
 import (
+	"context"
 	"database/sql"
+	"errors"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -25,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	defer db.Close()
+	// db.Close() will be handled during graceful shutdown below
 
 	if err := db.Ping(); err != nil {
 		log.Fatalf("Failed to ping database: %v", err)
@@ -40,16 +45,58 @@ func main() {
 	h.RegisterRoutes(mux)
 
 	// Simple CORS middleware
-	handler := corsMiddleware(mux)
+	corsHandler := corsMiddleware(mux)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
 	}
 
-	log.Printf("Server listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, handler); err != nil {
-		log.Fatalf("Server failed: %v", err)
+	srv := &http.Server{
+		Addr:    ":" + port,
+		Handler: corsHandler,
+	}
+
+	// Channel to listen for errors coming from the listener.
+	serverErrors := make(chan error, 1)
+
+	// Start the server in a goroutine
+	go func() {
+		log.Printf("Server listening on port %s", port)
+		serverErrors <- srv.ListenAndServe()
+	}()
+
+	// Channel to listen for an interrupt or terminate signal from the OS.
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+	// Blocking main and waiting for shutdown.
+	select {
+	case err := <-serverErrors:
+		if !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("Error starting server: %v", err)
+		}
+	case sig := <-shutdown:
+		log.Printf("Start shutdown... Signal: %v", sig)
+
+		// Create context with timeout for the shutdown process
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		// Shutdown the server gracefully
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Printf("Graceful shutdown did not complete in 10s: %v", err)
+			if err := srv.Close(); err != nil {
+				log.Fatalf("Could not stop server gracefully: %v", err)
+			}
+		}
+
+		// Close database connection
+		if err := db.Close(); err != nil {
+			log.Printf("Could not close database connection gracefully: %v", err)
+		}
+
+		log.Println("Graceful shutdown complete.")
 	}
 }
 

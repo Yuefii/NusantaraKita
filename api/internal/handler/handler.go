@@ -79,7 +79,7 @@ func writeError(w http.ResponseWriter, status int, err error, message string) {
 func (h *Handler) handleProvinsi(w http.ResponseWriter, r *http.Request) {
 	params, _ := parseQueryParams(r)
 
-	resp, err := h.svc.GetProvinsi(params.limit, params.halaman, params.pagination)
+	resp, err := h.svc.GetProvinsi(r.Context(), params.limit, params.halaman, params.pagination)
 	if err != nil {
 		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
 			writeError(w, http.StatusNotFound, err, err.Error())
@@ -96,7 +96,7 @@ func (h *Handler) handleProvinsi(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleKabKota(w http.ResponseWriter, r *http.Request) {
 	params, _ := parseQueryParams(r)
 
-	resp, err := h.svc.GetKabKota(params.limit, params.halaman, params.pagination)
+	resp, err := h.svc.GetKabKota(r.Context(), params.limit, params.halaman, params.pagination)
 	if err != nil {
 		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
 			writeError(w, http.StatusNotFound, err, err.Error())
@@ -113,7 +113,7 @@ func (h *Handler) handleKabKotaByProvinsi(w http.ResponseWriter, r *http.Request
 	params, _ := parseQueryParams(r)
 	kodeProv := r.PathValue("kode_provinsi")
 
-	resp, err := h.svc.GetKabKotaByProvinsi(kodeProv, params.limit, params.halaman, params.pagination)
+	resp, err := h.svc.GetKabKotaByProvinsi(r.Context(), kodeProv, params.limit, params.halaman, params.pagination)
 	if err != nil {
 		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
 			writeError(w, http.StatusNotFound, err, err.Error())
@@ -130,7 +130,7 @@ func (h *Handler) handleKabKotaByProvinsi(w http.ResponseWriter, r *http.Request
 func (h *Handler) handleKecamatan(w http.ResponseWriter, r *http.Request) {
 	params, _ := parseQueryParams(r)
 
-	resp, err := h.svc.GetKecamatan(params.limit, params.halaman, params.pagination)
+	resp, err := h.svc.GetKecamatan(r.Context(), params.limit, params.halaman, params.pagination)
 	if err != nil {
 		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
 			writeError(w, http.StatusNotFound, err, err.Error())
@@ -147,7 +147,7 @@ func (h *Handler) handleKecamatanByKabKota(w http.ResponseWriter, r *http.Reques
 	params, _ := parseQueryParams(r)
 	kodeKab := r.PathValue("kode_kabupaten_kota")
 
-	resp, err := h.svc.GetKecamatanByKabKota(kodeKab, params.limit, params.halaman, params.pagination)
+	resp, err := h.svc.GetKecamatanByKabKota(r.Context(), kodeKab, params.limit, params.halaman, params.pagination)
 	if err != nil {
 		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
 			writeError(w, http.StatusNotFound, err, err.Error())
@@ -164,7 +164,7 @@ func (h *Handler) handleKecamatanByKabKota(w http.ResponseWriter, r *http.Reques
 func (h *Handler) handleDesaKel(w http.ResponseWriter, r *http.Request) {
 	params, _ := parseQueryParams(r)
 
-	resp, err := h.svc.GetDesaKelurahan(params.limit, params.halaman, params.pagination)
+	resp, err := h.svc.GetDesaKelurahan(r.Context(), params.limit, params.halaman, params.pagination)
 	if err != nil {
 		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
 			writeError(w, http.StatusNotFound, err, err.Error())
@@ -181,7 +181,7 @@ func (h *Handler) handleDesaKelByKecamatan(w http.ResponseWriter, r *http.Reques
 	params, _ := parseQueryParams(r)
 	kodeKec := r.PathValue("kode_kecamatan")
 
-	resp, err := h.svc.GetDesaKelurahanByKecamatan(kodeKec, params.limit, params.halaman, params.pagination)
+	resp, err := h.svc.GetDesaKelurahanByKecamatan(r.Context(), kodeKec, params.limit, params.halaman, params.pagination)
 	if err != nil {
 		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
 			writeError(w, http.StatusNotFound, err, err.Error())

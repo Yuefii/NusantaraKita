@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"strings"
@@ -31,13 +32,14 @@ func replacePlaceholders(query string) string {
 }
 
 // fetchPaginatedData is a generic function to fetch paginated or non-paginated data from the database
-func fetchPaginatedData[T any](r *DaerahRepository, query string, countQuery string, args []interface{}, limit, offset int, pagination bool, scanFunc func(*sql.Rows) (T, error)) ([]T, int, error) {
+func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query string, countQuery string, args []interface{}, limit, offset int, pagination bool, scanFunc func(*sql.Rows) (T, error)) ([]T, int, error) {
 	var data []T
 	var totalItem int
 	var err error
 
 	if !pagination {
-		rows, err := r.db.Query(replacePlaceholders(query), args...)
+		// Use QueryContext for request cancellation
+		rows, err := r.db.QueryContext(ctx, replacePlaceholders(query), args...)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -53,13 +55,15 @@ func fetchPaginatedData[T any](r *DaerahRepository, query string, countQuery str
 		return data, 0, nil
 	}
 
-	err = r.db.QueryRow(replacePlaceholders(countQuery), args...).Scan(&totalItem)
+	// Use QueryRowContext for request cancellation
+	err = r.db.QueryRowContext(ctx, replacePlaceholders(countQuery), args...).Scan(&totalItem)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	finalArgs := append(args, limit, offset)
-	rows, err := r.db.Query(replacePlaceholders(query+" LIMIT ? OFFSET ?"), finalArgs...)
+	// Use QueryContext for request cancellation
+	rows, err := r.db.QueryContext(ctx, replacePlaceholders(query+" LIMIT ? OFFSET ?"), finalArgs...)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -77,10 +81,10 @@ func fetchPaginatedData[T any](r *DaerahRepository, query string, countQuery str
 }
 
 // ---------------- Provinsi ----------------
-func (r *DaerahRepository) GetProvinsi(limit, offset int, pagination bool) ([]model.Provinsi, int, error) {
+func (r *DaerahRepository) GetProvinsi(ctx context.Context, limit, offset int, pagination bool) ([]model.Provinsi, int, error) {
 	query := "SELECT kode, nama, lat, lng FROM nk_provinsi"
 	countQuery := "SELECT COUNT(*) FROM nk_provinsi"
-	return fetchPaginatedData(r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.Provinsi, error) {
+	return fetchPaginatedData(ctx, r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.Provinsi, error) {
 		var p model.Provinsi
 		err := rows.Scan(&p.Kode, &p.Nama, &p.Lat, &p.Lng)
 		return p, err
@@ -88,20 +92,20 @@ func (r *DaerahRepository) GetProvinsi(limit, offset int, pagination bool) ([]mo
 }
 
 // ---------------- Kabupaten / Kota ----------------
-func (r *DaerahRepository) GetKabKota(limit, offset int, pagination bool) ([]model.KabupatenKota, int, error) {
+func (r *DaerahRepository) GetKabKota(ctx context.Context, limit, offset int, pagination bool) ([]model.KabupatenKota, int, error) {
 	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota"
 	countQuery := "SELECT COUNT(*) FROM nk_kabupaten_kota"
-	return fetchPaginatedData(r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.KabupatenKota, error) {
+	return fetchPaginatedData(ctx, r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.KabupatenKota, error) {
 		var k model.KabupatenKota
 		err := rows.Scan(&k.Kode, &k.Nama, &k.Lat, &k.Lng, &k.KodeProvinsi)
 		return k, err
 	})
 }
 
-func (r *DaerahRepository) GetKabKotaByProvinsi(kodeProv string, limit, offset int, pagination bool) ([]model.KabupatenKota, int, error) {
+func (r *DaerahRepository) GetKabKotaByProvinsi(ctx context.Context, kodeProv string, limit, offset int, pagination bool) ([]model.KabupatenKota, int, error) {
 	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode_provinsi = ?"
 	countQuery := "SELECT COUNT(*) FROM nk_kabupaten_kota WHERE kode_provinsi = ?"
-	return fetchPaginatedData(r, query, countQuery, []interface{}{kodeProv}, limit, offset, pagination, func(rows *sql.Rows) (model.KabupatenKota, error) {
+	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeProv}, limit, offset, pagination, func(rows *sql.Rows) (model.KabupatenKota, error) {
 		var k model.KabupatenKota
 		err := rows.Scan(&k.Kode, &k.Nama, &k.Lat, &k.Lng, &k.KodeProvinsi)
 		return k, err
@@ -109,20 +113,20 @@ func (r *DaerahRepository) GetKabKotaByProvinsi(kodeProv string, limit, offset i
 }
 
 // ---------------- Kecamatan ----------------
-func (r *DaerahRepository) GetKecamatan(limit, offset int, pagination bool) ([]model.Kecamatan, int, error) {
+func (r *DaerahRepository) GetKecamatan(ctx context.Context, limit, offset int, pagination bool) ([]model.Kecamatan, int, error) {
 	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan"
 	countQuery := "SELECT COUNT(*) FROM nk_kecamatan"
-	return fetchPaginatedData(r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.Kecamatan, error) {
+	return fetchPaginatedData(ctx, r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.Kecamatan, error) {
 		var k model.Kecamatan
 		err := rows.Scan(&k.Kode, &k.Nama, &k.Lat, &k.Lng, &k.KodeKabupatenKota)
 		return k, err
 	})
 }
 
-func (r *DaerahRepository) GetKecamatanByKabKota(kodeKab string, limit, offset int, pagination bool) ([]model.Kecamatan, int, error) {
+func (r *DaerahRepository) GetKecamatanByKabKota(ctx context.Context, kodeKab string, limit, offset int, pagination bool) ([]model.Kecamatan, int, error) {
 	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan WHERE kode_kabupaten_kota = ?"
 	countQuery := "SELECT COUNT(*) FROM nk_kecamatan WHERE kode_kabupaten_kota = ?"
-	return fetchPaginatedData(r, query, countQuery, []interface{}{kodeKab}, limit, offset, pagination, func(rows *sql.Rows) (model.Kecamatan, error) {
+	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeKab}, limit, offset, pagination, func(rows *sql.Rows) (model.Kecamatan, error) {
 		var k model.Kecamatan
 		err := rows.Scan(&k.Kode, &k.Nama, &k.Lat, &k.Lng, &k.KodeKabupatenKota)
 		return k, err
@@ -130,20 +134,20 @@ func (r *DaerahRepository) GetKecamatanByKabKota(kodeKab string, limit, offset i
 }
 
 // ---------------- Desa / Kelurahan ----------------
-func (r *DaerahRepository) GetDesaKelurahan(limit, offset int, pagination bool) ([]model.DesaKelurahan, int, error) {
+func (r *DaerahRepository) GetDesaKelurahan(ctx context.Context, limit, offset int, pagination bool) ([]model.DesaKelurahan, int, error) {
 	query := "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan"
 	countQuery := "SELECT COUNT(*) FROM nk_desa_kelurahan"
-	return fetchPaginatedData(r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.DesaKelurahan, error) {
+	return fetchPaginatedData(ctx, r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.DesaKelurahan, error) {
 		var d model.DesaKelurahan
 		err := rows.Scan(&d.Kode, &d.Nama, &d.Lat, &d.Lng, &d.KodeKecamatan, &d.KodePos)
 		return d, err
 	})
 }
 
-func (r *DaerahRepository) GetDesaKelurahanByKecamatan(kodeKec string, limit, offset int, pagination bool) ([]model.DesaKelurahan, int, error) {
+func (r *DaerahRepository) GetDesaKelurahanByKecamatan(ctx context.Context, kodeKec string, limit, offset int, pagination bool) ([]model.DesaKelurahan, int, error) {
 	query := "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = ?"
 	countQuery := "SELECT COUNT(*) FROM nk_desa_kelurahan WHERE kode_kecamatan = ?"
-	return fetchPaginatedData(r, query, countQuery, []interface{}{kodeKec}, limit, offset, pagination, func(rows *sql.Rows) (model.DesaKelurahan, error) {
+	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeKec}, limit, offset, pagination, func(rows *sql.Rows) (model.DesaKelurahan, error) {
 		var d model.DesaKelurahan
 		err := rows.Scan(&d.Kode, &d.Nama, &d.Lat, &d.Lng, &d.KodeKecamatan, &d.KodePos)
 		return d, err
