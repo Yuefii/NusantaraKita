@@ -1,5 +1,5 @@
 aiomysql==0.2.0
-annotated-types==0.7.0
+annotated-types==0.8.0
 anyio==4.9.0
 cffi==1.17.1
 click==8.2.1
