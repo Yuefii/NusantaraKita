@@ -1,5 +1,4 @@
 import aiomysql
-from typing import List, Union
 from config import get_connection
 from helpers.cdn import CDN_PATHS
 from models.desa_kelurahan import (
@@ -12,7 +11,7 @@ from models.desa_kelurahan import (
 class DesaKelurahanService:
     async def get(
         self, limit: int, halaman: int, pagination: bool
-    ) -> Union[DesaKelurahanListResponse, PaginatedDesaKelurahanResponse]:
+    ) -> DesaKelurahanListResponse | PaginatedDesaKelurahanResponse:
         conn = await get_connection()
         async with conn.cursor(aiomysql.DictCursor) as cursor:
             try:
@@ -20,7 +19,7 @@ class DesaKelurahanService:
                     await cursor.execute(
                         "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan"
                     )
-                    data: List[DesaKelurahan] = await cursor.fetchall()
+                    data: list[DesaKelurahan] = await cursor.fetchall()
                     if not data:
                         raise Exception("tidak ditemukan data")
                     for desa_kel in data:
@@ -48,7 +47,7 @@ class DesaKelurahanService:
                     "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan LIMIT %s OFFSET %s",
                     (limit, offset),
                 )
-                data: List[DesaKelurahan] = await cursor.fetchall()
+                data: list[DesaKelurahan] = await cursor.fetchall()
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")
@@ -72,7 +71,7 @@ class DesaKelurahanService:
 
     async def get_by_kecamatan(
         self, kode_kecamatan: str, limit: int, halaman: int, pagination: bool
-    ) -> Union[DesaKelurahanListResponse, PaginatedDesaKelurahanResponse]:
+    ) -> DesaKelurahanListResponse | PaginatedDesaKelurahanResponse:
         conn = await get_connection()
         async with conn.cursor(aiomysql.DictCursor) as cursor:
             try:
@@ -81,7 +80,7 @@ class DesaKelurahanService:
                         "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = %s",
                         (kode_kecamatan,),
                     )
-                    data: List[DesaKelurahan] = await cursor.fetchall()
+                    data: list[DesaKelurahan] = await cursor.fetchall()
                     if not data:
                         raise Exception(
                             "tidak ditemukan data untuk kode provinsi tersebut"
@@ -114,7 +113,7 @@ class DesaKelurahanService:
                     "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = %s LIMIT %s OFFSET %s",
                     (kode_kecamatan, limit, offset),
                 )
-                data: List[DesaKelurahan] = await cursor.fetchall()
+                data: list[DesaKelurahan] = await cursor.fetchall()
 
                 if not data:
                     raise Exception("tidak ditemukan data untuk halaman yang diminta")

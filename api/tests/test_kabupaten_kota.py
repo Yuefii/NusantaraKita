@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 from services.kabupaten_kota import KabupatenKotaService
 
 mock_data_kabupaten = [

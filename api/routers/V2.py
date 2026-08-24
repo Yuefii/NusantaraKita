@@ -1,9 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query
-
-from services.provinsi import ProvinsiService
+from services.desa_kelurahan import DesaKelurahanService
 from services.kabupaten_kota import KabupatenKotaService
 from services.kecamatan import KecamatanService
-from services.desa_kelurahan import DesaKelurahanService
+from services.provinsi import ProvinsiService
 
 router = APIRouter()
 provinsi = ProvinsiService()
