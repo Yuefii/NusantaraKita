@@ -5,9 +5,20 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-  - repo: https://github.com/dnephin/pre-commit-golang
-    rev: v0.5.1
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.60.3
+    hooks:
+      - id: golangci-lint
+  - repo: local
     hooks:
       - id: go-fmt
+        name: go-fmt
+        entry: gofmt -w
+        language: golang
+        types: [go]
       - id: go-imports
-      - id: golangci-lint
+        name: go-imports
+        entry: goimports -w
+        language: golang
+        additional_dependencies: [golang.org/x/tools/cmd/goimports@latest]
+        types: [go]
