@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 	"time"
 
-	"github.com/patrickmn/go-cache"
 	"vercel-go-starter/internal/model"
+
+	"github.com/patrickmn/go-cache"
 )
 
 type DaerahRepository struct {
@@ -25,24 +25,10 @@ func NewDaerahRepository(db *sql.DB) *DaerahRepository {
 	}
 }
 
-// replacePlaceholders replaces ? with $1, $2, etc for PostgreSQL
-func replacePlaceholders(query string) string {
-	n := 1
-	for {
-		idx := strings.Index(query, "?")
-		if idx == -1 {
-			break
-		}
-		query = query[:idx] + fmt.Sprintf("$%d", n) + query[idx+1:]
-		n++
-	}
-	return query
-}
-
 // fetchPaginatedData is a generic function to fetch paginated or non-paginated data from the database
 func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query string, countQuery string, args []interface{}, limit, offset int, pagination bool, scanFunc func(*sql.Rows) (T, error)) ([]T, int, error) {
 	if !pagination {
-		rows, err := r.db.QueryContext(ctx, replacePlaceholders(query), args...)
+		rows, err := r.db.QueryContext(ctx, query, args...)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -88,7 +74,7 @@ func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query s
 		}
 
 		var total int
-		err := r.db.QueryRowContext(ctx, replacePlaceholders(countQuery), args...).Scan(&total)
+		err := r.db.QueryRowContext(ctx, countQuery, args...).Scan(&total)
 		if err != nil {
 			cancel() // Abort the data query immediately
 		} else {
@@ -101,7 +87,8 @@ func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query s
 	go func() {
 		var result []T
 		finalArgs := append(args, limit, offset)
-		rows, err := r.db.QueryContext(ctx, replacePlaceholders(query+" LIMIT ? OFFSET ?"), finalArgs...)
+		paginatedQuery := fmt.Sprintf("%s LIMIT $%d OFFSET $%d", query, len(args)+1, len(args)+2)
+		rows, err := r.db.QueryContext(ctx, paginatedQuery, finalArgs...)
 		if err != nil {
 			cancel() // Abort the count query immediately
 			dataCh <- dataResult{err: err}
@@ -158,8 +145,8 @@ func (r *DaerahRepository) GetKabKota(ctx context.Context, limit, offset int, pa
 }
 
 func (r *DaerahRepository) GetKabKotaByProvinsi(ctx context.Context, kodeProv string, limit, offset int, pagination bool) ([]model.KabupatenKota, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode_provinsi = ?"
-	countQuery := "SELECT COUNT(*) FROM nk_kabupaten_kota WHERE kode_provinsi = ?"
+	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode_provinsi = $1"
+	countQuery := "SELECT COUNT(*) FROM nk_kabupaten_kota WHERE kode_provinsi = $1"
 	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeProv}, limit, offset, pagination, func(rows *sql.Rows) (model.KabupatenKota, error) {
 		var k model.KabupatenKota
 		err := rows.Scan(&k.Kode, &k.Nama, &k.Lat, &k.Lng, &k.KodeProvinsi)
@@ -179,8 +166,8 @@ func (r *DaerahRepository) GetKecamatan(ctx context.Context, limit, offset int, 
 }
 
 func (r *DaerahRepository) GetKecamatanByKabKota(ctx context.Context, kodeKab string, limit, offset int, pagination bool) ([]model.Kecamatan, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan WHERE kode_kabupaten_kota = ?"
-	countQuery := "SELECT COUNT(*) FROM nk_kecamatan WHERE kode_kabupaten_kota = ?"
+	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan WHERE kode_kabupaten_kota = $1"
+	countQuery := "SELECT COUNT(*) FROM nk_kecamatan WHERE kode_kabupaten_kota = $1"
 	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeKab}, limit, offset, pagination, func(rows *sql.Rows) (model.Kecamatan, error) {
 		var k model.Kecamatan
 		err := rows.Scan(&k.Kode, &k.Nama, &k.Lat, &k.Lng, &k.KodeKabupatenKota)
@@ -200,8 +187,8 @@ func (r *DaerahRepository) GetDesaKelurahan(ctx context.Context, limit, offset i
 }
 
 func (r *DaerahRepository) GetDesaKelurahanByKecamatan(ctx context.Context, kodeKec string, limit, offset int, pagination bool) ([]model.DesaKelurahan, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = ?"
-	countQuery := "SELECT COUNT(*) FROM nk_desa_kelurahan WHERE kode_kecamatan = ?"
+	query := "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = $1"
+	countQuery := "SELECT COUNT(*) FROM nk_desa_kelurahan WHERE kode_kecamatan = $1"
 	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeKec}, limit, offset, pagination, func(rows *sql.Rows) (model.DesaKelurahan, error) {
 		var d model.DesaKelurahan
 		err := rows.Scan(&d.Kode, &d.Nama, &d.Lat, &d.Lng, &d.KodeKecamatan, &d.KodePos)
