@@ -33,18 +33,14 @@ func replacePlaceholders(query string) string {
 
 // fetchPaginatedData is a generic function to fetch paginated or non-paginated data from the database
 func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query string, countQuery string, args []interface{}, limit, offset int, pagination bool, scanFunc func(*sql.Rows) (T, error)) ([]T, int, error) {
-	var data []T
-	var totalItem int
-	var err error
-
 	if !pagination {
-		// Use QueryContext for request cancellation
 		rows, err := r.db.QueryContext(ctx, replacePlaceholders(query), args...)
 		if err != nil {
 			return nil, 0, err
 		}
 		defer rows.Close()
 
+		var data []T
 		for rows.Next() {
 			item, err := scanFunc(rows)
 			if err != nil {
@@ -55,29 +51,69 @@ func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query s
 		return data, 0, nil
 	}
 
-	// Use QueryRowContext for request cancellation
-	err = r.db.QueryRowContext(ctx, replacePlaceholders(countQuery), args...).Scan(&totalItem)
-	if err != nil {
-		return nil, 0, err
+	// Create a sub-context to cancel the other query early if one fails
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	type countResult struct {
+		total int
+		err   error
 	}
 
-	finalArgs := append(args, limit, offset)
-	// Use QueryContext for request cancellation
-	rows, err := r.db.QueryContext(ctx, replacePlaceholders(query+" LIMIT ? OFFSET ?"), finalArgs...)
-	if err != nil {
-		return nil, 0, err
+	type dataResult struct {
+		data []T
+		err  error
 	}
-	defer rows.Close()
 
-	for rows.Next() {
-		item, err := scanFunc(rows)
+	countCh := make(chan countResult, 1)
+	dataCh := make(chan dataResult, 1)
+
+	// Goroutine 1: Execute COUNT(*) query
+	go func() {
+		var total int
+		err := r.db.QueryRowContext(ctx, replacePlaceholders(countQuery), args...).Scan(&total)
 		if err != nil {
-			return nil, 0, err
+			cancel() // Abort the data query immediately
 		}
-		data = append(data, item)
+		countCh <- countResult{total: total, err: err}
+	}()
+
+	// Goroutine 2: Execute SELECT DATA query
+	go func() {
+		var result []T
+		finalArgs := append(args, limit, offset)
+		rows, err := r.db.QueryContext(ctx, replacePlaceholders(query+" LIMIT ? OFFSET ?"), finalArgs...)
+		if err != nil {
+			cancel() // Abort the count query immediately
+			dataCh <- dataResult{err: err}
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			item, err := scanFunc(rows)
+			if err != nil {
+				cancel()
+				dataCh <- dataResult{err: err}
+				return
+			}
+			result = append(result, item)
+		}
+		dataCh <- dataResult{data: result, err: nil}
+	}()
+
+	// Wait and collect results from both Goroutines
+	cRes := <-countCh
+	if cRes.err != nil {
+		return nil, 0, cRes.err
 	}
 
-	return data, totalItem, nil
+	dRes := <-dataCh
+	if dRes.err != nil {
+		return nil, 0, dRes.err
+	}
+
+	return dRes.data, cRes.total, nil
 }
 
 // ---------------- Provinsi ----------------
