@@ -16,6 +16,18 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
+var (
+	ErrNotFound = errors.New("tidak ditemukan data")
+)
+
+type ErrPageExceeded struct {
+	MaxPage int
+}
+
+func (e ErrPageExceeded) Error() string {
+	return fmt.Sprintf("nomor halaman melebihi total halaman. Halaman maksimum adalah %d", e.MaxPage)
+}
+
 type DaerahService struct {
 	repo         *repository.DaerahRepository
 	cdnBaseURL   string
@@ -44,7 +56,7 @@ func NewDaerahService(repo *repository.DaerahRepository) *DaerahService {
 // buildResponse wraps the pagination calculation, empty data checks, and response formatting generically
 func buildResponse[T any](data []T, limit, halaman, totalItem int, pagination bool) (any, error) {
 	if len(data) == 0 {
-		return nil, errors.New("tidak ditemukan data")
+		return nil, ErrNotFound
 	}
 
 	if !pagination {
@@ -53,7 +65,7 @@ func buildResponse[T any](data []T, limit, halaman, totalItem int, pagination bo
 
 	totalHalaman := (totalItem + limit - 1) / limit
 	if halaman > totalHalaman && totalHalaman > 0 {
-		return nil, fmt.Errorf("nomor halaman melebihi total halaman. Halaman maksimum adalah %d", totalHalaman)
+		return nil, ErrPageExceeded{MaxPage: totalHalaman}
 	}
 
 	meta := &model.PaginationMeta{

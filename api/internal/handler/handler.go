@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"nusantarakita/internal/service"
 )
@@ -82,11 +82,18 @@ func (h *Handler) handleWithService(w http.ResponseWriter, r *http.Request, svcC
 
 	resp, err := svcCall(r.Context(), params)
 	if err != nil {
-		if strings.Contains(err.Error(), "tidak ditemukan") || strings.Contains(err.Error(), "nomor halaman melebihi") {
+		if errors.Is(err, service.ErrNotFound) {
 			writeError(w, http.StatusNotFound, err, err.Error())
-		} else {
-			writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
+			return
 		}
+
+		var pageErr service.ErrPageExceeded
+		if errors.As(err, &pageErr) {
+			writeError(w, http.StatusNotFound, err, err.Error())
+			return
+		}
+
+		writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
 		return
 	}
 
