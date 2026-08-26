@@ -2,36 +2,33 @@ version: '3.8'
 
 services:
   db:
-    image: mysql:8.0
+    image: postgres:15
     container_name: nusantarakita_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: nusantarakita
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: nusantarakita
+      POSTGRES_USER: user
     ports:
-      - "3307:3306"
+      - "5430:5432"
     volumes:
-      - db_data:/var/lib/mysql
-      - ./data/mysql/nusakita.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/postgresql/data
+      - ./data/postgres/nusakita.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
+      test: ["CMD-SHELL", "pg_isready -U user -d nusantarakita"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
-    image: yuefii/nusantarakita-api:latest
+    build: ./api
     container_name: nusantarakita_api
     restart: always
     ports:
       - "8000:8000"
     environment:
-      MYSQL_HOST: db
-      MYSQL_PORT: 3306
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_DB: nusantarakita
+      DATABASE_URL: postgresql://user:rootpassword@db:5432/nusantarakita?sslmode=disable
+      PORT: 8000
     depends_on:
       db:
         condition: service_healthy

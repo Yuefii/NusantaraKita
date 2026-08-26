@@ -4,12 +4,11 @@
 ![GitHub forks](https://img.shields.io/github/forks/Yuefii/NusantaraKita.svg?style=social)
 
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white)
 ![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
+![Go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
 
 <img src=".github/assets/logo.png" width="200" alt="logo">
 
@@ -26,9 +25,9 @@ ENDPOINT:
 - `/v2/kab-kota`
 - `/v2/kecamatan`
 - `/v2/desa-kel`
-- `/v2/{kodeProvinsi}/kab-kota`
-- `/v2/{kodeKabKota}/kecamatan`
-- `/v2/{kodeKecamatan}/desa-kel`
+- `/v2/{kode_provinsi}/kab-kota`
+- `/v2/{kode_kabupaten_kota}/kecamatan`
+- `/v2/{kode_kecamatan}/desa-kel`
 
 API ini dihosting menggunakan `VERCEL` jadi akan terbatas untuk consume api nya jadi lebih baik kalian hosting sendiri project ini diserver kalian.
 
@@ -45,6 +44,8 @@ API ini berisi seluruh data wilayah indonesia beserta lokasinya mulai dari:
 
 Langkah-langkah cara install project ini dilokal :
 
+**Prasyarat:** Pastikan kamu sudah menginstall [Go](https://go.dev/doc/install) (minimal versi 1.22) di komputermu.
+
 Git clone API nya:
 
 ```bash
@@ -60,28 +61,21 @@ cd api
 ```bash
 cp .env.example .env
 ```
+*(Jangan lupa untuk mengisi `DATABASE_URL` dengan koneksi PostgreSQL kamu di file `.env`)*
 
-Menjalankan Projectnya menggunakan `pip`
+Menjalankan Projectnya menggunakan `Go`
 
-- create virtual environment:
+- Unduh dependencies:
   ```bash
-  python -m venv venv
+  go mod download
   ```
-- activate virtual environment:
+- Menjalankan server:
   ```bash
-  source venv/bin/activate
+  go run cmd/server/main.go
   ```
-- install dependencies:
+- Build project (opsional):
   ```bash
-  pip install -r requirements.txt
-  ```
-- running project:
-  ```bash
-  uvicorn main:app --reload
-  ```
-- testing project:
-  ```bash
-  pytest tests/
+  go build -o server ./cmd/server
   ```
 
 Menjalankan Projectnya menggunakan `docker`
@@ -90,9 +84,9 @@ Menjalankan Projectnya menggunakan `docker`
   ```bash
   docker-compose up -d
   ```
-  atau gunakan perintah ini untuk memperbarui docker image:
+  atau gunakan perintah ini jika ada perubahan kode dan kamu ingin melakukan *build* ulang image API-nya:
   ```bash
-  docker-compose pull && docker-compose up -d
+  docker-compose up -d --build
   ```
 
 
