@@ -29,4 +29,3 @@ jobs:
           file: ./api/Dockerfile
           push: true
           tags: yuefii/nusantarakita-api:latest
-
