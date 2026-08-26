@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,21 +19,28 @@ import (
 )
 
 func main() {
+	// Set default structured JSON logger
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
 	_ = godotenv.Load()
 
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
-		log.Fatal("DATABASE_URL environment variable is required")
+		slog.Error("DATABASE_URL environment variable is required")
+		os.Exit(1)
 	}
 
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		slog.Error("Failed to connect to database", "error", err)
+		os.Exit(1)
 	}
 	// db.Close() will be handled during graceful shutdown below
 
 	if err := db.Ping(); err != nil {
-		log.Fatalf("Failed to ping database: %v", err)
+		slog.Error("Failed to ping database", "error", err)
+		os.Exit(1)
 	}
 
 	// Initialize layers
@@ -62,7 +69,7 @@ func main() {
 
 	// Start the server in a goroutine
 	go func() {
-		log.Printf("Server listening on port %s", port)
+		slog.Info("Server listening", "port", port)
 		serverErrors <- srv.ListenAndServe()
 	}()
 
@@ -74,10 +81,11 @@ func main() {
 	select {
 	case err := <-serverErrors:
 		if !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("Error starting server: %v", err)
+			slog.Error("Error starting server", "error", err)
+			os.Exit(1)
 		}
 	case sig := <-shutdown:
-		log.Printf("Start shutdown... Signal: %v", sig)
+		slog.Info("Start shutdown...", "signal", sig.String())
 
 		// Create context with timeout for the shutdown process
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -85,18 +93,19 @@ func main() {
 
 		// Shutdown the server gracefully
 		if err := srv.Shutdown(ctx); err != nil {
-			log.Printf("Graceful shutdown did not complete in 10s: %v", err)
+			slog.Warn("Graceful shutdown did not complete in 10s", "error", err)
 			if err := srv.Close(); err != nil {
-				log.Fatalf("Could not stop server gracefully: %v", err)
+				slog.Error("Could not stop server gracefully", "error", err)
+				os.Exit(1)
 			}
 		}
 
 		// Close database connection
 		if err := db.Close(); err != nil {
-			log.Printf("Could not close database connection gracefully: %v", err)
+			slog.Warn("Could not close database connection gracefully", "error", err)
 		}
 
-		log.Println("Graceful shutdown complete.")
+		slog.Info("Graceful shutdown complete")
 	}
 }
 

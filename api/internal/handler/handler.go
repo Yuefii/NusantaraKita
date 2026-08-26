@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -72,7 +72,7 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 }
 
 func writeError(w http.ResponseWriter, status int, err error, message string) {
-	log.Printf("[ERROR] %v", err)
+	slog.Error("API request failed", "error", err, "status", status, "message", message)
 	writeJSON(w, status, map[string]string{"detail": message})
 }
 
