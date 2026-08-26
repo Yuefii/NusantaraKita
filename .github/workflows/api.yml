@@ -12,20 +12,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          python-version: "3.13"
+          go-version: "1.22"
 
-      - name: Install packages and dependencies
+      - name: Install dependencies
         working-directory: ./api
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: go mod download
 
-      - name: Run tests with pytest
+      - name: Build API
         working-directory: ./api
-        run: |
-          pytest tests/
+        run: go build -v ./cmd/server
+
+      - name: Run tests
+        working-directory: ./api
+        run: go test -v ./...
