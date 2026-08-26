@@ -91094,3 +91094,10 @@ INSERT INTO "nk_provinsi" ("kode", "nama", "lat", "lng") VALUES
 -- Ketidakleluasaan untuk tabel `nk_kecamatan`
 --
 
+
+--
+-- Indexes for dumped tables
+--
+CREATE INDEX idx_kabkota_prov ON nk_kabupaten_kota(kode_provinsi);
+CREATE INDEX idx_kecamatan_kabkota ON nk_kecamatan(kode_kabupaten_kota);
+CREATE INDEX idx_desa_kecamatan ON nk_desa_kelurahan(kode_kecamatan);
