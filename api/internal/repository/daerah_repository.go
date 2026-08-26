@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"vercel-go-starter/internal/model"
+	"nusantarakita/internal/model"
 
 	"github.com/patrickmn/go-cache"
 )

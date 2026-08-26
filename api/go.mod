@@ -1,4 +1,4 @@
-module vercel-go-starter
+module nusantarakita
 
 go 1.26
 

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"vercel-go-starter/internal/service"
+	"nusantarakita/internal/service"
 )
 
 type Handler struct {

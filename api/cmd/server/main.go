@@ -13,9 +13,9 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"vercel-go-starter/internal/handler"
-	"vercel-go-starter/internal/repository"
-	"vercel-go-starter/internal/service"
+	"nusantarakita/internal/handler"
+	"nusantarakita/internal/repository"
+	"nusantarakita/internal/service"
 )
 
 func main() {
