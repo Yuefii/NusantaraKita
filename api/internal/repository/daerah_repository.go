@@ -5,16 +5,24 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
+	"github.com/patrickmn/go-cache"
 	"vercel-go-starter/internal/model"
 )
 
 type DaerahRepository struct {
-	db *sql.DB
+	db    *sql.DB
+	cache *cache.Cache
 }
 
 func NewDaerahRepository(db *sql.DB) *DaerahRepository {
-	return &DaerahRepository{db: db}
+	// Cache for COUNT queries with 24 hour expiration
+	c := cache.New(24*time.Hour, 1*time.Hour)
+	return &DaerahRepository{
+		db:    db,
+		cache: c,
+	}
 }
 
 // replacePlaceholders replaces ? with $1, $2, etc for PostgreSQL
@@ -55,6 +63,9 @@ func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query s
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
+	// Create a cache key for the count query
+	countCacheKey := fmt.Sprintf("count_%s_%v", countQuery, args)
+
 	type countResult struct {
 		total int
 		err   error
@@ -68,12 +79,20 @@ func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query s
 	countCh := make(chan countResult, 1)
 	dataCh := make(chan dataResult, 1)
 
-	// Goroutine 1: Execute COUNT(*) query
+	// Goroutine 1: Execute COUNT(*) query or get from cache
 	go func() {
+		// Check cache first
+		if cachedTotal, found := r.cache.Get(countCacheKey); found {
+			countCh <- countResult{total: cachedTotal.(int), err: nil}
+			return
+		}
+
 		var total int
 		err := r.db.QueryRowContext(ctx, replacePlaceholders(countQuery), args...).Scan(&total)
 		if err != nil {
 			cancel() // Abort the data query immediately
+		} else {
+			r.cache.Set(countCacheKey, total, cache.DefaultExpiration)
 		}
 		countCh <- countResult{total: total, err: err}
 	}()
