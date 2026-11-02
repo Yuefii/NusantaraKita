@@ -19,8 +19,7 @@ interface PaginationProps {
 }
 
 type PaginationItemType =
-  | { type: 'page'; value: number }
-  | { type: 'ellipsis'; value: string };
+  { type: 'page'; value: number } | { type: 'ellipsis'; value: string };
 
 function shouldShowPreviousButton(
   isFirstPage: boolean,
