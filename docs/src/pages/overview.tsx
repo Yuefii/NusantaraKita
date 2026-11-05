@@ -20,27 +20,27 @@ const Overview = () => {
     {
       label: 'Provinsi',
       condition: true,
-      url: 'https://api-nusantarakita.vercel.app/v2/provinsi?pagination=true&limit=15',
+      url: 'https://api.nusantarakita.web.id/v2/provinsi?pagination=true&limit=15',
     },
     {
       label: 'Kab/Kota',
       condition: province && kabKota,
       url: province
-        ? `https://api-nusantarakita.vercel.app/v2/${province.kode}/kab-kota?pagination=true&limit=15`
+        ? `https://api.nusantarakita.web.id/v2/${province.kode}/kab-kota?pagination=true&limit=15`
         : '',
     },
     {
       label: 'Kecamatan',
       condition: province && kabKota && kecamatan,
       url: kabKota
-        ? `https://api-nusantarakita.vercel.app/v2/${kabKota.kode}/kecamatan?pagination=true&limit=15`
+        ? `https://api.nusantarakita.web.id/v2/${kabKota.kode}/kecamatan?pagination=true&limit=15`
         : '',
     },
     {
       label: 'Desa/Kelurahan',
       condition: province && kabKota && kecamatan && desaKel,
       url: kecamatan
-        ? `https://api-nusantarakita.vercel.app/v2/${kecamatan.kode}/desa-kel?pagination=true&limit=15`
+        ? `https://api.nusantarakita.web.id/v2/${kecamatan.kode}/desa-kel?pagination=true&limit=15`
         : '',
     },
   ];

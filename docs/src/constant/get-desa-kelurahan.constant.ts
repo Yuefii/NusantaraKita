@@ -32,6 +32,7 @@ const getDesaKelurahanResponseStructureData: ResponseJsonListItem[] = [
       { name: 'lat', details: '(double) - Koordinat latitude' },
       { name: 'lng', details: '(double) - Koordinat longitude' },
       { name: 'kode_kecamatan', details: '(string) - Kode Kecamatan induk' },
+      { name: 'kode_pos', details: '(string) - Kode pos Desa/Kelurahan' },
       { name: 'geojson_url', details: '(string) - URL GeoJSON Desa/Kelurahan' },
     ],
   },
@@ -51,6 +52,7 @@ const getDesaKelurahanExampleResponse = {
       lat: 2.931094803160483,
       lng: 97.48458404258515,
       kode_kecamatan: '11.01.01',
+      kode_pos: '23773',
       geojson_url:
         'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/desa_kelurahan/11.01.01.2001.geojson',
     },
@@ -59,19 +61,19 @@ const getDesaKelurahanExampleResponse = {
 
 const errorHandlingTableRows = [
   {
-    Code: '400',
-    Description: 'Parameter tidak valid',
+    Code: '404',
+    Description: 'Data tidak ditemukan',
     Example: JSON.stringify(
-      { error: 'nomor halaman tidak valid, halaman harus lebih besar dari 0' },
+      { detail: 'tidak ditemukan data' },
       null,
       2,
     ),
   },
   {
     Code: '404',
-    Description: 'Data tidak ditemukan',
+    Description: 'Halaman melebihi batas',
     Example: JSON.stringify(
-      { error: 'tidak ditemukan data desa/kelurahan' },
+      { detail: 'nomor halaman melebihi total halaman. Halaman maksimum adalah 10' },
       null,
       2,
     ),
@@ -80,7 +82,7 @@ const errorHandlingTableRows = [
     Code: '500',
     Description: 'Server Error',
     Example: JSON.stringify(
-      { error: 'Gagal mengambil data: [error detail]' },
+      { detail: 'Terjadi kesalahan pada server' },
       null,
       2,
     ),

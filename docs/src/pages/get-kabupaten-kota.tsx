@@ -50,7 +50,7 @@ export const GetKabupatenKota = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/kab-kota"
+            url="https://api.nusantarakita.web.id/v2/kab-kota"
           />
         </div>
 
@@ -60,7 +60,7 @@ export const GetKabupatenKota = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/{kodeProvinsi}/kab-kota"
+            url="https://api.nusantarakita.web.id/v2/{kodeProvinsi}/kab-kota"
           />
           <span className="mt-1 block text-sm">
             Ganti {'{'}kodeProvinsi{'}'} dengan kode provinsi yang valid
@@ -99,7 +99,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/kab-kota"
+            url="https://api.nusantarakita.web.id/v2/kab-kota"
           />
         </div>
 
@@ -109,7 +109,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/kab-kota?pagination=false"
+            url="https://api.nusantarakita.web.id/v2/kab-kota?pagination=false"
           />
         </div>
 
@@ -119,7 +119,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/kab-kota?limit=20"
+            url="https://api.nusantarakita.web.id/v2/kab-kota?limit=20"
           />
         </div>
 
@@ -129,7 +129,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/kab-kota?page=2"
+            url="https://api.nusantarakita.web.id/v2/kab-kota?halaman=2"
           />
         </div>
 
@@ -139,7 +139,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/11/kab-kota"
+            url="https://api.nusantarakita.web.id/v2/11/kab-kota"
           />
         </div>
 
@@ -149,7 +149,7 @@ export const GetKabupatenKota = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/kab-kota?pagination=true&limit=5&page=3"
+            url="https://api.nusantarakita.web.id/v2/kab-kota?pagination=true&limit=5&halaman=3"
           />
         </div>
       </div>
