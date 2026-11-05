@@ -52,26 +52,25 @@ const kecamatanResponse = {
       lng: 97.46087307098534,
       kode_kabupaten_kota: '11.01',
       geojson_url:
-        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kabupaten_kota/11.01.01.geojson',
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kecamatan/11.01.01.geojson',
     },
   ],
 };
 
 const errorHandlingTableRows = [
   {
-    Code: '400',
-    Description: 'Parameter tidak valid',
-    Example: JSON.stringify(
-      { error: 'nomor halaman tidak valid, halaman harus lebih besar dari 0' },
-      null,
-      2,
-    ),
+    Code: '404',
+    Description: 'Data tidak ditemukan',
+    Example: JSON.stringify({ detail: 'tidak ditemukan data' }, null, 2),
   },
   {
     Code: '404',
-    Description: 'Data tidak ditemukan',
+    Description: 'Halaman melebihi batas',
     Example: JSON.stringify(
-      { error: 'tidak ditemukan data kecamatan' },
+      {
+        detail:
+          'nomor halaman melebihi total halaman. Halaman maksimum adalah 7',
+      },
       null,
       2,
     ),
@@ -80,7 +79,7 @@ const errorHandlingTableRows = [
     Code: '500',
     Description: 'Server Error',
     Example: JSON.stringify(
-      { error: 'Gagal mengambil data: [error detail]' },
+      { detail: 'Terjadi kesalahan pada server' },
       null,
       2,
     ),

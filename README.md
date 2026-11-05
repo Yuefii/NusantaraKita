@@ -16,8 +16,8 @@ Nusantara Kita adalah sebuah API yang menyediakan data wilayah Indonesia. Projec
 
 URL:
 
-- API = [https://api-nusantarakita.vercel.app](https://api-nusantarakita.vercel.app)
-- DOKUMENTASI = [https://nusantarakita.vercel.app](https://nusantarakita.vercel.app)
+- API = [https://api.nusantarakita.web.id](https://api.nusantarakita.web.id)
+- DOKUMENTASI = [https://nusantarakita.web.id](https://nusantarakita.web.id)
 
 ENDPOINT:
 
@@ -29,7 +29,7 @@ ENDPOINT:
 - `/v2/{kode_kabupaten_kota}/kecamatan`
 - `/v2/{kode_kecamatan}/desa-kel`
 
-API ini dihosting menggunakan `VERCEL` jadi akan terbatas untuk consume api nya jadi lebih baik kalian hosting sendiri project ini diserver kalian.
+API ini sudah dihosting di domain sendiri. Namun jika kamu ingin menjalankannya di server sendiri, kamu tetap bisa melakukan self-hosting sesuai panduan instalasi di bawah.
 
 ## Fitur
 

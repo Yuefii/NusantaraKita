@@ -31,24 +31,27 @@ export const queryTableRows = [
 
 export const errorHandlingTableRows = [
   {
-    Code: '400',
-    Description: 'Parameter tidak valid',
+    Code: '404',
+    Description: 'Data tidak ditemukan',
+    Example: JSON.stringify({ detail: 'tidak ditemukan data' }, null, 2),
+  },
+  {
+    Code: '404',
+    Description: 'Halaman melebihi batas',
     Example: JSON.stringify(
-      { error: 'nomor halaman tidak valid, halaman harus lebih besar dari 0' },
+      {
+        detail:
+          'nomor halaman melebihi total halaman. Halaman maksimum adalah 4',
+      },
       null,
       2,
     ),
   },
   {
-    Code: '404',
-    Description: 'Data tidak ditemukan',
-    Example: JSON.stringify({ error: 'tidak ditemukan data' }, null, 2),
-  },
-  {
     Code: '500',
     Description: 'Server Error',
     Example: JSON.stringify(
-      { error: 'Gagal mengambil data: [error detail]' },
+      { detail: 'Terjadi kesalahan pada server' },
       null,
       2,
     ),

@@ -1,5 +1,5 @@
 import axiosInstace from '@/lib/axios';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export const getKabKota = async (
   params?: ParamsApi,
@@ -12,6 +12,7 @@ const useGetKabKota = (options: ParamsApi) => {
   const { data, isLoading, isError, isSuccess, isPending } = useQuery({
     queryKey: ['kab-kota', options],
     queryFn: () => getKabKota(options),
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
     retry: false,
   });

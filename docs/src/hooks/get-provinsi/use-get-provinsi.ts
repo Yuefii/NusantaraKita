@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/axios';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export const getProvinsi = async (
   params?: ParamsApi,
@@ -23,6 +23,7 @@ const useGetProvinsi = (
   } = useQuery({
     queryKey: ['provinsi', options],
     queryFn: () => getProvinsi(options),
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
     retry: false,
     enabled: queryOptions?.enabled ?? true,

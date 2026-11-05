@@ -59,19 +59,18 @@ const kabKotaResponse = {
 
 const errorHandlingTableRows = [
   {
-    Code: '400',
-    Description: 'Parameter tidak valid',
-    Example: JSON.stringify(
-      { error: 'nomor halaman tidak valid, halaman harus lebih besar dari 0' },
-      null,
-      2,
-    ),
+    Code: '404',
+    Description: 'Data tidak ditemukan',
+    Example: JSON.stringify({ detail: 'tidak ditemukan data' }, null, 2),
   },
   {
     Code: '404',
-    Description: 'Data tidak ditemukan',
+    Description: 'Halaman melebihi batas',
     Example: JSON.stringify(
-      { error: 'tidak ditemukan data kabupaten/kota' },
+      {
+        detail:
+          'nomor halaman melebihi total halaman. Halaman maksimum adalah 52',
+      },
       null,
       2,
     ),
@@ -80,7 +79,7 @@ const errorHandlingTableRows = [
     Code: '500',
     Description: 'Server Error',
     Example: JSON.stringify(
-      { error: 'Gagal mengambil data: [error detail]' },
+      { detail: 'Terjadi kesalahan pada server' },
       null,
       2,
     ),

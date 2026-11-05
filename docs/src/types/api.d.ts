@@ -43,6 +43,7 @@ type DesaKelApi = {
   lat: number; // Koordinat latitude
   lng: number; // Koordinat longitude
   kode_kecamatan: string; // Kode Kecamatan induk
+  kode_pos: string; // Kode pos Desa/Kelurahan
   geojson_url: string; // CDN URL file GeoJSON Desa/Kelurahan
 };
 

@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/sidebar';
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 import type { IconType } from 'react-icons/lib';
+import { Link, useLocation } from 'react-router';
 
 export interface NavMenuItem {
   title: string;
@@ -36,10 +37,17 @@ export interface NavMenuProps {
 }
 
 export function NavMenu({ items }: NavMenuProps) {
-  const { setOpen, open } = useSidebar();
+  const { setOpen, open, isMobile, setOpenMobile } = useSidebar();
+  const location = useLocation();
 
   const handleSidebarItemClick = () => {
     if (!open) setOpen(true);
+  };
+
+  const handleSubItemClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   };
 
   return (
@@ -67,10 +75,16 @@ export function NavMenu({ items }: NavMenuProps) {
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
+                      <SidebarMenuSubButton
+                        asChild
+                        isActive={location.pathname === subItem.url}
+                      >
+                        <Link
+                          to={subItem.url}
+                          onClick={handleSubItemClick}
+                        >
                           <span>{subItem.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

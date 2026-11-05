@@ -53,54 +53,44 @@ export const InstalationGuide = () => {
         />
       </div>
 
-      {/* Section Virtual Environment */}
+      {/* Section Running API with Go */}
       <div className="mb-10">
         <h2 className="mb-4 text-xl font-semibold text-gray-600">
-          Menjalankan Project dengan pip
+          Menjalankan Project dengan Go
         </h2>
 
         <div className="mb-6">
           <p className="mb-4 leading-relaxed text-gray-600">
-            Buat Virtual Environment
+            Unduh dependencies
           </p>
           <Code
-            content={`python -m venv venv`}
+            content={`go mod download`}
+            showCopyButton
+          />
+        </div>
+
+        <div className="mb-6">
+          <p className="mb-4 leading-relaxed text-gray-600">Jalankan server</p>
+          <Code
+            content={`go run cmd/server/main.go`}
             showCopyButton
           />
         </div>
 
         <div className="mb-6">
           <p className="mb-4 leading-relaxed text-gray-600">
-            Aktifkan Virtual Environment
+            Build project (opsional)
           </p>
           <Code
-            content={`source venv/bin/activate`}
+            content={`go build -o server ./cmd/server`}
             showCopyButton
           />
         </div>
 
         <div className="mb-6">
-          <p className="mb-4 leading-relaxed text-gray-600">
-            Install Dependencies
-          </p>
+          <p className="mb-4 leading-relaxed text-gray-600">Jalankan test</p>
           <Code
-            content={`pip install -r requirements.txt`}
-            showCopyButton
-          />
-        </div>
-
-        <div className="mb-6">
-          <p className="mb-4 leading-relaxed text-gray-600">Jalankan Project</p>
-          <Code
-            content={`uvicorn main:app --reload`}
-            showCopyButton
-          />
-        </div>
-
-        <div className="mb-6">
-          <p className="mb-4 leading-relaxed text-gray-600">Testing Project</p>
-          <Code
-            content={`pytest tests/`}
+            content={`go test ./...`}
             showCopyButton
           />
         </div>
@@ -120,10 +110,11 @@ export const InstalationGuide = () => {
           showCopyButton
         />
         <p className="my-4 leading-relaxed text-gray-600">
-          atau gunakan perintah ini untuk memperbarui docker image:
+          atau gunakan perintah ini jika ada perubahan kode dan kamu ingin
+          melakukan <em>build</em> ulang image API-nya:
         </p>
         <Code
-          content={`docker-compose pull && docker-compose up -d`}
+          content={`docker-compose up -d --build`}
           showCopyButton
         />
       </div>

@@ -50,7 +50,7 @@ export const GetDesaKelurahan = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/desa-kel"
+            url="https://api.nusantarakita.web.id/v2/desa-kel"
           />
         </div>
 
@@ -60,7 +60,7 @@ export const GetDesaKelurahan = () => {
           </h2>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/{kodeKecamatan}/desa-kel"
+            url="https://api.nusantarakita.web.id/v2/{kodeKecamatan}/desa-kel"
           />
           <span className="mt-1 block text-sm">
             Ganti {'{'}kodeKecamatan{'}'} dengan kode Kecamatan yang valid
@@ -99,7 +99,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/desa-kel"
+            url="https://api.nusantarakita.web.id/v2/desa-kel"
           />
         </div>
 
@@ -109,7 +109,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/desa-kel?pagination=false"
+            url="https://api.nusantarakita.web.id/v2/desa-kel?pagination=false"
           />
         </div>
 
@@ -119,7 +119,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/desa-kel?limit=20"
+            url="https://api.nusantarakita.web.id/v2/desa-kel?limit=20"
           />
         </div>
 
@@ -129,7 +129,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/desa-kel?page=2"
+            url="https://api.nusantarakita.web.id/v2/desa-kel?halaman=2"
           />
         </div>
 
@@ -139,7 +139,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/11.01/desa-kel"
+            url="https://api.nusantarakita.web.id/v2/11.01/desa-kel"
           />
         </div>
 
@@ -149,7 +149,7 @@ export const GetDesaKelurahan = () => {
           </h3>
           <EndpointUrl
             method="GET"
-            url="https://api-nusantarakita.vercel.app/v2/desa-kel?pagination=true&limit=5&page=3"
+            url="https://api.nusantarakita.web.id/v2/desa-kel?pagination=true&limit=5&halaman=3"
           />
         </div>
       </div>

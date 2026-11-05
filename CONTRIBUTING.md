@@ -30,7 +30,7 @@ Kami menyambut baik kontribusi pada project Nusantara Kita! Untuk memastikan lin
 
 ## Gaya Kode
 
-Harap patuhi gaya kode yang ada di project. Kami menggunakan `black`, `ruff` untuk pemformatan Python dan `prettier`, `eslint` untuk TypeScript yang ada pada react.
+Harap patuhi gaya kode yang ada di project. Kami menggunakan `gofmt` untuk pemformatan Go dan `prettier`, `eslint` untuk TypeScript yang ada pada react.
 
 ## Melaporkan Bug
 
