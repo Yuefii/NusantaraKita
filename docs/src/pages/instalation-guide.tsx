@@ -70,9 +70,7 @@ export const InstalationGuide = () => {
         </div>
 
         <div className="mb-6">
-          <p className="mb-4 leading-relaxed text-gray-600">
-            Jalankan server
-          </p>
+          <p className="mb-4 leading-relaxed text-gray-600">Jalankan server</p>
           <Code
             content={`go run cmd/server/main.go`}
             showCopyButton
@@ -112,7 +110,8 @@ export const InstalationGuide = () => {
           showCopyButton
         />
         <p className="my-4 leading-relaxed text-gray-600">
-          atau gunakan perintah ini jika ada perubahan kode dan kamu ingin melakukan <em>build</em> ulang image API-nya:
+          atau gunakan perintah ini jika ada perubahan kode dan kamu ingin
+          melakukan <em>build</em> ulang image API-nya:
         </p>
         <Code
           content={`docker-compose up -d --build`}

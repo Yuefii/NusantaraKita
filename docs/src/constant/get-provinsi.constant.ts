@@ -39,7 +39,10 @@ export const errorHandlingTableRows = [
     Code: '404',
     Description: 'Halaman melebihi batas',
     Example: JSON.stringify(
-      { detail: 'nomor halaman melebihi total halaman. Halaman maksimum adalah 4' },
+      {
+        detail:
+          'nomor halaman melebihi total halaman. Halaman maksimum adalah 4',
+      },
       null,
       2,
     ),

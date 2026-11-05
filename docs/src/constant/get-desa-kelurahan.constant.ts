@@ -63,17 +63,16 @@ const errorHandlingTableRows = [
   {
     Code: '404',
     Description: 'Data tidak ditemukan',
-    Example: JSON.stringify(
-      { detail: 'tidak ditemukan data' },
-      null,
-      2,
-    ),
+    Example: JSON.stringify({ detail: 'tidak ditemukan data' }, null, 2),
   },
   {
     Code: '404',
     Description: 'Halaman melebihi batas',
     Example: JSON.stringify(
-      { detail: 'nomor halaman melebihi total halaman. Halaman maksimum adalah 10' },
+      {
+        detail:
+          'nomor halaman melebihi total halaman. Halaman maksimum adalah 10',
+      },
       null,
       2,
     ),
