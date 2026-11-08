@@ -55,17 +55,18 @@ func NewDaerahService(repo *repository.DaerahRepository) *DaerahService {
 
 // buildResponse wraps the pagination calculation, empty data checks, and response formatting generically
 func buildResponse[T any](data []T, limit, halaman, totalItem int, pagination bool) (any, error) {
+	// Check the page bound first: a page past the end returns no rows.
+	totalHalaman := (totalItem + limit - 1) / limit
+	if pagination && halaman > totalHalaman && totalHalaman > 0 {
+		return nil, ErrPageExceeded{MaxPage: totalHalaman}
+	}
+
 	if len(data) == 0 {
 		return nil, ErrNotFound
 	}
 
 	if !pagination {
 		return map[string]interface{}{"data": data}, nil
-	}
-
-	totalHalaman := (totalItem + limit - 1) / limit
-	if halaman > totalHalaman && totalHalaman > 0 {
-		return nil, ErrPageExceeded{MaxPage: totalHalaman}
 	}
 
 	meta := &model.PaginationMeta{

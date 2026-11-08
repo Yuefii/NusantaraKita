@@ -31,7 +31,8 @@ func TestBuildResponse(t *testing.T) {
 	})
 
 	t.Run("Page exceeds max page", func(t *testing.T) {
-		data := []string{"item1"}
+		// A page past the end returns no rows from the query.
+		data := []string{}
 		// 15 items, limit 10 => 2 pages max. Requesting page 3.
 		_, err := buildResponse(data, 10, 3, 15, true)
 		if err == nil {

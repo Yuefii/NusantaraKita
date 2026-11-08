@@ -71,9 +71,25 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 	json.NewEncoder(w).Encode(v)
 }
 
-func writeError(w http.ResponseWriter, status int, err error, message string) {
-	slog.Error("API request failed", "error", err, "status", status, "message", message)
-	writeJSON(w, status, map[string]string{"detail": message})
+// Error codes returned in the "error.code" field.
+const (
+	codeNotFound       = "NOT_FOUND"
+	codePageOutOfRange = "PAGE_OUT_OF_RANGE"
+	codeInternalError  = "INTERNAL_ERROR"
+)
+
+type errorBody struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+type errorResponse struct {
+	Error errorBody `json:"error"`
+}
+
+func writeError(w http.ResponseWriter, status int, err error, code, message string) {
+	slog.Error("API request failed", "error", err, "status", status, "code", code, "message", message)
+	writeJSON(w, status, errorResponse{Error: errorBody{Code: code, Message: message}})
 }
 
 // handleWithService is a DRY helper to parse params, call service, and handle standard errors/responses
@@ -83,17 +99,17 @@ func (h *Handler) handleWithService(w http.ResponseWriter, r *http.Request, svcC
 	resp, err := svcCall(r.Context(), params)
 	if err != nil {
 		if errors.Is(err, service.ErrNotFound) {
-			writeError(w, http.StatusNotFound, err, err.Error())
+			writeError(w, http.StatusNotFound, err, codeNotFound, err.Error())
 			return
 		}
 
 		var pageErr service.ErrPageExceeded
 		if errors.As(err, &pageErr) {
-			writeError(w, http.StatusNotFound, err, err.Error())
+			writeError(w, http.StatusNotFound, err, codePageOutOfRange, err.Error())
 			return
 		}
 
-		writeError(w, http.StatusInternalServerError, err, "Terjadi kesalahan pada server")
+		writeError(w, http.StatusInternalServerError, err, codeInternalError, "Terjadi kesalahan pada server")
 		return
 	}
 
