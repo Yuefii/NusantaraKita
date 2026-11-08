@@ -3,8 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"math"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -177,6 +179,43 @@ func TestErrorResponses(t *testing.T) {
 			WillReturnRows(sqlmock.NewRows([]string{"kode", "nama", "lat", "lng", "kode_provinsi"}))
 		assertError(t, serve(mux, "/v2/32/kab-kota?halaman=10"), http.StatusNotFound,
 			"PAGE_OUT_OF_RANGE", "Halaman maksimum adalah 3")
+	})
+
+	t.Run("huge halaman returns PAGE_OUT_OF_RANGE instead of a negative OFFSET", func(t *testing.T) {
+		mux, mock := newTestMux(t)
+		expectProv(mock, 38, 10, math.MaxInt, 0)
+		assertError(t, serve(mux, "/v2/provinsi?halaman="+strconv.Itoa(math.MaxInt)), http.StatusNotFound,
+			"PAGE_OUT_OF_RANGE", "Halaman maksimum adalah 4")
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unexpected OFFSET: %v", err)
+		}
+	})
+
+	t.Run("huge limit still finds page 2 out of range", func(t *testing.T) {
+		mux, mock := newTestMux(t)
+		expectProv(mock, 38, math.MaxInt, math.MaxInt, 0)
+		assertError(t, serve(mux, "/v2/provinsi?limit="+strconv.Itoa(math.MaxInt)+"&halaman=2"), http.StatusNotFound,
+			"PAGE_OUT_OF_RANGE", "Halaman maksimum adalah 1")
+	})
+
+	t.Run("huge limit on page 1 reports one page", func(t *testing.T) {
+		mux, mock := newTestMux(t)
+		expectProv(mock, 3, math.MaxInt, 0, 3)
+		w := serve(mux, "/v2/provinsi?limit="+strconv.Itoa(math.MaxInt))
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected 200, got %d (body %s)", w.Code, w.Body.String())
+		}
+		var body struct {
+			Pagination struct {
+				TotalHalaman int `json:"total_halaman"`
+			} `json:"pagination"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
+			t.Fatalf("invalid JSON: %v", err)
+		}
+		if body.Pagination.TotalHalaman != 1 {
+			t.Errorf("expected total_halaman 1, got %d", body.Pagination.TotalHalaman)
+		}
 	})
 
 	t.Run("invalid halaman values fall back to page 1", func(t *testing.T) {

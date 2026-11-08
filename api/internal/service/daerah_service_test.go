@@ -1,7 +1,11 @@
 package service
 
 import (
+	"errors"
+	"math"
 	"testing"
+
+	"nusantarakita/internal/model"
 )
 
 func TestBuildResponse(t *testing.T) {
@@ -61,6 +65,49 @@ func TestBuildResponse(t *testing.T) {
 		// Actually, since buildResponse returns 'any', we can just check if it's not nil for now.
 		if res == nil {
 			t.Error("expected response, got nil")
+		}
+	})
+}
+
+func TestPageOffset(t *testing.T) {
+	tests := []struct {
+		limit, halaman, want int
+	}{
+		{10, 1, 0},
+		{10, 3, 20},
+		{1, math.MaxInt, math.MaxInt - 1},
+		{10, math.MaxInt, math.MaxInt},
+		{10, math.MaxInt/10 + 1, math.MaxInt / 10 * 10},
+		{10, math.MaxInt/10 + 2, math.MaxInt},
+		{math.MaxInt, 2, math.MaxInt},
+		{math.MaxInt, 3, math.MaxInt},
+	}
+	for _, tt := range tests {
+		if got := pageOffset(tt.limit, tt.halaman); got != tt.want {
+			t.Errorf("pageOffset(%d, %d) = %d, want %d", tt.limit, tt.halaman, got, tt.want)
+		}
+		if got := pageOffset(tt.limit, tt.halaman); got < 0 {
+			t.Errorf("pageOffset(%d, %d) is negative: %d", tt.limit, tt.halaman, got)
+		}
+	}
+}
+
+func TestBuildResponseHugeLimit(t *testing.T) {
+	t.Run("first page reports one page", func(t *testing.T) {
+		res, err := buildResponse([]string{"a", "b"}, math.MaxInt, 1, 2, true)
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+		if got := res.(model.PaginatedResponse[string]).Pagination.TotalHalaman; got != 1 {
+			t.Errorf("expected total_halaman 1, got %d", got)
+		}
+	})
+
+	t.Run("second page is out of range", func(t *testing.T) {
+		_, err := buildResponse([]string{}, math.MaxInt, 2, 2, true)
+		var pageErr ErrPageExceeded
+		if !errors.As(err, &pageErr) || pageErr.MaxPage != 1 {
+			t.Fatalf("expected ErrPageExceeded{MaxPage: 1}, got %v", err)
 		}
 	})
 }

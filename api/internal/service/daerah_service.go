@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"os"
 	"time"
@@ -53,10 +54,23 @@ func NewDaerahService(repo *repository.DaerahRepository) *DaerahService {
 	}
 }
 
+// pageOffset returns (halaman-1)*limit, capped at math.MaxInt instead of
+// overflowing into a negative OFFSET for very large page numbers.
+func pageOffset(limit, halaman int) int {
+	if halaman-1 > math.MaxInt/limit {
+		return math.MaxInt
+	}
+	return (halaman - 1) * limit
+}
+
 // buildResponse wraps the pagination calculation, empty data checks, and response formatting generically
 func buildResponse[T any](data []T, limit, halaman, totalItem int, pagination bool) (any, error) {
 	// Check the page bound first: a page past the end returns no rows.
-	totalHalaman := (totalItem + limit - 1) / limit
+	// Written this way so a huge limit cannot overflow.
+	totalHalaman := 0
+	if totalItem > 0 {
+		totalHalaman = (totalItem-1)/limit + 1
+	}
 	if pagination && halaman > totalHalaman && totalHalaman > 0 {
 		return nil, ErrPageExceeded{MaxPage: totalHalaman}
 	}
@@ -150,7 +164,7 @@ func (s *DaerahService) withCache(ctx context.Context, cacheKey string, fetcher 
 func (s *DaerahService) GetProvinsi(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
 	cacheKey := fmt.Sprintf("provinsi_%d_%d_%v", limit, halaman, pagination)
 	return s.withCache(ctx, cacheKey, func() (any, error) {
-		offset := (halaman - 1) * limit
+		offset := pageOffset(limit, halaman)
 		data, totalItem, err := s.repo.GetProvinsi(ctx, limit, offset, pagination)
 		if err != nil {
 			return nil, err
@@ -167,7 +181,7 @@ func (s *DaerahService) GetProvinsi(ctx context.Context, limit, halaman int, pag
 func (s *DaerahService) GetKabKota(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
 	cacheKey := fmt.Sprintf("kabkota_%d_%d_%v", limit, halaman, pagination)
 	return s.withCache(ctx, cacheKey, func() (any, error) {
-		offset := (halaman - 1) * limit
+		offset := pageOffset(limit, halaman)
 		data, totalItem, err := s.repo.GetKabKota(ctx, limit, offset, pagination)
 		if err != nil {
 			return nil, err
@@ -184,7 +198,7 @@ func (s *DaerahService) GetKabKota(ctx context.Context, limit, halaman int, pagi
 func (s *DaerahService) GetKabKotaByProvinsi(ctx context.Context, kodeProv string, limit, halaman int, pagination bool) (any, error) {
 	cacheKey := fmt.Sprintf("kabkota_prov_%s_%d_%d_%v", kodeProv, limit, halaman, pagination)
 	return s.withCache(ctx, cacheKey, func() (any, error) {
-		offset := (halaman - 1) * limit
+		offset := pageOffset(limit, halaman)
 		data, totalItem, err := s.repo.GetKabKotaByProvinsi(ctx, kodeProv, limit, offset, pagination)
 		if err != nil {
 			return nil, err
@@ -201,7 +215,7 @@ func (s *DaerahService) GetKabKotaByProvinsi(ctx context.Context, kodeProv strin
 func (s *DaerahService) GetKecamatan(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
 	cacheKey := fmt.Sprintf("kecamatan_%d_%d_%v", limit, halaman, pagination)
 	return s.withCache(ctx, cacheKey, func() (any, error) {
-		offset := (halaman - 1) * limit
+		offset := pageOffset(limit, halaman)
 		data, totalItem, err := s.repo.GetKecamatan(ctx, limit, offset, pagination)
 		if err != nil {
 			return nil, err
@@ -218,7 +232,7 @@ func (s *DaerahService) GetKecamatan(ctx context.Context, limit, halaman int, pa
 func (s *DaerahService) GetKecamatanByKabKota(ctx context.Context, kodeKab string, limit, halaman int, pagination bool) (any, error) {
 	cacheKey := fmt.Sprintf("kecamatan_kab_%s_%d_%d_%v", kodeKab, limit, halaman, pagination)
 	return s.withCache(ctx, cacheKey, func() (any, error) {
-		offset := (halaman - 1) * limit
+		offset := pageOffset(limit, halaman)
 		data, totalItem, err := s.repo.GetKecamatanByKabKota(ctx, kodeKab, limit, offset, pagination)
 		if err != nil {
 			return nil, err
@@ -235,7 +249,7 @@ func (s *DaerahService) GetKecamatanByKabKota(ctx context.Context, kodeKab strin
 func (s *DaerahService) GetDesaKelurahan(ctx context.Context, limit, halaman int, pagination bool) (any, error) {
 	cacheKey := fmt.Sprintf("desa_%d_%d_%v", limit, halaman, pagination)
 	return s.withCache(ctx, cacheKey, func() (any, error) {
-		offset := (halaman - 1) * limit
+		offset := pageOffset(limit, halaman)
 		data, totalItem, err := s.repo.GetDesaKelurahan(ctx, limit, offset, pagination)
 		if err != nil {
 			return nil, err
@@ -252,7 +266,7 @@ func (s *DaerahService) GetDesaKelurahan(ctx context.Context, limit, halaman int
 func (s *DaerahService) GetDesaKelurahanByKecamatan(ctx context.Context, kodeKec string, limit, halaman int, pagination bool) (any, error) {
 	cacheKey := fmt.Sprintf("desa_kec_%s_%d_%d_%v", kodeKec, limit, halaman, pagination)
 	return s.withCache(ctx, cacheKey, func() (any, error) {
-		offset := (halaman - 1) * limit
+		offset := pageOffset(limit, halaman)
 		data, totalItem, err := s.repo.GetDesaKelurahanByKecamatan(ctx, kodeKec, limit, offset, pagination)
 		if err != nil {
 			return nil, err
