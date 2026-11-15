@@ -3,7 +3,9 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"nusantarakita/internal/model"
@@ -194,4 +196,224 @@ func (r *DaerahRepository) GetDesaKelurahanByKecamatan(ctx context.Context, kode
 		err := rows.Scan(&d.Kode, &d.Nama, &d.Lat, &d.Lng, &d.KodeKecamatan, &d.KodePos)
 		return d, err
 	})
+}
+
+// ---------------- Detail By Kode ----------------
+
+func (r *DaerahRepository) GetProvinsiByKode(ctx context.Context, kode string) (*model.Provinsi, error) {
+	query := "SELECT kode, nama, lat, lng FROM nk_provinsi WHERE kode = $1"
+	var p model.Provinsi
+	err := r.db.QueryRowContext(ctx, query, kode).Scan(&p.Kode, &p.Nama, &p.Lat, &p.Lng)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &p, nil
+}
+
+func (r *DaerahRepository) GetKabKotaByKode(ctx context.Context, kode string) (*model.KabupatenKota, error) {
+	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode = $1"
+	var k model.KabupatenKota
+	err := r.db.QueryRowContext(ctx, query, kode).Scan(&k.Kode, &k.Nama, &k.Lat, &k.Lng, &k.KodeProvinsi)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &k, nil
+}
+
+func (r *DaerahRepository) GetKecamatanByKode(ctx context.Context, kode string) (*model.Kecamatan, error) {
+	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan WHERE kode = $1"
+	var k model.Kecamatan
+	err := r.db.QueryRowContext(ctx, query, kode).Scan(&k.Kode, &k.Nama, &k.Lat, &k.Lng, &k.KodeKabupatenKota)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &k, nil
+}
+
+func (r *DaerahRepository) GetDesaKelurahanByKode(ctx context.Context, kode string) (*model.DesaKelurahan, error) {
+	query := "SELECT kode, nama, lat, lng, kode_kecamatan, COALESCE(kode_pos, '') FROM nk_desa_kelurahan WHERE kode = $1"
+	var d model.DesaKelurahan
+	err := r.db.QueryRowContext(ctx, query, kode).Scan(&d.Kode, &d.Nama, &d.Lat, &d.Lng, &d.KodeKecamatan, &d.KodePos)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &d, nil
+}
+
+// ---------------- Search / Autocomplete ----------------
+
+func (r *DaerahRepository) SearchWilayah(ctx context.Context, q, tipe string, limit, offset int, pagination bool) ([]model.SearchItem, int, error) {
+	pattern := "%" + q + "%"
+	exact := q
+
+	var query string
+	var countQuery string
+	var args []interface{}
+
+	switch tipe {
+	case "provinsi":
+		query = `SELECT kode, nama, 'provinsi' AS tipe, lat, lng, '' AS kode_pos, nama AS hierarki
+			FROM nk_provinsi
+			WHERE nama ILIKE $1
+			ORDER BY CASE WHEN LOWER(nama) = LOWER($2) THEN 1 WHEN LOWER(nama) LIKE LOWER($2) || '%' THEN 2 ELSE 3 END, nama ASC`
+		countQuery = "SELECT COUNT(*) FROM nk_provinsi WHERE nama ILIKE $1"
+		args = []interface{}{pattern, exact}
+
+	case "kab-kota", "kabupaten_kota":
+		query = `SELECT k.kode, k.nama, 'kabupaten_kota' AS tipe, k.lat, k.lng, '' AS kode_pos,
+				k.nama || ', ' || p.nama AS hierarki
+			FROM nk_kabupaten_kota k
+			JOIN nk_provinsi p ON k.kode_provinsi = p.kode
+			WHERE k.nama ILIKE $1
+			ORDER BY CASE WHEN LOWER(k.nama) = LOWER($2) THEN 1 WHEN LOWER(k.nama) LIKE LOWER($2) || '%' THEN 2 ELSE 3 END, k.nama ASC`
+		countQuery = "SELECT COUNT(*) FROM nk_kabupaten_kota WHERE nama ILIKE $1"
+		args = []interface{}{pattern, exact}
+
+	case "kecamatan":
+		query = `SELECT kc.kode, kc.nama, 'kecamatan' AS tipe, kc.lat, kc.lng, '' AS kode_pos,
+				kc.nama || ', ' || kk.nama || ', ' || p.nama AS hierarki
+			FROM nk_kecamatan kc
+			JOIN nk_kabupaten_kota kk ON kc.kode_kabupaten_kota = kk.kode
+			JOIN nk_provinsi p ON kk.kode_provinsi = p.kode
+			WHERE kc.nama ILIKE $1
+			ORDER BY CASE WHEN LOWER(kc.nama) = LOWER($2) THEN 1 WHEN LOWER(kc.nama) LIKE LOWER($2) || '%' THEN 2 ELSE 3 END, kc.nama ASC`
+		countQuery = "SELECT COUNT(*) FROM nk_kecamatan WHERE nama ILIKE $1"
+		args = []interface{}{pattern, exact}
+
+	case "desa-kel", "desa_kelurahan":
+		query = `SELECT d.kode, d.nama, 'desa_kelurahan' AS tipe, d.lat, d.lng, COALESCE(d.kode_pos, '') AS kode_pos,
+				d.nama || ', ' || kc.nama || ', ' || kk.nama || ', ' || p.nama AS hierarki
+			FROM nk_desa_kelurahan d
+			JOIN nk_kecamatan kc ON d.kode_kecamatan = kc.kode
+			JOIN nk_kabupaten_kota kk ON kc.kode_kabupaten_kota = kk.kode
+			JOIN nk_provinsi p ON kk.kode_provinsi = p.kode
+			WHERE d.nama ILIKE $1 OR d.kode_pos = $2
+			ORDER BY CASE WHEN LOWER(d.nama) = LOWER($3) THEN 1 WHEN LOWER(d.nama) LIKE LOWER($3) || '%' THEN 2 ELSE 3 END, d.nama ASC`
+		countQuery = "SELECT COUNT(*) FROM nk_desa_kelurahan WHERE nama ILIKE $1 OR kode_pos = $2"
+		args = []interface{}{pattern, exact, exact}
+
+	default: // All types
+		query = `SELECT kode, nama, tipe, lat, lng, kode_pos, hierarki FROM (
+				SELECT kode, nama, 'provinsi' AS tipe, lat, lng, '' AS kode_pos, nama AS hierarki FROM nk_provinsi WHERE nama ILIKE $1
+				UNION ALL
+				SELECT k.kode, k.nama, 'kabupaten_kota' AS tipe, k.lat, k.lng, '' AS kode_pos, k.nama || ', ' || p.nama AS hierarki FROM nk_kabupaten_kota k JOIN nk_provinsi p ON k.kode_provinsi = p.kode WHERE k.nama ILIKE $1
+				UNION ALL
+				SELECT kc.kode, kc.nama, 'kecamatan' AS tipe, kc.lat, kc.lng, '' AS kode_pos, kc.nama || ', ' || kk.nama || ', ' || p.nama AS hierarki FROM nk_kecamatan kc JOIN nk_kabupaten_kota kk ON kc.kode_kabupaten_kota = kk.kode JOIN nk_provinsi p ON kk.kode_provinsi = p.kode WHERE kc.nama ILIKE $1
+				UNION ALL
+				SELECT d.kode, d.nama, 'desa_kelurahan' AS tipe, d.lat, d.lng, COALESCE(d.kode_pos, '') AS kode_pos, d.nama || ', ' || kc.nama || ', ' || kk.nama || ', ' || p.nama AS hierarki FROM nk_desa_kelurahan d JOIN nk_kecamatan kc ON d.kode_kecamatan = kc.kode JOIN nk_kabupaten_kota kk ON kc.kode_kabupaten_kota = kk.kode JOIN nk_provinsi p ON kk.kode_provinsi = p.kode WHERE d.nama ILIKE $1 OR d.kode_pos = $2
+			) AS combined
+			ORDER BY
+				CASE WHEN LOWER(nama) = LOWER($3) THEN 1 WHEN LOWER(nama) LIKE LOWER($3) || '%' THEN 2 ELSE 3 END,
+				CASE tipe WHEN 'provinsi' THEN 1 WHEN 'kabupaten_kota' THEN 2 WHEN 'kecamatan' THEN 3 ELSE 4 END,
+				nama ASC`
+		countQuery = `SELECT (
+				(SELECT COUNT(*) FROM nk_provinsi WHERE nama ILIKE $1) +
+				(SELECT COUNT(*) FROM nk_kabupaten_kota WHERE nama ILIKE $1) +
+				(SELECT COUNT(*) FROM nk_kecamatan WHERE nama ILIKE $1) +
+				(SELECT COUNT(*) FROM nk_desa_kelurahan WHERE nama ILIKE $1 OR kode_pos = $2)
+			)`
+		args = []interface{}{pattern, exact, exact}
+	}
+
+	return fetchPaginatedData(ctx, r, query, countQuery, args, limit, offset, pagination, func(rows *sql.Rows) (model.SearchItem, error) {
+		var item model.SearchItem
+		err := rows.Scan(&item.Kode, &item.Nama, &item.Tipe, &item.Lat, &item.Lng, &item.KodePos, &item.Hierarki)
+		return item, err
+	})
+}
+
+// ---------------- Reverse Geocoding ----------------
+
+func (r *DaerahRepository) ReverseGeocode(ctx context.Context, lat, lng float64) (*model.ReverseGeocodeResult, error) {
+	// Query with bounding box (+-0.5 degrees, approx 55 km)
+	boxQuery := `SELECT 
+			p.kode, p.nama,
+			kk.kode, kk.nama,
+			kc.kode, kc.nama,
+			d.kode, d.nama, COALESCE(d.kode_pos, ''),
+			d.jarak_meter
+		FROM (
+			SELECT kode, nama, kode_kecamatan, kode_pos,
+				   6371000 * 2 * ASIN(
+					   SQRT(
+						   POWER(SIN(RADIANS(lat - $1) / 2), 2) +
+						   COS(RADIANS($1)) * COS(RADIANS(lat)) *
+						   POWER(SIN(RADIANS(lng - $2) / 2), 2)
+					   )
+				   ) AS jarak_meter
+			FROM nk_desa_kelurahan
+			WHERE lat BETWEEN $1 - 0.5 AND $1 + 0.5
+			  AND lng BETWEEN $2 - 0.5 AND $2 + 0.5
+			ORDER BY jarak_meter ASC
+			LIMIT 1
+		) d
+		JOIN nk_kecamatan kc ON d.kode_kecamatan = kc.kode
+		JOIN nk_kabupaten_kota kk ON kc.kode_kabupaten_kota = kk.kode
+		JOIN nk_provinsi p ON kk.kode_provinsi = p.kode`
+
+	var res model.ReverseGeocodeResult
+	err := r.db.QueryRowContext(ctx, boxQuery, lat, lng).Scan(
+		&res.Provinsi.Kode, &res.Provinsi.Nama,
+		&res.KabupatenKota.Kode, &res.KabupatenKota.Nama,
+		&res.Kecamatan.Kode, &res.Kecamatan.Nama,
+		&res.DesaKelurahan.Kode, &res.DesaKelurahan.Nama, &res.DesaKelurahan.KodePos,
+		&res.JarakMeter,
+	)
+
+	// If no rows found within bounding box, fallback to global nearest search
+	if errors.Is(err, sql.ErrNoRows) {
+		fallbackQuery := `SELECT 
+				p.kode, p.nama,
+				kk.kode, kk.nama,
+				kc.kode, kc.nama,
+				d.kode, d.nama, COALESCE(d.kode_pos, ''),
+				d.jarak_meter
+			FROM (
+				SELECT kode, nama, kode_kecamatan, kode_pos,
+					   6371000 * 2 * ASIN(
+						   SQRT(
+							   POWER(SIN(RADIANS(lat - $1) / 2), 2) +
+							   COS(RADIANS($1)) * COS(RADIANS(lat)) *
+							   POWER(SIN(RADIANS(lng - $2) / 2), 2)
+						   )
+					   ) AS jarak_meter
+				FROM nk_desa_kelurahan
+				ORDER BY (POWER(lat - $1, 2) + POWER(lng - $2, 2)) ASC
+				LIMIT 1
+			) d
+			JOIN nk_kecamatan kc ON d.kode_kecamatan = kc.kode
+			JOIN nk_kabupaten_kota kk ON kc.kode_kabupaten_kota = kk.kode
+			JOIN nk_provinsi p ON kk.kode_provinsi = p.kode`
+
+		err = r.db.QueryRowContext(ctx, fallbackQuery, lat, lng).Scan(
+			&res.Provinsi.Kode, &res.Provinsi.Nama,
+			&res.KabupatenKota.Kode, &res.KabupatenKota.Nama,
+			&res.Kecamatan.Kode, &res.Kecamatan.Nama,
+			&res.DesaKelurahan.Kode, &res.DesaKelurahan.Nama, &res.DesaKelurahan.KodePos,
+			&res.JarakMeter,
+		)
+	}
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	res.Koordinat = model.CoordinateInfo{Lat: lat, Lng: lng}
+	res.JarakMeter = math.Round(res.JarakMeter*100) / 100
+	return &res, nil
 }

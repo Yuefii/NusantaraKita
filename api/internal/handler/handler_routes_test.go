@@ -114,3 +114,183 @@ func TestHandleProvinsi(t *testing.T) {
 		}
 	})
 }
+
+func TestHandleDetailRoutes(t *testing.T) {
+	t.Run("GET /v2/provinsi/{kode} returns single JSON", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		if err != nil {
+			t.Fatalf("failed to open sqlmock: %v", err)
+		}
+		defer db.Close()
+
+		repo := repository.NewDaerahRepository(db)
+		svc := service.NewDaerahService(repo)
+		h := New(svc)
+
+		mux := http.NewServeMux()
+		h.RegisterRoutes(mux)
+
+		rows := sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}).
+			AddRow("32", "JAWA BARAT", -6.920, 107.604)
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi WHERE kode = \\$1$").
+			WithArgs("32").
+			WillReturnRows(rows)
+
+		req := httptest.NewRequest(http.MethodGet, "/v2/provinsi/32", nil)
+		w := httptest.NewRecorder()
+		mux.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected status 200, got %d", w.Code)
+		}
+
+		var res map[string]interface{}
+		if err := json.Unmarshal(w.Body.Bytes(), &res); err != nil {
+			t.Fatalf("failed to unmarshal JSON: %v", err)
+		}
+
+		data, ok := res["data"].(map[string]interface{})
+		if !ok || data["nama"] != "JAWA BARAT" {
+			t.Errorf("unexpected response body: %v", res)
+		}
+	})
+
+	t.Run("GET /v2/provinsi/{kode} 404 when not found", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		if err != nil {
+			t.Fatalf("failed to open sqlmock: %v", err)
+		}
+		defer db.Close()
+
+		repo := repository.NewDaerahRepository(db)
+		svc := service.NewDaerahService(repo)
+		h := New(svc)
+
+		mux := http.NewServeMux()
+		h.RegisterRoutes(mux)
+
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi WHERE kode = \\$1$").
+			WithArgs("99").
+			WillReturnRows(sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}))
+
+		req := httptest.NewRequest(http.MethodGet, "/v2/provinsi/99", nil)
+		w := httptest.NewRecorder()
+		mux.ServeHTTP(w, req)
+
+		if w.Code != http.StatusNotFound {
+			t.Errorf("expected status 404, got %d", w.Code)
+		}
+	})
+}
+
+func TestHandleSearchRoute(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to open sqlmock: %v", err)
+	}
+	defer db.Close()
+
+	repo := repository.NewDaerahRepository(db)
+	svc := service.NewDaerahService(repo)
+	h := New(svc)
+
+	mux := http.NewServeMux()
+	h.RegisterRoutes(mux)
+
+	t.Run("GET /v2/search with short query returns 400", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/v2/search?q=a", nil)
+		w := httptest.NewRecorder()
+		mux.ServeHTTP(w, req)
+
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("expected status 400, got %d", w.Code)
+		}
+	})
+
+	t.Run("GET /v2/search with valid query returns results", func(t *testing.T) {
+		rows := sqlmock.NewRows([]string{"kode", "nama", "tipe", "lat", "lng", "kode_pos", "hierarki"}).
+			AddRow("32", "JAWA BARAT", "provinsi", -6.920, 107.604, "", "JAWA BARAT")
+
+		mock.ExpectQuery("SELECT kode, nama, 'provinsi' AS tipe").
+			WithArgs("%jawa%", "jawa").
+			WillReturnRows(rows)
+
+		req := httptest.NewRequest(http.MethodGet, "/v2/search?q=jawa&tipe=provinsi&pagination=false", nil)
+		w := httptest.NewRecorder()
+		mux.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected status 200, got %d: %s", w.Code, w.Body.String())
+		}
+	})
+}
+
+func TestHandleReverseGeocodeRoute(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to open sqlmock: %v", err)
+	}
+	defer db.Close()
+
+	repo := repository.NewDaerahRepository(db)
+	svc := service.NewDaerahService(repo)
+	h := New(svc)
+
+	mux := http.NewServeMux()
+	h.RegisterRoutes(mux)
+
+	t.Run("GET /v2/reverse with missing lat/lng returns 400", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/v2/reverse?lat=12", nil)
+		w := httptest.NewRecorder()
+		mux.ServeHTTP(w, req)
+
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("expected status 400, got %d", w.Code)
+		}
+	})
+
+	t.Run("GET /v2/reverse outside Indonesia returns 404", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/v2/reverse?lat=51.5074&lng=-0.1278", nil)
+		w := httptest.NewRecorder()
+		mux.ServeHTTP(w, req)
+
+		if w.Code != http.StatusNotFound {
+			t.Errorf("expected status 404, got %d", w.Code)
+		}
+	})
+
+	t.Run("GET /v2/reverse valid coordinates returns 200", func(t *testing.T) {
+		rows := sqlmock.NewRows([]string{
+			"p_kode", "p_nama",
+			"kk_kode", "kk_nama",
+			"kc_kode", "kc_nama",
+			"d_kode", "d_nama", "d_kode_pos",
+			"jarak_meter",
+		}).AddRow("32", "JAWA BARAT", "32.73", "KOTA BANDUNG", "32.73.01", "SUKASARI", "32.73.01.1001", "SARIJADI", "40151", 100.5)
+
+		mock.ExpectQuery("FROM nk_desa_kelurahan").
+			WithArgs(-6.874, 107.589).
+			WillReturnRows(rows)
+
+		req := httptest.NewRequest(http.MethodGet, "/v2/reverse?lat=-6.874&lng=107.589", nil)
+		w := httptest.NewRecorder()
+		mux.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected status 200, got %d: %s", w.Code, w.Body.String())
+		}
+
+		var res map[string]interface{}
+		if err := json.Unmarshal(w.Body.Bytes(), &res); err != nil {
+			t.Fatalf("failed to unmarshal JSON: %v", err)
+		}
+
+		data, ok := res["data"].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected data object: %v", res)
+		}
+		if data["jarak_meter"].(float64) != 100.5 {
+			t.Errorf("expected 100.5, got %v", data["jarak_meter"])
+		}
+	})
+}

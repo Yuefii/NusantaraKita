@@ -1,11 +1,14 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"math"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"nusantarakita/internal/model"
+	"nusantarakita/internal/repository"
 )
 
 func TestBuildResponse(t *testing.T) {
@@ -108,6 +111,89 @@ func TestBuildResponseHugeLimit(t *testing.T) {
 		var pageErr ErrPageExceeded
 		if !errors.As(err, &pageErr) || pageErr.MaxPage != 1 {
 			t.Fatalf("expected ErrPageExceeded{MaxPage: 1}, got %v", err)
+		}
+	})
+}
+
+func TestSearchServiceValidation(t *testing.T) {
+	db, _, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to open sqlmock: %v", err)
+	}
+	defer db.Close()
+
+	repo := repository.NewDaerahRepository(db)
+	svc := NewDaerahService(repo)
+
+	t.Run("Query less than 2 characters returns ErrQueryTooShort", func(t *testing.T) {
+		_, err := svc.SearchWilayah(context.Background(), "a", "", 10, 1, true)
+		if !errors.Is(err, ErrQueryTooShort) {
+			t.Errorf("expected ErrQueryTooShort, got %v", err)
+		}
+	})
+}
+
+func TestReverseGeocodeServiceValidation(t *testing.T) {
+	db, _, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to open sqlmock: %v", err)
+	}
+	defer db.Close()
+
+	repo := repository.NewDaerahRepository(db)
+	svc := NewDaerahService(repo)
+
+	t.Run("Coordinates clearly outside Indonesia returns ErrOutsideIndonesia", func(t *testing.T) {
+		// New York coordinates
+		_, err := svc.ReverseGeocode(context.Background(), 40.7128, -74.0060)
+		if !errors.Is(err, ErrOutsideIndonesia) {
+			t.Errorf("expected ErrOutsideIndonesia, got %v", err)
+		}
+	})
+}
+
+func TestDetailService(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to open sqlmock: %v", err)
+	}
+	defer db.Close()
+
+	repo := repository.NewDaerahRepository(db)
+	svc := NewDaerahService(repo)
+
+	t.Run("GetProvinsiByKode not found returns ErrNotFound", func(t *testing.T) {
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi WHERE kode = \\$1$").
+			WithArgs("99").
+			WillReturnRows(sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}))
+
+		_, err := svc.GetProvinsiByKode(context.Background(), "99")
+		if !errors.Is(err, ErrNotFound) {
+			t.Errorf("expected ErrNotFound, got %v", err)
+		}
+	})
+
+	t.Run("GetProvinsiByKode found returns SingleResponse with GeojsonURL", func(t *testing.T) {
+		rows := sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}).
+			AddRow("32", "JAWA BARAT", -6.920, 107.604)
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi WHERE kode = \\$1$").
+			WithArgs("32").
+			WillReturnRows(rows)
+
+		res, err := svc.GetProvinsiByKode(context.Background(), "32")
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		singleRes, ok := res.(model.SingleResponse[*model.Provinsi])
+		if !ok {
+			t.Fatalf("expected model.SingleResponse[*model.Provinsi], got %T", res)
+		}
+		if singleRes.Data.Nama != "JAWA BARAT" {
+			t.Errorf("expected JAWA BARAT, got %s", singleRes.Data.Nama)
+		}
+		if singleRes.Data.GeojsonURL == "" {
+			t.Errorf("expected non-empty GeojsonURL")
 		}
 	})
 }

@@ -18,7 +18,10 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("tidak ditemukan data")
+	ErrNotFound          = errors.New("tidak ditemukan data")
+	ErrBadRequest        = errors.New("parameter tidak valid")
+	ErrQueryTooShort     = errors.New("parameter 'q' minimal 2 karakter")
+	ErrOutsideIndonesia = errors.New("koordinat berada di luar wilayah Indonesia")
 )
 
 type ErrPageExceeded struct {
@@ -277,5 +280,126 @@ func (s *DaerahService) GetDesaKelurahanByKecamatan(ctx context.Context, kodeKec
 		}
 
 		return buildResponse(data, limit, halaman, totalItem, pagination)
+	})
+}
+
+// ---------------- Detail By Kode ----------------
+
+func (s *DaerahService) GetProvinsiByKode(ctx context.Context, kode string) (any, error) {
+	cacheKey := fmt.Sprintf("provinsi_detail_%s", kode)
+	return s.withCache(ctx, cacheKey, func() (any, error) {
+		data, err := s.repo.GetProvinsiByKode(ctx, kode)
+		if err != nil {
+			return nil, err
+		}
+		if data == nil {
+			return nil, ErrNotFound
+		}
+		data.GeojsonURL = fmt.Sprintf("%s/provinsi/%s.geojson", s.cdnBaseURL, data.Kode)
+		return model.SingleResponse[*model.Provinsi]{Data: data}, nil
+	})
+}
+
+func (s *DaerahService) GetKabKotaByKode(ctx context.Context, kode string) (any, error) {
+	cacheKey := fmt.Sprintf("kabkota_detail_%s", kode)
+	return s.withCache(ctx, cacheKey, func() (any, error) {
+		data, err := s.repo.GetKabKotaByKode(ctx, kode)
+		if err != nil {
+			return nil, err
+		}
+		if data == nil {
+			return nil, ErrNotFound
+		}
+		data.GeojsonURL = fmt.Sprintf("%s/kabupaten_kota/%s.geojson", s.cdnBaseURL, data.Kode)
+		return model.SingleResponse[*model.KabupatenKota]{Data: data}, nil
+	})
+}
+
+func (s *DaerahService) GetKecamatanByKode(ctx context.Context, kode string) (any, error) {
+	cacheKey := fmt.Sprintf("kecamatan_detail_%s", kode)
+	return s.withCache(ctx, cacheKey, func() (any, error) {
+		data, err := s.repo.GetKecamatanByKode(ctx, kode)
+		if err != nil {
+			return nil, err
+		}
+		if data == nil {
+			return nil, ErrNotFound
+		}
+		data.GeojsonURL = fmt.Sprintf("%s/kecamatan/%s.geojson", s.cdnBaseURL, data.Kode)
+		return model.SingleResponse[*model.Kecamatan]{Data: data}, nil
+	})
+}
+
+func (s *DaerahService) GetDesaKelurahanByKode(ctx context.Context, kode string) (any, error) {
+	cacheKey := fmt.Sprintf("desa_detail_%s", kode)
+	return s.withCache(ctx, cacheKey, func() (any, error) {
+		data, err := s.repo.GetDesaKelurahanByKode(ctx, kode)
+		if err != nil {
+			return nil, err
+		}
+		if data == nil {
+			return nil, ErrNotFound
+		}
+		data.GeojsonURL = fmt.Sprintf("%s/desa_kelurahan/%s.geojson", s.cdnBaseURL, data.Kode)
+		return model.SingleResponse[*model.DesaKelurahan]{Data: data}, nil
+	})
+}
+
+// ---------------- Search / Autocomplete ----------------
+
+func (s *DaerahService) SearchWilayah(ctx context.Context, q, tipe string, limit, halaman int, pagination bool) (any, error) {
+	if len(q) < 2 {
+		return nil, ErrQueryTooShort
+	}
+
+	cacheKey := fmt.Sprintf("search_%s_%s_%d_%d_%v", q, tipe, limit, halaman, pagination)
+	return s.withCache(ctx, cacheKey, func() (any, error) {
+		offset := pageOffset(limit, halaman)
+		data, totalItem, err := s.repo.SearchWilayah(ctx, q, tipe, limit, offset, pagination)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := range data {
+			switch data[i].Tipe {
+			case "provinsi":
+				data[i].GeojsonURL = fmt.Sprintf("%s/provinsi/%s.geojson", s.cdnBaseURL, data[i].Kode)
+			case "kabupaten_kota":
+				data[i].GeojsonURL = fmt.Sprintf("%s/kabupaten_kota/%s.geojson", s.cdnBaseURL, data[i].Kode)
+			case "kecamatan":
+				data[i].GeojsonURL = fmt.Sprintf("%s/kecamatan/%s.geojson", s.cdnBaseURL, data[i].Kode)
+			case "desa_kelurahan":
+				data[i].GeojsonURL = fmt.Sprintf("%s/desa_kelurahan/%s.geojson", s.cdnBaseURL, data[i].Kode)
+			}
+		}
+
+		return buildResponse(data, limit, halaman, totalItem, pagination)
+	})
+}
+
+// ---------------- Reverse Geocoding ----------------
+
+func (s *DaerahService) ReverseGeocode(ctx context.Context, lat, lng float64) (any, error) {
+	// Quick boundary check for Indonesian coordinates
+	if lat < -15.0 || lat > 10.0 || lng < 90.0 || lng > 145.0 {
+		return nil, ErrOutsideIndonesia
+	}
+
+	cacheKey := fmt.Sprintf("reverse_%.4f_%.4f", lat, lng)
+	return s.withCache(ctx, cacheKey, func() (any, error) {
+		res, err := s.repo.ReverseGeocode(ctx, lat, lng)
+		if err != nil {
+			return nil, err
+		}
+		if res == nil || res.JarakMeter > 300000 {
+			return nil, ErrOutsideIndonesia
+		}
+
+		res.Provinsi.GeojsonURL = fmt.Sprintf("%s/provinsi/%s.geojson", s.cdnBaseURL, res.Provinsi.Kode)
+		res.KabupatenKota.GeojsonURL = fmt.Sprintf("%s/kabupaten_kota/%s.geojson", s.cdnBaseURL, res.KabupatenKota.Kode)
+		res.Kecamatan.GeojsonURL = fmt.Sprintf("%s/kecamatan/%s.geojson", s.cdnBaseURL, res.Kecamatan.Kode)
+		res.DesaKelurahan.GeojsonURL = fmt.Sprintf("%s/desa_kelurahan/%s.geojson", s.cdnBaseURL, res.DesaKelurahan.Kode)
+
+		return model.SingleResponse[*model.ReverseGeocodeResult]{Data: res}, nil
 	})
 }
