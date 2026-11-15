@@ -42,13 +42,30 @@ export const GetProvinsi = () => {
       </h1>
 
       <div className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold text-gray-600">
-          Endpoint API
-        </h2>
-        <EndpointUrl
-          method="GET"
-          url="https://api.nusantarakita.web.id/v2/provinsi"
-        />
+        <div className="mb-6">
+          <h2 className="mb-4 text-xl font-semibold text-gray-600">
+            Endpoint API (Semua Provinsi)
+          </h2>
+          <EndpointUrl
+            method="GET"
+            url="https://api.nusantarakita.web.id/v2/provinsi"
+          />
+        </div>
+
+        <div className="mb-6">
+          <h2 className="mb-4 text-xl font-semibold text-gray-600">
+            Endpoint API (Detail Provinsi by Kode)
+          </h2>
+          <EndpointUrl
+            method="GET"
+            url="https://api.nusantarakita.web.id/v2/provinsi/{kode}"
+          />
+          <span className="mt-1 block text-sm">
+            Ganti <code className="rounded bg-gray-200 px-1">{'{kode}'}</code>{' '}
+            dengan kode provinsi yang diinginkan (contoh:{' '}
+            <code className="rounded bg-gray-200 px-1">32</code> untuk Jawa Barat)
+          </span>
+        </div>
       </div>
 
       <div className="mb-10">

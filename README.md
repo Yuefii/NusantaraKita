@@ -21,13 +21,31 @@ URL:
 
 ENDPOINT:
 
-- `/v2/provinsi`
-- `/v2/kab-kota`
-- `/v2/kecamatan`
-- `/v2/desa-kel`
-- `/v2/{kode_provinsi}/kab-kota`
-- `/v2/{kode_kabupaten_kota}/kecamatan`
-- `/v2/{kode_kecamatan}/desa-kel`
+- **List Wilayah:**
+  - `/v2/provinsi`
+  - `/v2/kab-kota`
+  - `/v2/kecamatan`
+  - `/v2/desa-kel`
+
+- **Filter Berdasarkan Wilayah Induk:**
+  - `/v2/provinsi/{kode}/kab-kota` (atau `/v2/{kode_provinsi}/kab-kota`)
+  - `/v2/kab-kota/{kode}/kecamatan` (atau `/v2/{kode_kabupaten_kota}/kecamatan`)
+  - `/v2/kecamatan/{kode}/desa-kel` (atau `/v2/{kode_kecamatan}/desa-kel`)
+
+- **Detail Wilayah (Get by Kode):**
+  - `/v2/provinsi/{kode}`
+  - `/v2/kab-kota/{kode}`
+  - `/v2/kecamatan/{kode}`
+  - `/v2/desa-kel/{kode}`
+
+- **Pencarian / Autocomplete:**
+  - `/v2/search?q={keyword}&tipe={provinsi|kab-kota|kecamatan|desa-kel}&limit=10&halaman=1`
+
+- **Reverse Geocoding:**
+  - `/v2/reverse?lat={latitude}&lng={longitude}`
+
+- **System:**
+  - `/health`
 
 API ini sudah dihosting di domain sendiri. Namun jika kamu ingin menjalankannya di server sendiri, kamu tetap bisa melakukan self-hosting sesuai panduan instalasi di bawah.
 
@@ -35,10 +53,54 @@ API ini sudah dihosting di domain sendiri. Namun jika kamu ingin menjalankannya 
 
 API ini berisi seluruh data wilayah indonesia beserta lokasinya mulai dari:
 
-- Provinsi
-- Kabupaten/Kota
-- Kecamatan
-- Desa/Kelurahan
+- Provinsi (38 Provinsi)
+- Kabupaten/Kota (514 Kab/Kota)
+- Kecamatan (7.277 Kecamatan)
+- Desa/Kelurahan (82.978 Desa/Kelurahan)
+- **Search & Autocomplete:** Pencarian pintar nama wilayah dan kode pos dengan skor relevansi
+- **Detail by Kode:** Pengambilan 1 wilayah langsung berdasarkan kode unik
+- **Reverse Geocoding:** Konversi koordinat GPS (`lat`, `lng`) menjadi hierarki wilayah Indonesia terdekat
+- **GeoJSON Boundaries:** Batas wilayah geospasial untuk visualisasi peta
+
+## Contoh Penggunaan API
+
+### 1. Pencarian & Autocomplete
+```bash
+# Cari wilayah umum (Provinsi, Kab/Kota, Kecamatan, Desa)
+curl "https://api.nusantarakita.web.id/v2/search?q=bandung"
+
+# Filter berdasarkan jenis wilayah (tipe: provinsi | kab-kota | kecamatan | desa-kel)
+curl "https://api.nusantarakita.web.id/v2/search?q=bandung&tipe=kab-kota"
+
+# Cari berdasarkan 5 digit Kode Pos
+curl "https://api.nusantarakita.web.id/v2/search?q=40151"
+```
+
+### 2. Detail Wilayah Berdasarkan Kode
+```bash
+# Detail Provinsi
+curl "https://api.nusantarakita.web.id/v2/provinsi/32"
+
+# Detail Kabupaten/Kota
+curl "https://api.nusantarakita.web.id/v2/kab-kota/32.73"
+
+# Detail Kecamatan
+curl "https://api.nusantarakita.web.id/v2/kecamatan/32.73.01"
+
+# Detail Desa/Kelurahan
+curl "https://api.nusantarakita.web.id/v2/desa-kel/32.73.01.1001"
+```
+
+### 3. Reverse Geocoding (Koordinat GPS ke Wilayah)
+```bash
+# Mengembalikan Provinsi, Kab/Kota, Kecamatan, Desa/Kelurahan, Kode Pos, & Jarak dalam meter
+curl "https://api.nusantarakita.web.id/v2/reverse?lat=-6.874112&lng=107.589123"
+```
+
+### 4. Health Check
+```bash
+curl "https://api.nusantarakita.web.id/health"
+```
 
 ## Instalasi
 

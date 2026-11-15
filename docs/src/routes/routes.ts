@@ -10,6 +10,8 @@ import { KabupatenKota } from '@/pages/kabupaten-kota';
 import { Kecamatan } from '@/pages/kecamatan';
 import Overview from '@/pages/overview';
 import { Provinsi } from '@/pages/provinsi';
+import { ReverseGeocodingApiDoc } from '@/pages/reverse-geocoding';
+import { SearchApiDoc } from '@/pages/search';
 import { createBrowserRouter } from 'react-router';
 
 export const routers = createBrowserRouter([
@@ -28,6 +30,8 @@ export const routers = createBrowserRouter([
           { path: 'get-kabupaten-kota', Component: GetKabupatenKota },
           { path: 'get-kecamatan', Component: GetKecamatan },
           { path: 'get-desa-kelurahan', Component: GetDesaKelurahan },
+          { path: 'search', Component: SearchApiDoc },
+          { path: 'reverse-geocoding', Component: ReverseGeocodingApiDoc },
         ],
       },
       {

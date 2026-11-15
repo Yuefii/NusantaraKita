@@ -52,7 +52,51 @@ type ApiResponse<T> = {
   data: T[];
 };
 
+type SingleApiResponse<T> = {
+  data: T;
+};
+
+type SearchItemApi = {
+  kode: string;
+  nama: string;
+  tipe: 'provinsi' | 'kabupaten_kota' | 'kecamatan' | 'desa_kelurahan';
+  lat: number;
+  lng: number;
+  kode_pos?: string;
+  hierarki?: string;
+  geojson_url: string;
+};
+
+type RegionInfoApi = {
+  kode: string;
+  nama: string;
+  geojson_url?: string;
+};
+
+type DesaKelurahanInfoApi = {
+  kode: string;
+  nama: string;
+  kode_pos?: string;
+  geojson_url?: string;
+};
+
+type CoordinateInfoApi = {
+  lat: number;
+  lng: number;
+};
+
+type ReverseGeocodeApi = {
+  provinsi: RegionInfoApi;
+  kabupaten_kota: RegionInfoApi;
+  kecamatan: RegionInfoApi;
+  desa_kelurahan: DesaKelurahanInfoApi;
+  koordinat: CoordinateInfoApi;
+  jarak_meter: number;
+};
+
 type KabKotaApiRes = ApiResponse<KabKotaApi>;
 type KecamatanApiRes = ApiResponse<KecamatanApi>;
 type DesaKelApiRes = ApiResponse<DesaKelApi>;
 type ProvinsiApiRes = ApiResponse<ProvinsiApi>;
+type SearchApiRes = ApiResponse<SearchItemApi>;
+type ReverseGeocodeApiRes = SingleApiResponse<ReverseGeocodeApi>;
