@@ -66,6 +66,22 @@ export const GetKecamatan = () => {
             Ganti {'{'}kodeKabKota{'}'} dengan kode kabupaten/kota yang valid
           </span>
         </div>
+
+        <div className="mb-6">
+          <h2 className="mb-4 text-xl font-semibold text-gray-600">
+            Endpoint API (Detail Kecamatan by Kode)
+          </h2>
+          <EndpointUrl
+            method="GET"
+            url="https://api.nusantarakita.web.id/v2/kecamatan/{kode}"
+          />
+          <span className="mt-1 block text-sm">
+            Ganti <code className="rounded bg-gray-200 px-1">{'{kode}'}</code>{' '}
+            dengan kode kecamatan yang diinginkan (contoh:{' '}
+            <code className="rounded bg-gray-200 px-1">32.73.01</code> untuk
+            Sukasari)
+          </span>
+        </div>
       </div>
 
       <div className="mb-10">

@@ -42,6 +42,14 @@ const navMenus: NavMenuGroup[] = [
         title: 'GET Desa/Kelurahan',
         url: '/api-documentation/get-desa-kelurahan',
       },
+      {
+        title: 'Search / Autocomplete',
+        url: '/api-documentation/search',
+      },
+      {
+        title: 'Reverse Geocoding',
+        url: '/api-documentation/reverse-geocoding',
+      },
     ],
   },
   {
