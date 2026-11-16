@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -43,6 +44,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Connection pool configuration
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(10)
+	db.SetConnMaxLifetime(5 * time.Minute)
+	db.SetConnMaxIdleTime(2 * time.Minute)
+
 	// Initialize layers
 	repo := repository.NewDaerahRepository(db)
 	svc := service.NewDaerahService(repo)
@@ -50,6 +57,18 @@ func main() {
 
 	mux := http.NewServeMux()
 	h.RegisterRoutes(mux)
+
+	// Health check endpoint
+	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if err := db.PingContext(r.Context()); err != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			_ = json.NewEncoder(w).Encode(map[string]string{"status": "error", "database": "disconnected"})
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok", "database": "connected"})
+	})
 
 	// Simple CORS middleware
 	corsHandler := corsMiddleware(mux)
