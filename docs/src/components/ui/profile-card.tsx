@@ -15,8 +15,8 @@ export interface ProfileCardProps {
 
 const SocialIcon = ({ type, url }: SocialLink) => {
   const iconMap = {
-    github: <FaGithub size="24" />,
-    linkedin: <FaLinkedin size="24" />,
+    github: <FaGithub className="h-5 w-5" />,
+    linkedin: <FaLinkedin className="h-5 w-5" />,
   };
 
   return (
@@ -24,7 +24,8 @@ const SocialIcon = ({ type, url }: SocialLink) => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-gray-500 hover:text-gray-700"
+      className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-md p-2 transition-all"
+      aria-label={type}
     >
       {iconMap[type]}
     </a>
@@ -38,18 +39,26 @@ export const ProfileCard = ({
   socialLinks,
 }: ProfileCardProps) => {
   return (
-    <div className="flex flex-col items-center rounded-lg border border-gray-200 bg-white p-6 text-center shadow-md transition-shadow duration-300 hover:shadow-lg">
-      <Avatar className="mb-4 size-28 object-cover">
-        <AvatarImage
-          src={avatarUrl}
-          alt={name}
-        />
-        <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-      </Avatar>
-      <h4 className="text-xl font-semibold text-gray-800">{name}</h4>
-      <p className="text-gray-600">{role}</p>
+    <div className="group border-border/70 bg-card hover:border-primary/40 relative flex flex-col items-center rounded-lg border p-6 text-center shadow-xs transition-all duration-300 hover:shadow-md">
+      <div className="relative mb-4">
+        <Avatar className="ring-border/50 group-hover:ring-primary/40 size-24 object-cover ring-4 transition-all">
+          <AvatarImage
+            src={avatarUrl}
+            alt={name}
+          />
+          <AvatarFallback className="text-lg font-semibold">
+            {name.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+      <h4 className="text-foreground text-lg font-bold tracking-tight">
+        {name}
+      </h4>
+      <p className="text-muted-foreground mt-1 text-xs font-medium sm:text-sm">
+        {role}
+      </p>
       {socialLinks && socialLinks.length > 0 && (
-        <div className="mt-4 flex space-x-4">
+        <div className="border-border/60 mt-4 flex items-center gap-1 border-t pt-4">
           {socialLinks.map((link) => (
             <SocialIcon
               key={link.type}

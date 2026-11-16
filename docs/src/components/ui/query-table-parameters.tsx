@@ -2,18 +2,27 @@ import React from 'react';
 import type { TableProps } from './table';
 import Table from './table';
 
-interface TableWithTitle extends TableProps {
-  titleText: string;
+interface TableWithTitleProps extends TableProps {
+  titleText?: string;
+  description?: string;
 }
 
-const TableWithTitle: React.FC<TableWithTitle> = ({
+const TableWithTitle: React.FC<TableWithTitleProps> = ({
   columnHeaders,
   rowData,
   titleText = 'Query Parameters',
+  description,
 }) => {
   return (
-    <section className="py-4">
-      <h2 className="mb-4 text-2xl font-semibold text-gray-700">{titleText}</h2>
+    <section className="py-2">
+      <div className="mb-4">
+        <h3 className="text-foreground text-xl font-semibold tracking-tight">
+          {titleText}
+        </h3>
+        {description && (
+          <p className="text-muted-foreground mt-1 text-sm">{description}</p>
+        )}
+      </div>
       <Table
         columnHeaders={columnHeaders}
         rowData={rowData}

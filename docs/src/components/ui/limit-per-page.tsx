@@ -13,8 +13,10 @@ export default function LimitPerPage() {
   const { params, setParams } = useParams();
 
   return (
-    <div className="flex items-center">
-      <span className="mr-2">Tampilkan :</span>
+    <div className="flex items-center text-sm">
+      <span className="text-muted-foreground mr-2 font-medium">
+        Tampilkan :
+      </span>
       <Select
         value={params.limit.toString()}
         onValueChange={(value) => {
