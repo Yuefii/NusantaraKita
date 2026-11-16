@@ -8,8 +8,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import useParams from '@/hooks/use-params';
 import { useIsTablet } from '@/hooks/use-tablet';
 import { cn } from '@/lib/utils';
+import { MapPin } from 'lucide-react';
 
-// Komponen utama
 export const Provinsi = () => {
   const { params } = useParams();
   const { data, isError, isLoading, isSuccess, isPending } =
@@ -21,23 +21,34 @@ export const Provinsi = () => {
 
   return (
     <section
-      className={cn('max-w-5xl bg-white text-gray-800', {
-        'p-5': isSmallScreen,
-        'p-8': !isSmallScreen,
-      })}
+      className={cn(
+        'text-foreground mx-auto max-w-5xl space-y-8 transition-all',
+        {
+          'p-4 sm:p-6': isSmallScreen,
+          'p-8 lg:p-10': !isSmallScreen,
+        },
+      )}
     >
-      <h1 className="mb-10 text-3xl font-bold text-gray-700">
-        Data Wilayah - Provinsi
-      </h1>
+      {/* Header */}
+      <div className="space-y-3">
+        <div className="inline-flex items-center gap-2 rounded-md border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+          <MapPin className="h-3.5 w-3.5" />
+          <span>Data Explorer</span>
+        </div>
+        <h1 className="text-foreground text-3xl font-bold tracking-tight">
+          Data Wilayah - Provinsi
+        </h1>
+        <ProvinsiDescription />
+      </div>
 
-      <ProvinsiDescription />
-
-      <div className="mb-10 flex w-full justify-between">
+      {/* Controls Bar */}
+      <div className="border-border/80 bg-card flex flex-wrap items-center justify-between gap-4 rounded-lg border p-4 shadow-xs">
         <ResponseTypeSwitch />
         <LimitPerPage />
       </div>
 
-      <div className="mb-10 flex w-full flex-col justify-between gap-3">
+      {/* Data & Pagination */}
+      <div className="flex w-full flex-col justify-between gap-6">
         <ProvinsiDisplayData
           data={data}
           isError={isError}

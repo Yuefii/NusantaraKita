@@ -1,8 +1,8 @@
 import Code from '@/components/ui/code';
 import EndpointUrl from '@/components/ui/endpoint-url';
 import { Notes, type NotesProps } from '@/components/ui/notes';
-import TableWithTitle from '@/components/ui/query-table-parameters';
 import ResponseSuccess from '@/components/ui/response-success';
+import Table from '@/components/ui/table';
 import {
   errorHandlingTableRows,
   getDesaKelurahanExampleResponse,
@@ -13,202 +13,231 @@ import {
   queryTableHeaders,
   queryTableRows,
 } from '@/constant/get-provinsi.constant';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useIsTablet } from '@/hooks/use-tablet';
-import { cn } from '@/lib/utils';
+import { Home } from 'lucide-react';
 
 const notesItems: NotesProps['items'] = [
   <>
-    Jika <code className="rounded bg-gray-300 px-1">pagination=false</code>,
-    field <code className="rounded bg-gray-100 px-1">pagination</code> tidak
-    akan muncul di response
+    Jika <code>pagination=false</code>, field <code>pagination</code> tidak akan
+    muncul di response.
   </>,
-  'Parameter dapat digabungkan sesuai kebutuhan',
-  'Untuk endpoint berdasarkan Kecamatan, pastikan kode Kecamatan valid',
+  'Parameter query dapat digabungkan sesuai kebutuhan filter data.',
 ];
 
 export const GetDesaKelurahan = () => {
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
-  const isSmallScreen = isMobile || isTablet;
-
   return (
-    <section
-      className={cn('max-w-5xl bg-white text-gray-800', {
-        'p-5': isSmallScreen,
-        'p-8': !isSmallScreen,
-      })}
-    >
-      <h1 className="mb-10 text-3xl font-bold text-gray-700">
-        API Documentation - GET Desa/Kelurahan
-      </h1>
-
-      <div className="mb-10">
-        <div className="mb-6">
-          <h2 className="mb-4 text-xl font-semibold text-gray-600">
-            Endpoint API (Semua Desa/Kelurahan)
-          </h2>
-          <EndpointUrl
-            method="GET"
-            url="https://api.nusantarakita.web.id/v2/desa-kel"
-          />
+    <article className="text-foreground w-full space-y-10 transition-all">
+      {/* Header */}
+      <div className="space-y-3">
+        <div className="inline-flex items-center gap-2 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+          <Home className="h-3.5 w-3.5" />
+          <span>API Reference • GET /v2/desa-kel</span>
         </div>
-
-        <div className="mb-6">
-          <h2 className="mb-4 text-xl font-semibold text-gray-600">
-            Endpoint API (Desa/Keluarahan berdasarkan kode Kecamatan)
-          </h2>
-          <EndpointUrl
-            method="GET"
-            url="https://api.nusantarakita.web.id/v2/{kodeKecamatan}/desa-kel"
-          />
-          <span className="mt-1 block text-sm">
-            Ganti {'{'}kodeKecamatan{'}'} dengan kode Kecamatan yang valid
-          </span>
-        </div>
-
-        <div className="mb-6">
-          <h2 className="mb-4 text-xl font-semibold text-gray-600">
-            Endpoint API (Detail Desa/Kelurahan by Kode)
-          </h2>
-          <EndpointUrl
-            method="GET"
-            url="https://api.nusantarakita.web.id/v2/desa-kel/{kode}"
-          />
-          <span className="mt-1 block text-sm">
-            Ganti <code className="rounded bg-gray-200 px-1">{'{kode}'}</code>{' '}
-            dengan kode desa/kelurahan yang diinginkan (contoh:{' '}
-            <code className="rounded bg-gray-200 px-1">32.73.01.1001</code>{' '}
-            untuk Sarijadi)
-          </span>
-        </div>
-      </div>
-
-      <div className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold text-gray-600">
-          Description
-        </h2>
-        <p className="leading-relaxed text-gray-600">
-          API ini digunakan untuk mendapatkan daftar Desa/Keluarahan beserta
-          informasi geografisnya. Dapat menampilkan semua Desa/Kelurahan atau
-          berdasarkan Kecamatan tertentu. Response akan menampilkan data dengan
-          paginasi default, tetapi dapat dimodifikasi melalui parameter query.
+        <h1 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
+          GET Desa / Kelurahan
+        </h1>
+        <p className="text-muted-foreground text-base leading-relaxed sm:text-lg">
+          Mengambil data seluruh desa dan kelurahan di Indonesia beserta kodepos
+          5-digit, titik koordinat pusat pemerintahan desa, dan file GeoJSON
+          batas wilayah.
         </p>
       </div>
 
-      <div className="mb-10">
-        <TableWithTitle
-          titleText="Query Parameters"
+      <hr className="border-border/60" />
+
+      {/* 1. Endpoints Section */}
+      <section
+        id="endpoint"
+        className="scroll-mt-20 space-y-5"
+      >
+        <h2 className="group border-border/50 text-foreground flex items-center gap-2 border-b pb-2 text-xl font-bold tracking-tight sm:text-2xl">
+          <span>Endpoint URL</span>
+          <a
+            href="#endpoint"
+            className="text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            #
+          </a>
+        </h2>
+
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <h3 className="text-foreground text-sm font-semibold">
+              1. Semua Desa / Kelurahan (Global)
+            </h3>
+            <EndpointUrl
+              method="GET"
+              url="https://api.nusantarakita.web.id/v2/desa-kel"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-foreground text-sm font-semibold">
+              2. Desa / Kelurahan Berdasarkan Kode Kecamatan
+            </h3>
+            <EndpointUrl
+              method="GET"
+              url="https://api.nusantarakita.web.id/v2/{kodeKecamatan}/desa-kel"
+            />
+            <span className="text-muted-foreground mt-2 block text-xs">
+              Ganti <code>{'{kodeKecamatan}'}</code> dengan kode 6-digit
+              kecamatan (contoh: <code>32.73.01</code> untuk Sukasari).
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-foreground text-sm font-semibold">
+              3. Detail Desa / Kelurahan by Kode
+            </h3>
+            <EndpointUrl
+              method="GET"
+              url="https://api.nusantarakita.web.id/v2/desa-kel/{kode}"
+            />
+            <span className="text-muted-foreground mt-2 block text-xs">
+              Ganti <code>{'{kode}'}</code> dengan kode lengkap 10-digit
+              (contoh: <code>32.73.01.1001</code> untuk Sarijadi).
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Query Parameters Section */}
+      <section
+        id="parameter-query"
+        className="scroll-mt-20 space-y-4"
+      >
+        <h2 className="group border-border/50 text-foreground flex items-center gap-2 border-b pb-2 text-xl font-bold tracking-tight sm:text-2xl">
+          <span>Parameter Query</span>
+          <a
+            href="#parameter-query"
+            className="text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            #
+          </a>
+        </h2>
+        <Table
           columnHeaders={queryTableHeaders}
           rowData={queryTableRows}
         />
-      </div>
+      </section>
 
-      <div className="mb-10">
-        <h2 className="mb-6 text-2xl font-semibold text-gray-700">
-          Example Requests
-        </h2>
+      {/* Example Requests Subsection */}
+      <div className="space-y-4 pt-2">
+        <h3 className="text-foreground text-base font-semibold">
+          Contoh Penggunaan Request
+        </h3>
 
-        <div className="mb-6">
-          <h3 className="mb-2 text-lg font-medium text-gray-600">
-            Semua Desa/Kelurahan (dengan paginasi)
-          </h3>
+        <div className="space-y-3">
+          <div className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+            Semua Desa / Kelurahan (Dengan Paginasi)
+          </div>
           <EndpointUrl
             method="GET"
             url="https://api.nusantarakita.web.id/v2/desa-kel"
           />
         </div>
 
-        <div className="mb-6">
-          <h3 className="mb-2 text-lg font-medium text-gray-600">
-            Semua Desa/Kelurahan (tanpa paginasi)
-          </h3>
+        <div className="space-y-3">
+          <div className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+            Desa / Kelurahan di Kecamatan Bakongan (11.01.01)
+          </div>
           <EndpointUrl
             method="GET"
-            url="https://api.nusantarakita.web.id/v2/desa-kel?pagination=false"
+            url="https://api.nusantarakita.web.id/v2/11.01.01/desa-kel"
           />
         </div>
 
-        <div className="mb-6">
-          <h3 className="mb-2 text-lg font-medium text-gray-600">
-            Custom limit per halaman
-          </h3>
+        <div className="space-y-3">
+          <div className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+            Custom Limit Per Halaman
+          </div>
           <EndpointUrl
             method="GET"
             url="https://api.nusantarakita.web.id/v2/desa-kel?limit=20"
           />
         </div>
-
-        <div className="mb-6">
-          <h3 className="mb-2 text-lg font-medium text-gray-600">
-            Menuju halaman tertentu
-          </h3>
-          <EndpointUrl
-            method="GET"
-            url="https://api.nusantarakita.web.id/v2/desa-kel?halaman=2"
-          />
-        </div>
-
-        <div className="mb-6">
-          <h3 className="mb-2 text-lg font-medium text-gray-600">
-            Desa/Kelurahan berdasarkan kode Kecamatan
-          </h3>
-          <EndpointUrl
-            method="GET"
-            url="https://api.nusantarakita.web.id/v2/11.01/desa-kel"
-          />
-        </div>
-
-        <div className="mb-6">
-          <h3 className="mb-2 text-lg font-medium text-gray-600">
-            Gabungan parameter
-          </h3>
-          <EndpointUrl
-            method="GET"
-            url="https://api.nusantarakita.web.id/v2/desa-kel?pagination=true&limit=5&halaman=3"
-          />
-        </div>
       </div>
 
-      <div className="mb-10">
+      {/* 3. Response Structure Section */}
+      <section
+        id="struktur-response"
+        className="scroll-mt-20 space-y-4"
+      >
+        <h2 className="group border-border/50 text-foreground flex items-center gap-2 border-b pb-2 text-xl font-bold tracking-tight sm:text-2xl">
+          <span>Struktur Data Response</span>
+          <a
+            href="#struktur-response"
+            className="text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            #
+          </a>
+        </h2>
         <ResponseSuccess items={getDesaKelurahanResponseStructureData} />
-      </div>
+      </section>
 
-      <div className="mb-10">
-        <h3 className="mb-4 text-base font-semibold text-gray-700">
-          Example Response (Default):
-        </h3>
-        <Code
-          content={JSON.stringify(getDesaKelurahanExampleResponse, null, 2)}
-          showCopyButton
-        />
-      </div>
+      {/* 4. Response Examples Section */}
+      <section
+        id="contoh-response"
+        className="scroll-mt-20 space-y-6"
+      >
+        <h2 className="group border-border/50 text-foreground flex items-center gap-2 border-b pb-2 text-xl font-bold tracking-tight sm:text-2xl">
+          <span>Contoh Response JSON</span>
+          <a
+            href="#contoh-response"
+            className="text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            #
+          </a>
+        </h2>
 
-      <div className="mb-10">
-        <h3 className="mb-4 text-base font-semibold text-gray-700">
-          Example Response (Without Pagination):
-        </h3>
-        <Code
-          content={JSON.stringify(
-            { data: getDesaKelurahanExampleResponse.data },
-            null,
-            2,
-          )}
-          showCopyButton
-        />
-      </div>
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <h3 className="text-foreground text-sm font-semibold">
+              Contoh Response Default:
+            </h3>
+            <Code
+              content={JSON.stringify(getDesaKelurahanExampleResponse, null, 2)}
+              showCopyButton
+            />
+          </div>
 
-      <div className="mb-10">
-        <TableWithTitle
-          titleText="Error Handling"
+          <div className="space-y-2">
+            <h3 className="text-foreground text-sm font-semibold">
+              Contoh Response Tanpa Paginasi:
+            </h3>
+            <Code
+              content={JSON.stringify(
+                { data: getDesaKelurahanExampleResponse.data },
+                null,
+                2,
+              )}
+              showCopyButton
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Error Handling Section */}
+      <section
+        id="error-handling"
+        className="scroll-mt-20 space-y-4"
+      >
+        <h2 className="group border-border/50 text-foreground flex items-center gap-2 border-b pb-2 text-xl font-bold tracking-tight sm:text-2xl">
+          <span>Error Handling</span>
+          <a
+            href="#error-handling"
+            className="text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            #
+          </a>
+        </h2>
+        <Table
           columnHeaders={errorHandlingTableHeaders}
           rowData={errorHandlingTableRows}
         />
-      </div>
+      </section>
 
-      <div className="mb-10">
-        <Notes items={notesItems} />
-      </div>
-    </section>
+      {/* Notes / Callout */}
+      <Notes items={notesItems} />
+    </article>
   );
 };

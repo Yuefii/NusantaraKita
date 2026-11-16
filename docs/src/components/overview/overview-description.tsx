@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface OverviewDescriptionProps {
   title: string;
   description: string;
@@ -8,9 +10,13 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
   title,
 }) => {
   return (
-    <div className="mb-5">
-      <h2 className="mb-3 text-xl font-semibold text-gray-600">{title}</h2>
-      <p className="leading-relaxed text-gray-600">{description}</p>
+    <div className="mb-4">
+      <h2 className="text-foreground text-xl font-bold tracking-tight">
+        {title}
+      </h2>
+      <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
+        {description}
+      </p>
     </div>
   );
 };

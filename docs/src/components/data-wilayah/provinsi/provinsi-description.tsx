@@ -1,9 +1,10 @@
 export const ProvinsiDescription = () => (
-  <div className="mb-10">
-    <h2 className="mb-4 text-xl font-semibold text-gray-600">Description</h2>
-    <p className="leading-relaxed text-gray-600">
-      Menampilkan daftar data provinsi di Indonesia, Dari Sabang sampai Merauke
-      🇮🇩
+  <div className="space-y-1">
+    <h2 className="text-foreground text-xl font-bold tracking-tight">
+      Deskripsi
+    </h2>
+    <p className="text-muted-foreground text-sm leading-relaxed">
+      Menampilkan daftar 38 provinsi di Indonesia dari Sabang sampai Merauke 🇮🇩
     </p>
   </div>
 );
