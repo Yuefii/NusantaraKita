@@ -78,7 +78,8 @@ export const GetDesaKelurahan = () => {
           <span className="mt-1 block text-sm">
             Ganti <code className="rounded bg-gray-200 px-1">{'{kode}'}</code>{' '}
             dengan kode desa/kelurahan yang diinginkan (contoh:{' '}
-            <code className="rounded bg-gray-200 px-1">32.73.01.1001</code> untuk Sarijadi)
+            <code className="rounded bg-gray-200 px-1">32.73.01.1001</code>{' '}
+            untuk Sarijadi)
           </span>
         </div>
       </div>

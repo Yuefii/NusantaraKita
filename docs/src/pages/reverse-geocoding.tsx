@@ -53,9 +53,11 @@ export const ReverseGeocodingApiDoc = () => {
           Description
         </h2>
         <p className="leading-relaxed text-gray-600">
-          Endpoint Reverse Geocoding memungkinkan Anda mengonversi koordinat geografis GPS (latitude & longitude)
-          menjadi informasi hierarki administratif wilayah Indonesia yang lengkap: mulai dari nama Provinsi,
-          Kabupaten/Kota, Kecamatan, hingga Desa/Kelurahan beserta kode pos dan perkiraan jarak ke pusat wilayah.
+          Endpoint Reverse Geocoding memungkinkan Anda mengonversi koordinat
+          geografis GPS (latitude & longitude) menjadi informasi hierarki
+          administratif wilayah Indonesia yang lengkap: mulai dari nama
+          Provinsi, Kabupaten/Kota, Kecamatan, hingga Desa/Kelurahan beserta
+          kode pos dan perkiraan jarak ke pusat wilayah.
         </p>
       </div>
 

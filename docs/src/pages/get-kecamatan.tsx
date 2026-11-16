@@ -78,7 +78,8 @@ export const GetKecamatan = () => {
           <span className="mt-1 block text-sm">
             Ganti <code className="rounded bg-gray-200 px-1">{'{kode}'}</code>{' '}
             dengan kode kecamatan yang diinginkan (contoh:{' '}
-            <code className="rounded bg-gray-200 px-1">32.73.01</code> untuk Sukasari)
+            <code className="rounded bg-gray-200 px-1">32.73.01</code> untuk
+            Sukasari)
           </span>
         </div>
       </div>

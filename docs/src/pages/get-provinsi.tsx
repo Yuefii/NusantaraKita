@@ -63,7 +63,8 @@ export const GetProvinsi = () => {
           <span className="mt-1 block text-sm">
             Ganti <code className="rounded bg-gray-200 px-1">{'{kode}'}</code>{' '}
             dengan kode provinsi yang diinginkan (contoh:{' '}
-            <code className="rounded bg-gray-200 px-1">32</code> untuk Jawa Barat)
+            <code className="rounded bg-gray-200 px-1">32</code> untuk Jawa
+            Barat)
           </span>
         </div>
       </div>

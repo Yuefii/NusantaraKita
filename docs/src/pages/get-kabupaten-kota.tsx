@@ -78,7 +78,8 @@ export const GetKabupatenKota = () => {
           <span className="mt-1 block text-sm">
             Ganti <code className="rounded bg-gray-200 px-1">{'{kode}'}</code>{' '}
             dengan kode kabupaten/kota yang diinginkan (contoh:{' '}
-            <code className="rounded bg-gray-200 px-1">32.73</code> untuk Kota Bandung)
+            <code className="rounded bg-gray-200 px-1">32.73</code> untuk Kota
+            Bandung)
           </span>
         </div>
       </div>

@@ -53,9 +53,12 @@ export const SearchApiDoc = () => {
           Description
         </h2>
         <p className="leading-relaxed text-gray-600">
-          Endpoint ini dirancang khusus untuk kebutuhan pencarian cepat dan autocomplete nama wilayah di Indonesia.
-          Anda dapat mencari lintas seluruh tingkat administratif (provinsi, kabupaten/kota, kecamatan, dan kelurahan/desa)
-          atau membatasi pencarian pada jenis wilayah tertentu menggunakan parameter <code className="rounded bg-gray-200 px-1">tipe</code>.
+          Endpoint ini dirancang khusus untuk kebutuhan pencarian cepat dan
+          autocomplete nama wilayah di Indonesia. Anda dapat mencari lintas
+          seluruh tingkat administratif (provinsi, kabupaten/kota, kecamatan,
+          dan kelurahan/desa) atau membatasi pencarian pada jenis wilayah
+          tertentu menggunakan parameter{' '}
+          <code className="rounded bg-gray-200 px-1">tipe</code>.
         </p>
       </div>
 

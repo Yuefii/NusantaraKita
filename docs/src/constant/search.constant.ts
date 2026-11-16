@@ -13,13 +13,15 @@ export const queryTableRows = [
   {
     Parameter: 'q',
     Type: 'string',
-    Description: 'Kata kunci pencarian nama wilayah atau 5 digit kode pos (minimal 2 karakter)',
+    Description:
+      'Kata kunci pencarian nama wilayah atau 5 digit kode pos (minimal 2 karakter)',
     Default: '-',
   },
   {
     Parameter: 'tipe',
     Type: 'string',
-    Description: 'Filter jenis wilayah: provinsi, kab-kota, kecamatan, desa-kel (opsional)',
+    Description:
+      'Filter jenis wilayah: provinsi, kab-kota, kecamatan, desa-kel (opsional)',
     Default: 'all',
   },
   {
@@ -47,7 +49,12 @@ export const errorHandlingTableRows = [
     Code: '400',
     Description: 'Parameter q kurang dari 2 karakter',
     Example: JSON.stringify(
-      { error: { code: 'BAD_REQUEST', message: "parameter 'q' minimal 2 karakter" } },
+      {
+        error: {
+          code: 'BAD_REQUEST',
+          message: "parameter 'q' minimal 2 karakter",
+        },
+      },
       null,
       2,
     ),
@@ -65,7 +72,12 @@ export const errorHandlingTableRows = [
     Code: '500',
     Description: 'Server Error',
     Example: JSON.stringify(
-      { error: { code: 'INTERNAL_ERROR', message: 'Terjadi kesalahan pada server' } },
+      {
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Terjadi kesalahan pada server',
+        },
+      },
       null,
       2,
     ),
@@ -80,7 +92,10 @@ export const searchResponseStructureData: ResponseJsonListItem[] = [
       { name: 'total_item', details: '(integer) - Total item yang cocok' },
       { name: 'total_halaman', details: '(integer) - Total halaman' },
       { name: 'halaman_saat_ini', details: '(integer) - Halaman aktif' },
-      { name: 'ukuran_halaman', details: '(integer) - Jumlah item per halaman' },
+      {
+        name: 'ukuran_halaman',
+        details: '(integer) - Jumlah item per halaman',
+      },
     ],
   },
   {
@@ -89,11 +104,21 @@ export const searchResponseStructureData: ResponseJsonListItem[] = [
     children: [
       { name: 'kode', details: '(string) - Kode wilayah' },
       { name: 'nama', details: '(string) - Nama wilayah' },
-      { name: 'tipe', details: '(string) - Tipe wilayah (provinsi, kabupaten_kota, kecamatan, desa_kelurahan)' },
+      {
+        name: 'tipe',
+        details:
+          '(string) - Tipe wilayah (provinsi, kabupaten_kota, kecamatan, desa_kelurahan)',
+      },
       { name: 'lat', details: '(double) - Koordinat latitude' },
       { name: 'lng', details: '(double) - Koordinat longitude' },
-      { name: 'kode_pos', details: '(string, opsional) - Kode pos (untuk desa/kelurahan)' },
-      { name: 'hierarki', details: '(string) - Jalur hierarki wilayah (breadcrumb)' },
+      {
+        name: 'kode_pos',
+        details: '(string, opsional) - Kode pos (untuk desa/kelurahan)',
+      },
+      {
+        name: 'hierarki',
+        details: '(string) - Jalur hierarki wilayah (breadcrumb)',
+      },
       { name: 'geojson_url', details: '(string) - URL CDN file GeoJSON' },
     ],
   },
@@ -114,16 +139,18 @@ export const responseExampleSearch = {
       lat: -6.917464,
       lng: 107.619123,
       hierarki: 'Kota Bandung, Jawa Barat',
-      geojson_url: 'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kabupaten_kota/32.73.geojson',
+      geojson_url:
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kabupaten_kota/32.73.geojson',
     },
     {
       kode: '32.04',
       nama: 'Kabupaten Bandung',
       tipe: 'kabupaten_kota',
       lat: -7.025253,
-      lng: 107.519760,
+      lng: 107.51976,
       hierarki: 'Kabupaten Bandung, Jawa Barat',
-      geojson_url: 'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kabupaten_kota/32.04.geojson',
+      geojson_url:
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kabupaten_kota/32.04.geojson',
     },
     {
       kode: '32.73.08',
@@ -132,7 +159,8 @@ export const responseExampleSearch = {
       lat: -6.903891,
       lng: 107.618645,
       hierarki: 'Bandung Wetan, Kota Bandung, Jawa Barat',
-      geojson_url: 'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kecamatan/32.73.08.geojson',
+      geojson_url:
+        'https://cdn.jsdelivr.net/gh/yuefii/NusantaraKita@main/geojson/kecamatan/32.73.08.geojson',
     },
   ],
 };
