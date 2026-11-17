@@ -9,7 +9,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { Search } from 'lucide-react';
+import { Menu, Search } from 'lucide-react';
 import { useState } from 'react';
 import { FaGithub } from 'react-icons/fa';
 import { Link, NavLink, Outlet, useLocation } from 'react-router';
@@ -27,7 +27,13 @@ export default function AppLayout() {
           <div className="flex h-14 w-full items-center justify-between px-4 sm:h-16 sm:px-6 lg:px-8">
             {/* Left: Mobile Trigger, Brand Logo, Nav Links */}
             <div className="flex items-center gap-4 sm:gap-6">
-              <SidebarTrigger className="text-muted-foreground hover:text-foreground -ml-1 size-8 cursor-pointer md:hidden" />
+              <SidebarTrigger
+                className="border-border/70 bg-background/50 text-muted-foreground hover:bg-muted hover:text-foreground -ml-1 flex size-9 cursor-pointer items-center justify-center rounded-md border transition-colors md:hidden"
+                aria-label="Buka menu navigasi"
+                title="Buka menu navigasi"
+              >
+                <Menu className="h-5 w-5" />
+              </SidebarTrigger>
 
               <Link
                 to="/"
