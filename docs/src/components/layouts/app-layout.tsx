@@ -41,6 +41,9 @@ export default function AppLayout() {
                 <span className="text-foreground text-sm font-bold tracking-tight sm:text-base">
                   Nusantara Kita
                 </span>
+                <span className="border-border/70 bg-muted/60 text-muted-foreground inline-flex items-center rounded-md border px-1.5 py-0.5 font-mono text-[10px] font-medium sm:text-xs">
+                  v2.2
+                </span>
               </Link>
 
               {/* Main Nav Links (Next.js docs header style) */}
