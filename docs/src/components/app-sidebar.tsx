@@ -10,16 +10,13 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar';
 import * as React from 'react';
-import { GrMapLocation } from 'react-icons/gr';
-import { MdOutlineTouchApp } from 'react-icons/md';
-import { SlBookOpen } from 'react-icons/sl';
 
 const navMenus: NavMenuGroup[] = [
   {
     title: 'Getting Started',
     url: '#',
-    icon: MdOutlineTouchApp,
     isActive: true,
+    badge: '3',
     items: [
       { title: 'Overview', url: '/' },
       { title: 'Tentang API', url: '/tentang-api' },
@@ -29,39 +26,51 @@ const navMenus: NavMenuGroup[] = [
   {
     title: 'API Documentation',
     url: '#',
-    icon: SlBookOpen,
     isActive: true,
+    badge: '6',
     items: [
-      { title: 'GET Provinsi', url: '/api-documentation/get-provinsi' },
       {
-        title: 'GET Kabupaten/Kota',
+        title: 'Provinsi',
+        url: '/api-documentation/get-provinsi',
+        method: 'GET',
+      },
+      {
+        title: 'Kabupaten / Kota',
         url: '/api-documentation/get-kabupaten-kota',
+        method: 'GET',
       },
-      { title: 'GET Kecamatan', url: '/api-documentation/get-kecamatan' },
       {
-        title: 'GET Desa/Kelurahan',
+        title: 'Kecamatan',
+        url: '/api-documentation/get-kecamatan',
+        method: 'GET',
+      },
+      {
+        title: 'Desa / Kelurahan',
         url: '/api-documentation/get-desa-kelurahan',
+        method: 'GET',
       },
       {
-        title: 'Search / Autocomplete',
+        title: 'Search & Autocomplete',
         url: '/api-documentation/search',
+        method: 'GET',
       },
       {
         title: 'Reverse Geocoding',
         url: '/api-documentation/reverse-geocoding',
+        method: 'GET',
       },
     ],
   },
   {
     title: 'Data Wilayah',
     url: '#',
-    icon: GrMapLocation,
     isActive: true,
+    badge: '4',
     items: [
       { title: 'Provinsi', url: '/data-wilayah/provinsi' },
-      { title: 'Kabupaten/Kota', url: '/data-wilayah/kabupaten-kota' },
+      { title: 'Kabupaten / Kota', url: '/data-wilayah/kabupaten-kota' },
       { title: 'Kecamatan', url: '/data-wilayah/kecamatan' },
-      { title: 'Desa/Kelurahan', url: '/data-wilayah/desa-kelurahan' },
+      { title: 'Desa / Kelurahan', url: '/data-wilayah/desa-kelurahan' },
     ],
   },
 ];
@@ -70,15 +79,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
+      className="border-border bg-background border-r"
       {...props}
     >
-      <SidebarHeader>
+      <SidebarHeader className="border-border border-b p-3 md:hidden">
         <SidebarLogo />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="no-scrollbar bg-background px-1 py-2">
         <NavMenu items={navMenus} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-border bg-background border-t p-2.5 group-data-[collapsible=icon]:p-1.5">
         <NavSourceCode />
       </SidebarFooter>
     </Sidebar>

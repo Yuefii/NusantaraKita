@@ -76,7 +76,7 @@ const OverviewMap = () => {
       zoom={zoomLevel}
       scrollWheelZoom={true}
       className={cn(
-        'z-0 aspect-square h-full max-h-[40dvh] w-full rounded-lg md:max-h-[60dvh]',
+        'border-border z-0 aspect-square h-full max-h-[40dvh] w-full overflow-hidden rounded-lg border shadow-md md:max-h-[55dvh]',
       )}
     >
       <TileLayer

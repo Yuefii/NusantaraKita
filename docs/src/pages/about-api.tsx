@@ -1,5 +1,8 @@
-import type { ProfileCardProps } from '@/components/ui/profile-card';
-import { ProfileCard } from '@/components/ui/profile-card';
+import {
+  ProfileCard,
+  type ProfileCardProps,
+} from '@/components/ui/profile-card';
+import { BookOpen, ExternalLink } from 'lucide-react';
 
 const developers: ProfileCardProps[] = [
   {
@@ -29,7 +32,7 @@ const developers: ProfileCardProps[] = [
   {
     name: 'Arif Rhamadan',
     role: 'Data Engineer',
-    avatarUrl: 'arifrhamadan.jpeg',
+    avatarUrl: '/arifrhamadan.jpeg',
     socialLinks: [
       { type: 'github', url: 'https://github.com/arifrhamadan' },
       { type: 'linkedin', url: 'https://www.linkedin.com/in/arifrhamadan' },
@@ -37,78 +40,130 @@ const developers: ProfileCardProps[] = [
   },
 ];
 
-const AboutApi = () => {
+export const AboutApi = () => {
   return (
-    <section className="max-w-5xl bg-white p-6">
-      <div className="mb-4 flex flex-col items-start">
-        <img
-          src="/logo.png"
-          alt="Nusantara Kita Logo"
-          className="mb-4 size-40"
-        />
-        <h2 className="mb-3 text-3xl font-bold text-gray-800">
-          Nusantara Kita
-        </h2>
-        <p className="text-base leading-relaxed text-gray-600">
-          Nusantara Kita adalah sebuah API yang menyediakan data wilayah
-          Indonesia. Proyek ini dirancang untuk memudahkan akses dan penggunaan
-          data geospasial terkait wilayah-wilayah di Indonesia. API ini dapat
-          digunakan untuk berbagai aplikasi yang memerlukan informasi seperti
-          batas wilayah, data administratif, dan lain-lain.
+    <article className="text-foreground w-full space-y-10 transition-all">
+      {/* Header */}
+      <div className="space-y-3">
+        <div className="border-primary/25 bg-primary/10 text-primary inline-flex items-center gap-1.5 rounded-md border px-2.5 py-0.5 text-xs font-semibold">
+          <BookOpen className="h-3.5 w-3.5" />
+          <span>Tentang Inisiatif</span>
+        </div>
+        <h1 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
+          Tentang Nusantara Kita
+        </h1>
+        <p className="text-muted-foreground text-base leading-relaxed sm:text-lg">
+          Nusantara Kita adalah API terbuka yang menyediakan data wilayah
+          administratif dan geospasial Indonesia. Dirancang agar mudah
+          diintegrasikan ke berbagai jenis aplikasi digital, mulai dari
+          e-commerce, logistik, pemerintahan, hingga riset akademik.
         </p>
       </div>
 
-      <div className="mb-10">
-        <h3 className="mb-4 text-2xl font-semibold text-gray-800">
-          Sumber Data
-        </h3>
-        <p className="leading-relaxed text-gray-700">
-          Data yang disajikan dalam API Nusantara Kita dikompilasi dari berbagai
-          sumber resmi dan terpercaya. Data wilayah administratif pemerintahan
-          Indonesia sesuai{' '}
-          <span className="font-semibold">
-            {' '}
+      <hr className="border-border/60" />
+
+      {/* 1. Latar Belakang & Regulasi */}
+      <section
+        id="latar-belakang"
+        className="scroll-mt-20 space-y-4"
+      >
+        <h2 className="group border-border/50 text-foreground flex items-center gap-2 border-b pb-2 text-xl font-bold tracking-tight sm:text-2xl">
+          <span>Sumber Data & Regulasi Resmi</span>
+          <a
+            href="#latar-belakang"
+            className="text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            #
+          </a>
+        </h2>
+        <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
+          Data wilayah administratif pemerintahan Indonesia yang disajikan dalam
+          API ini disusun mengacu pada regulasi resmi{' '}
+          <span className="text-foreground decoration-primary/40 font-semibold underline underline-offset-4">
             Kepmendagri No 300.2.2-2138 Tahun 2025
           </span>
-          . Kami berkomitmen untuk terus memperbarui data secara berkala guna
-          menjaga relevansi dan keandalannya.
+          . Pembaruan dilakukan berkala demi menjaga validitas dan relevansi
+          informasi batas wilayah, koordinat spasial, dan kodepos.
         </p>
-      </div>
+      </section>
 
-      <div className="mb-10">
-        <h3 className="mb-4 text-2xl font-bold text-gray-800">References</h3>
-        <p className="mb-4 leading-relaxed text-gray-700">
-          Dataset yang digunakan dalam project ini berasal dari:
+      {/* 2. Dataset References */}
+      <section
+        id="cakupan-data"
+        className="scroll-mt-20 space-y-4"
+      >
+        <h2 className="group border-border/50 text-foreground flex items-center gap-2 border-b pb-2 text-xl font-bold tracking-tight sm:text-2xl">
+          <span>Dataset & Open Source Attribution</span>
+          <a
+            href="#cakupan-data"
+            className="text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            #
+          </a>
+        </h2>
+        <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
+          Proyek ini terwujud berkat kontribusi dataset terbuka dari komunitas.
+          Kami sangat mengapresiasi repositori berikut:
         </p>
-        <ul className="mb-4 text-blue-500">
-          <li className="hover:underline">
-            <a href="https://github.com/cahyadsn/wilayah_boundaries">
-              https://github.com/cahyadsn/wilayah_boundaries
-            </a>
-          </li>
-          <li className="hover:underline">
-            <a href="https://github.com/cahyadsn/wilayah_kodepos">
-              https://github.com/cahyadsn/wilayah_kodepos
-            </a>
-          </li>
-        </ul>
-        <p className="mb-4 leading-relaxed text-gray-700">
-          Kami sangat menghargai pembuat dataset ini. Tanpa adanya data
-          tersebut, project ini tidak akan bisa dikembangkan.
-        </p>
-      </div>
 
-      <div className="mb-10">
-        <h3 className="mb-4 text-2xl font-semibold text-gray-800">
-          Tim Pengembang
-        </h3>
-        <p className="mb-6 leading-relaxed text-gray-700">
-          API Nusantara Kita dikembangkan dan dikelola oleh tim yang terdiri
-          dari 3 pengembang aktif. Project ini merupakan inisiatif untuk
-          menyediakan akses data wilayah Indonesia yang terbuka dan mudah
-          digunakan bagi komunitas pengembang.
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <a
+            href="https://github.com/cahyadsn/wilayah_boundaries"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 group flex items-center justify-between rounded-lg border p-4 transition-all"
+          >
+            <div className="min-w-0">
+              <div className="text-foreground truncate text-sm font-semibold">
+                cahyadsn / wilayah_boundaries
+              </div>
+              <div className="text-muted-foreground mt-0.5 truncate text-xs">
+                Dataset batas poligon GeoJSON wilayah Indonesia
+              </div>
+            </div>
+            <ExternalLink className="text-muted-foreground group-hover:text-primary ml-2 h-4 w-4 shrink-0 transition-colors" />
+          </a>
+
+          <a
+            href="https://github.com/cahyadsn/wilayah_kodepos"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 group flex items-center justify-between rounded-lg border p-4 transition-all"
+          >
+            <div className="min-w-0">
+              <div className="text-foreground truncate text-sm font-semibold">
+                cahyadsn / wilayah_kodepos
+              </div>
+              <div className="text-muted-foreground mt-0.5 truncate text-xs">
+                Dataset kodepos resmi seluruh desa dan kelurahan
+              </div>
+            </div>
+            <ExternalLink className="text-muted-foreground group-hover:text-primary ml-2 h-4 w-4 shrink-0 transition-colors" />
+          </a>
+        </div>
+      </section>
+
+      {/* 3. Tim Pengembang */}
+      <section
+        id="arsitektur"
+        className="scroll-mt-20 space-y-5"
+      >
+        <h2 className="group border-border/50 text-foreground flex items-center gap-2 border-b pb-2 text-xl font-bold tracking-tight sm:text-2xl">
+          <span>Tim Pengembang</span>
+          <a
+            href="#arsitektur"
+            className="text-muted-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            #
+          </a>
+        </h2>
+        <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
+          API Nusantara Kita dikembangkan dan dikelola bersama sebagai proyek
+          sumber terbuka (open-source) demi kemudahan integrasi geospasial bagi
+          developer Indonesia.
         </p>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {developers.map((dev) => (
             <ProfileCard
               key={dev.name}
@@ -116,8 +171,8 @@ const AboutApi = () => {
             />
           ))}
         </div>
-      </div>
-    </section>
+      </section>
+    </article>
   );
 };
 

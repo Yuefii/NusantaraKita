@@ -82,11 +82,11 @@ export default function ResponseTypeSwitch() {
     dispatch({ type: 'SET_RESPONSE_TYPE', payload: 'JSON' });
 
   return (
-    <div className="relative flex w-fit items-center overflow-hidden rounded-md border border-gray-300 bg-gray-100 p-1">
+    <div className="border-border bg-muted/60 relative flex w-fit items-center overflow-hidden rounded-lg border p-1">
       {/* Background slider */}
       <div
         className={cn(
-          'bg-primary absolute left-1 h-8 w-8 rounded-md transition-transform duration-300 ease-in-out',
+          'bg-background absolute left-1 h-8 w-8 rounded-md shadow-xs transition-transform duration-200 ease-in-out',
           state.dataType === 'TABLE' ? 'translate-x-0' : 'translate-x-full',
         )}
       />
@@ -95,28 +95,30 @@ export default function ResponseTypeSwitch() {
       <button
         onClick={handleTableClick}
         className={cn(
-          'relative z-10 flex h-8 w-8 items-center justify-center text-xl transition-colors duration-150',
+          'relative z-10 flex h-8 w-8 cursor-pointer items-center justify-center text-lg transition-colors duration-150',
           state.dataType === 'TABLE'
-            ? 'text-white'
-            : 'hover:text-primary cursor-pointer text-gray-600',
+            ? 'text-foreground font-semibold'
+            : 'text-muted-foreground hover:text-foreground',
         )}
         aria-label="Table View"
+        title="Tampilan Tabel"
       >
-        <CiViewTable />
+        <CiViewTable className="h-5 w-5" />
       </button>
 
       {/* JSON Button */}
       <button
         onClick={handleJsonClick}
         className={cn(
-          'relative z-10 flex h-8 w-8 items-center justify-center text-xl transition-colors duration-150',
+          'relative z-10 flex h-8 w-8 cursor-pointer items-center justify-center text-lg transition-colors duration-150',
           state.dataType === 'JSON'
-            ? 'text-white'
-            : 'hover:text-primary cursor-pointer text-gray-600',
+            ? 'text-foreground font-semibold'
+            : 'text-muted-foreground hover:text-foreground',
         )}
         aria-label="JSON View"
+        title="Tampilan JSON"
       >
-        <VscJson />
+        <VscJson className="h-5 w-5" />
       </button>
     </div>
   );
