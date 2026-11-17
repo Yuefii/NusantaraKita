@@ -4,10 +4,7 @@ import { KabupatenKotaPagination } from '@/components/data-wilayah/kabupaten-kot
 import LimitPerPage from '@/components/ui/limit-per-page';
 import ResponseTypeSwitch from '@/components/ui/response-type';
 import useGetKabKota from '@/hooks/get-kabupaten-kota/use-get-kab-kota';
-import { useIsMobile } from '@/hooks/use-mobile';
 import useParams from '@/hooks/use-params';
-import { useIsTablet } from '@/hooks/use-tablet';
-import { cn } from '@/lib/utils';
 import { Building2 } from 'lucide-react';
 
 export const KabupatenKota = () => {
@@ -15,20 +12,8 @@ export const KabupatenKota = () => {
   const { data, isError, isLoading, isSuccess, isPending } =
     useGetKabKota(params);
 
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
-  const isSmallScreen = isMobile || isTablet;
-
   return (
-    <section
-      className={cn(
-        'text-foreground mx-auto max-w-5xl space-y-8 transition-all',
-        {
-          'p-4 sm:p-6': isSmallScreen,
-          'p-8 lg:p-10': !isSmallScreen,
-        },
-      )}
-    >
+    <article className="text-foreground w-full space-y-8 transition-all">
       {/* Header */}
       <div className="space-y-3">
         <div className="inline-flex items-center gap-2 rounded-md border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
@@ -64,6 +49,6 @@ export const KabupatenKota = () => {
           />
         </div>
       </div>
-    </section>
+    </article>
   );
 };

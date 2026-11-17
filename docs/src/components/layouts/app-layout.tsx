@@ -142,7 +142,11 @@ export default function AppLayout() {
               <div
                 className={cn(
                   'w-full px-6 py-8 sm:px-10 lg:px-14 xl:px-16',
-                  location.pathname === '/' ? 'max-w-6xl' : 'max-w-4xl',
+                  location.pathname === '/'
+                    ? 'max-w-6xl'
+                    : location.pathname.startsWith('/data-wilayah')
+                      ? 'max-w-5xl'
+                      : 'max-w-4xl',
                 )}
               >
                 {location.pathname !== '/' && <InPageBreadcrumbs />}

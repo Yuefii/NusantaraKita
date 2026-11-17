@@ -4,10 +4,7 @@ import { DesaKelPagination } from '@/components/data-wilayah/desa-kelurahan/desa
 import LimitPerPage from '@/components/ui/limit-per-page';
 import ResponseTypeSwitch from '@/components/ui/response-type';
 import useGetDesaKelurahan from '@/hooks/get-desa-kelurahan/use-get-desa-kelurahan';
-import { useIsMobile } from '@/hooks/use-mobile';
 import useParams from '@/hooks/use-params';
-import { useIsTablet } from '@/hooks/use-tablet';
-import { cn } from '@/lib/utils';
 import { Home } from 'lucide-react';
 
 export const DesaKelurahan = () => {
@@ -15,20 +12,8 @@ export const DesaKelurahan = () => {
   const { data, isError, isLoading, isSuccess, isPending } =
     useGetDesaKelurahan(params);
 
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
-  const isSmallScreen = isMobile || isTablet;
-
   return (
-    <section
-      className={cn(
-        'text-foreground mx-auto max-w-5xl space-y-8 transition-all',
-        {
-          'p-4 sm:p-6': isSmallScreen,
-          'p-8 lg:p-10': !isSmallScreen,
-        },
-      )}
-    >
+    <article className="text-foreground w-full space-y-8 transition-all">
       {/* Header */}
       <div className="space-y-3">
         <div className="inline-flex items-center gap-2 rounded-md border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
@@ -64,6 +49,6 @@ export const DesaKelurahan = () => {
           />
         </div>
       </div>
-    </section>
+    </article>
   );
 };
