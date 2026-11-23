@@ -26,7 +26,7 @@
     "@tanstack/react-query": "^5.106.1",
     "@vercel/analytics": "^2.0.1",
     "axios": "^1.19.0",
-    "class-variance-authority": "^0.6.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.70.0",
