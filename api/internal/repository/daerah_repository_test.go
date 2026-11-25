@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"database/sql/driver"
+	"fmt"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -23,7 +25,7 @@ func TestGetProvinsi(t *testing.T) {
 			AddRow("11", "ACEH", 4.695135, 96.749399).
 			AddRow("12", "SUMATERA UTARA", 2.115355, 99.545097)
 
-		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi$").WillReturnRows(rows)
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC$").WillReturnRows(rows)
 
 		provs, total, err := repo.GetProvinsi(context.Background(), 10, 0, false)
 		if err != nil {
@@ -52,7 +54,7 @@ func TestGetProvinsi(t *testing.T) {
 
 		dataRows := sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}).
 			AddRow("31", "DKI JAKARTA", -6.175110, 106.827153)
-		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi LIMIT \\$1 OFFSET \\$2$").
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC LIMIT \\$1 OFFSET \\$2$").
 			WithArgs(10, 0).
 			WillReturnRows(dataRows)
 
@@ -235,4 +237,81 @@ func TestReverseGeocode(t *testing.T) {
 			t.Errorf("expected 123.46, got %f", res.JarakMeter)
 		}
 	})
+}
+
+func TestListQueriesOrderByKode(t *testing.T) {
+	type listFunc func(repo *DaerahRepository) error
+
+	cases := []struct {
+		name    string
+		query   string
+		args    []driver.Value
+		columns []string
+		call    listFunc
+	}{
+		{"GetProvinsi", "FROM nk_provinsi", nil, []string{"kode", "nama", "lat", "lng"},
+			func(r *DaerahRepository) error {
+				_, _, err := r.GetProvinsi(context.Background(), 10, 20, true)
+				return err
+			}},
+		{"GetKabKota", "FROM nk_kabupaten_kota", nil, []string{"kode", "nama", "lat", "lng", "kode_provinsi"},
+			func(r *DaerahRepository) error {
+				_, _, err := r.GetKabKota(context.Background(), 10, 20, true)
+				return err
+			}},
+		{"GetKabKotaByProvinsi", "FROM nk_kabupaten_kota WHERE kode_provinsi = \\$1", []driver.Value{"32"}, []string{"kode", "nama", "lat", "lng", "kode_provinsi"},
+			func(r *DaerahRepository) error {
+				_, _, err := r.GetKabKotaByProvinsi(context.Background(), "32", 10, 20, true)
+				return err
+			}},
+		{"GetKecamatan", "FROM nk_kecamatan", nil, []string{"kode", "nama", "lat", "lng", "kode_kabupaten_kota"},
+			func(r *DaerahRepository) error {
+				_, _, err := r.GetKecamatan(context.Background(), 10, 20, true)
+				return err
+			}},
+		{"GetKecamatanByKabKota", "FROM nk_kecamatan WHERE kode_kabupaten_kota = \\$1", []driver.Value{"32.01"}, []string{"kode", "nama", "lat", "lng", "kode_kabupaten_kota"},
+			func(r *DaerahRepository) error {
+				_, _, err := r.GetKecamatanByKabKota(context.Background(), "32.01", 10, 20, true)
+				return err
+			}},
+		{"GetDesaKelurahan", "FROM nk_desa_kelurahan", nil, []string{"kode", "nama", "lat", "lng", "kode_kecamatan", "kode_pos"},
+			func(r *DaerahRepository) error {
+				_, _, err := r.GetDesaKelurahan(context.Background(), 10, 20, true)
+				return err
+			}},
+		{"GetDesaKelurahanByKecamatan", "FROM nk_desa_kelurahan WHERE kode_kecamatan = \\$1", []driver.Value{"32.01.01"}, []string{"kode", "nama", "lat", "lng", "kode_kecamatan", "kode_pos"},
+			func(r *DaerahRepository) error {
+				_, _, err := r.GetDesaKelurahanByKecamatan(context.Background(), "32.01.01", 10, 20, true)
+				return err
+			}},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			db, mock, err := sqlmock.New()
+			if err != nil {
+				t.Fatalf("failed to open sqlmock database: %s", err)
+			}
+			defer db.Close()
+			mock.MatchExpectationsInOrder(false)
+
+			repo := NewDaerahRepository(db)
+			n := len(tc.args)
+			mock.ExpectQuery("^SELECT COUNT\\(\\*\\) " + tc.query + "$").
+				WithArgs(tc.args...).
+				WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+			// Pages must come from a fixed order, so ORDER BY comes before LIMIT and OFFSET.
+			dataQuery := fmt.Sprintf("^SELECT .* %s ORDER BY kode ASC LIMIT \\$%d OFFSET \\$%d$", tc.query, n+1, n+2)
+			mock.ExpectQuery(dataQuery).
+				WithArgs(append(append([]driver.Value{}, tc.args...), 10, 20)...).
+				WillReturnRows(sqlmock.NewRows(tc.columns))
+
+			if err := tc.call(repo); err != nil {
+				t.Fatalf("expected no error, got %v", err)
+			}
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Errorf("unmet expectations: %v", err)
+			}
+		})
+	}
 }

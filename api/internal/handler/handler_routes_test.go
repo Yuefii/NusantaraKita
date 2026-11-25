@@ -35,7 +35,7 @@ func TestHandleProvinsi(t *testing.T) {
 		dataRows := sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}).
 			AddRow("31", "DKI JAKARTA", -6.175, 106.827).
 			AddRow("32", "JAWA BARAT", -6.920, 107.604)
-		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi LIMIT \\$1 OFFSET \\$2$").
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC LIMIT \\$1 OFFSET \\$2$").
 			WithArgs(10, 0).
 			WillReturnRows(dataRows)
 
@@ -99,7 +99,7 @@ func TestHandleProvinsi(t *testing.T) {
 		mock.ExpectQuery("^SELECT COUNT\\(\\*\\) FROM nk_provinsi$").WillReturnRows(countRows)
 
 		dataRows := sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}) // Empty
-		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi LIMIT \\$1 OFFSET \\$2$").
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC LIMIT \\$1 OFFSET \\$2$").
 			WithArgs(10, 0).
 			WillReturnRows(dataRows)
 

@@ -17,10 +17,10 @@ import (
 
 const (
 	provCountQuery = "^SELECT COUNT\\(\\*\\) FROM nk_provinsi$"
-	provDataQuery  = "^SELECT kode, nama, lat, lng FROM nk_provinsi LIMIT \\$1 OFFSET \\$2$"
-	provAllQuery   = "^SELECT kode, nama, lat, lng FROM nk_provinsi$"
+	provDataQuery  = "^SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC LIMIT \\$1 OFFSET \\$2$"
+	provAllQuery   = "^SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC$"
 	kabCountQuery  = "^SELECT COUNT\\(\\*\\) FROM nk_kabupaten_kota WHERE kode_provinsi = \\$1$"
-	kabDataQuery   = "^SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode_provinsi = \\$1 LIMIT \\$2 OFFSET \\$3$"
+	kabDataQuery   = "^SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode_provinsi = \\$1 ORDER BY kode ASC LIMIT \\$2 OFFSET \\$3$"
 )
 
 func newTestMux(t *testing.T) (*http.ServeMux, sqlmock.Sqlmock) {
