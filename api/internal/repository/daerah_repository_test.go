@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
+	"nusantarakita/internal/model"
+	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -313,5 +315,66 @@ func TestListQueriesOrderByKode(t *testing.T) {
 				t.Errorf("unmet expectations: %v", err)
 			}
 		})
+	}
+}
+
+func TestDesaListsCoalescePostalCodes(t *testing.T) {
+	for _, filtered := range []bool{false, true} {
+		for _, paginated := range []bool{false, true} {
+			t.Run(fmt.Sprintf("filtered=%t/paginated=%t", filtered, paginated), func(t *testing.T) {
+				db, mock, err := sqlmock.New()
+				if err != nil {
+					t.Fatal(err)
+				}
+				defer db.Close()
+				mock.MatchExpectationsInOrder(false)
+				repo := NewDaerahRepository(db)
+				query := "SELECT kode, nama, lat, lng, kode_kecamatan, COALESCE(kode_pos, '') FROM nk_desa_kelurahan"
+				count := "SELECT COUNT(*) FROM nk_desa_kelurahan"
+				var args []driver.Value
+				if filtered {
+					query += " WHERE kode_kecamatan = $1"
+					count += " WHERE kode_kecamatan = $1"
+					args = append(args, "32.01.01")
+				}
+				if paginated {
+					mock.ExpectQuery(regexp.QuoteMeta(count)).WithArgs(args...).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(2))
+				}
+				query += " ORDER BY kode ASC"
+				if paginated {
+					query += fmt.Sprintf(" LIMIT $%d OFFSET $%d", len(args)+1, len(args)+2)
+					args = append(args, 10, 20)
+				}
+				// sqlmock does not evaluate SQL: the empty string represents PostgreSQL's
+				// COALESCE result for a NULL postal code. Require that expression above.
+				rows := sqlmock.NewRows([]string{"kode", "nama", "lat", "lng", "kode_kecamatan", "kode_pos"}).
+					AddRow("32.01.01.1001", "Example A", -6.0, 106.0, "32.01.01", "").
+					AddRow("32.01.01.1002", "Example B", -6.1, 106.1, "32.01.01", "12345")
+				mock.ExpectQuery("^" + regexp.QuoteMeta(query) + "$").WithArgs(args...).WillReturnRows(rows)
+				var result []model.DesaKelurahan
+				var total int
+				if filtered {
+					result, total, err = repo.GetDesaKelurahanByKecamatan(context.Background(), "32.01.01", 10, 20, paginated)
+				} else {
+					result, total, err = repo.GetDesaKelurahan(context.Background(), 10, 20, paginated)
+				}
+				if err != nil {
+					t.Fatal(err)
+				}
+				if len(result) != 2 || result[0].KodePos != "" || result[1].KodePos != "12345" {
+					t.Fatalf("unexpected postal codes: %+v", result)
+				}
+				wantTotal := 0
+				if paginated {
+					wantTotal = 2
+				}
+				if total != wantTotal {
+					t.Errorf("total = %d, want %d", total, wantTotal)
+				}
+				if err := mock.ExpectationsWereMet(); err != nil {
+					t.Fatal(err)
+				}
+			})
+		}
 	}
 }
