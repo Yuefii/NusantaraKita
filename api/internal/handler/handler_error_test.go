@@ -23,7 +23,7 @@ const (
 	kabDataQuery   = "^SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode_provinsi = \\$1 LIMIT \\$2 OFFSET \\$3$"
 )
 
-func newTestMux(t *testing.T) (*http.ServeMux, sqlmock.Sqlmock) {
+func newTestMux(t *testing.T) (http.Handler, sqlmock.Sqlmock) {
 	t.Helper()
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -34,7 +34,7 @@ func newTestMux(t *testing.T) (*http.ServeMux, sqlmock.Sqlmock) {
 
 	mux := http.NewServeMux()
 	New(service.NewDaerahService(repository.NewDaerahRepository(db))).RegisterRoutes(mux)
-	return mux, mock
+	return WrapMux(mux), mock
 }
 
 func provRows(n int) *sqlmock.Rows {
@@ -50,9 +50,13 @@ func expectProv(mock sqlmock.Sqlmock, total, limit, offset, returned int) {
 	mock.ExpectQuery(provDataQuery).WithArgs(limit, offset).WillReturnRows(provRows(returned))
 }
 
-func serve(mux *http.ServeMux, target string) *httptest.ResponseRecorder {
+func serve(mux http.Handler, target string) *httptest.ResponseRecorder {
+	return serveMethod(mux, http.MethodGet, target)
+}
+
+func serveMethod(mux http.Handler, method, target string) *httptest.ResponseRecorder {
 	w := httptest.NewRecorder()
-	mux.ServeHTTP(w, httptest.NewRequest(http.MethodGet, target, nil))
+	mux.ServeHTTP(w, httptest.NewRequest(method, target, nil))
 	return w
 }
 
@@ -230,6 +234,54 @@ func TestErrorResponses(t *testing.T) {
 					t.Errorf("halaman=%s did not query page 1: %v", h, err)
 				}
 			})
+		}
+	})
+
+	t.Run("unregistered routes return structured 404 NOT_FOUND", func(t *testing.T) {
+		mux, _ := newTestMux(t)
+		for _, target := range []string{"/", "/tidak-ada", "/v2/tidak-ada", "/v2/a/b/c", "/v2/foo/bar"} {
+			t.Run(target, func(t *testing.T) {
+				assertError(t, serve(mux, target), http.StatusNotFound,
+					"NOT_FOUND", "Endpoint tidak ditemukan")
+			})
+		}
+		assertError(t, serveMethod(mux, http.MethodPost, "/v2/tidak-ada"), http.StatusNotFound,
+			"NOT_FOUND", "Endpoint tidak ditemukan")
+	})
+
+	t.Run("unsupported HTTP methods return structured 405 METHOD_NOT_ALLOWED", func(t *testing.T) {
+		mux, _ := newTestMux(t)
+		cases := []struct {
+			method string
+			target string
+		}{
+			{http.MethodPost, "/v2/provinsi"},
+			{http.MethodDelete, "/v2/search"},
+			{http.MethodPut, "/v2/provinsi/32"},
+			{http.MethodPatch, "/v2/provinsi/32/kab-kota"},
+		}
+		for _, tc := range cases {
+			t.Run(tc.method+" "+tc.target, func(t *testing.T) {
+				w := serveMethod(mux, tc.method, tc.target)
+				assertError(t, w, http.StatusMethodNotAllowed,
+					"METHOD_NOT_ALLOWED", "Metode HTTP tidak diizinkan")
+				if allow := w.Header().Get("Allow"); !strings.Contains(allow, http.MethodGet) {
+					t.Errorf("expected Allow header to include GET, got %q", allow)
+				}
+			})
+		}
+	})
+
+	t.Run("search with short or missing query returns structured 400 BAD_REQUEST via ErrQueryTooShort", func(t *testing.T) {
+		mux, mock := newTestMux(t)
+		for _, target := range []string{"/v2/search", "/v2/search?q=", "/v2/search?q=a"} {
+			t.Run(target, func(t *testing.T) {
+				assertError(t, serve(mux, target), http.StatusBadRequest,
+					"BAD_REQUEST", "parameter 'q' minimal 2 karakter")
+			})
+		}
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unexpected DB query for short search: %v", err)
 		}
 	})
 }
