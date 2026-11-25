@@ -39,8 +39,8 @@ const getKecamatanResponseStructureData: ResponseJsonListItem[] = [
 
 const kecamatanResponse = {
   pagination: {
-    total_item: 516,
-    total_halaman: 52,
+    total_item: 7277,
+    total_halaman: 728,
     halaman_saat_ini: 1,
     ukuran_halaman: 10,
   },
@@ -61,15 +61,22 @@ const errorHandlingTableRows = [
   {
     Code: '404',
     Description: 'Data tidak ditemukan',
-    Example: JSON.stringify({ detail: 'tidak ditemukan data' }, null, 2),
+    Example: JSON.stringify(
+      { error: { code: 'NOT_FOUND', message: 'tidak ditemukan data' } },
+      null,
+      2,
+    ),
   },
   {
     Code: '404',
     Description: 'Halaman melebihi batas',
     Example: JSON.stringify(
       {
-        detail:
-          'nomor halaman melebihi total halaman. Halaman maksimum adalah 7',
+        error: {
+          code: 'PAGE_OUT_OF_RANGE',
+          message:
+            'nomor halaman melebihi total halaman. Halaman maksimum adalah 728',
+        },
       },
       null,
       2,
@@ -79,7 +86,12 @@ const errorHandlingTableRows = [
     Code: '500',
     Description: 'Server Error',
     Example: JSON.stringify(
-      { detail: 'Terjadi kesalahan pada server' },
+      {
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Terjadi kesalahan pada server',
+        },
+      },
       null,
       2,
     ),
