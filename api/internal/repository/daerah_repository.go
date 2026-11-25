@@ -44,6 +44,11 @@ func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query s
 			}
 			data = append(data, item)
 		}
+		// rows.Next returns false on iteration errors too, so check rows.Err
+		// to avoid returning partial data as if it were complete.
+		if err := rows.Err(); err != nil {
+			return nil, 0, err
+		}
 		return data, 0, nil
 	}
 
@@ -106,6 +111,11 @@ func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query s
 				return
 			}
 			result = append(result, item)
+		}
+		if err := rows.Err(); err != nil {
+			cancel()
+			dataCh <- dataResult{err: err}
+			return
 		}
 		dataCh <- dataResult{data: result, err: nil}
 	}()
