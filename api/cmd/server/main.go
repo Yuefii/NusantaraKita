@@ -71,7 +71,7 @@ func main() {
 	})
 
 	// Simple CORS middleware
-	corsHandler := corsMiddleware(mux)
+	corsHandler := corsMiddleware(handler.WrapMux(mux))
 
 	port := os.Getenv("PORT")
 	if port == "" {

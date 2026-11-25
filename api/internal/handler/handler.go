@@ -87,11 +87,74 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 // Error codes returned in the "error.code" field.
 const (
-	codeNotFound       = "NOT_FOUND"
-	codeBadRequest     = "BAD_REQUEST"
-	codePageOutOfRange = "PAGE_OUT_OF_RANGE"
-	codeInternalError  = "INTERNAL_ERROR"
+	codeNotFound         = "NOT_FOUND"
+	codeBadRequest       = "BAD_REQUEST"
+	codeMethodNotAllowed = "METHOD_NOT_ALLOWED"
+	codePageOutOfRange   = "PAGE_OUT_OF_RANGE"
+	codeInternalError    = "INTERNAL_ERROR"
 )
+
+var errMethodNotAllowed = errors.New("metode HTTP tidak diizinkan")
+
+type statusProbeWriter struct {
+	header http.Header
+	status int
+}
+
+func (p *statusProbeWriter) Header() http.Header {
+	if p.header == nil {
+		p.header = make(http.Header)
+	}
+	return p.header
+}
+
+func (p *statusProbeWriter) WriteHeader(code int) {
+	if p.status == 0 {
+		p.status = code
+	}
+}
+
+func (p *statusProbeWriter) Write(b []byte) (int, error) {
+	if p.status == 0 {
+		p.status = http.StatusOK
+	}
+	return len(b), nil
+}
+
+// WrapMux wraps an *http.ServeMux so unmatched routes (404) and unsupported
+// HTTP methods (405) return structured JSON error responses instead of Go's
+// default plain-text bodies.
+func WrapMux(mux *http.ServeMux) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h, pattern := mux.Handler(r)
+		if pattern != "" {
+			mux.ServeHTTP(w, r)
+			return
+		}
+
+		probe := &statusProbeWriter{}
+		h.ServeHTTP(probe, r)
+
+		switch probe.status {
+		case http.StatusMethodNotAllowed:
+			if allow := probe.Header().Get("Allow"); allow != "" {
+				w.Header().Set("Allow", allow)
+			}
+			writeError(w, http.StatusMethodNotAllowed, errMethodNotAllowed, codeMethodNotAllowed, "Metode HTTP tidak diizinkan")
+		case http.StatusNotFound:
+			writeError(w, http.StatusNotFound, service.ErrNotFound, codeNotFound, "Endpoint tidak ditemukan")
+		default:
+			for k, vals := range probe.Header() {
+				for _, v := range vals {
+					w.Header().Add(k, v)
+				}
+			}
+			if probe.status != 0 {
+				w.WriteHeader(probe.status)
+			}
+		}
+	})
+}
 
 type errorBody struct {
 	Code    string `json:"code"`
@@ -293,16 +356,16 @@ func (h *Handler) handleDesaKelByKecamatan(w http.ResponseWriter, r *http.Reques
 // ---------------- Search / Autocomplete ----------------
 func (h *Handler) handleSearch(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
-	if len(q) < 2 {
-		writeError(w, http.StatusBadRequest, service.ErrQueryTooShort, codeBadRequest, "parameter 'q' minimal 2 karakter")
-		return
-	}
-
 	tipe := r.URL.Query().Get("tipe")
 	params := parseQueryParams(r)
 
 	resp, err := h.svc.SearchWilayah(r.Context(), q, tipe, params.limit, params.halaman, params.pagination)
 	if err != nil {
+		if errors.Is(err, service.ErrQueryTooShort) {
+			writeError(w, http.StatusBadRequest, err, codeBadRequest, err.Error())
+			return
+		}
+
 		if errors.Is(err, service.ErrNotFound) {
 			writeError(w, http.StatusNotFound, err, codeNotFound, err.Error())
 			return
