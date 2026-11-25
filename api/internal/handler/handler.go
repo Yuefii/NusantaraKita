@@ -44,7 +44,30 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /v2/provinsi/{kode}/kab-kota", h.handleKabKotaByProvinsi)
 	mux.HandleFunc("GET /v2/kab-kota/{kode}/kecamatan", h.handleKecamatanByKabKota)
 	mux.HandleFunc("GET /v2/kecamatan/{kode}/desa-kel", h.handleDesaKelByKecamatan)
+
+	// Fallback for every request no other pattern matches, so that unknown
+	// paths and wrong methods also get a JSON error instead of Go's plain text.
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		handleUnmatched(mux, w, r)
+	})
 }
+
+// handleUnmatched answers 405 when the path exists for GET (and so HEAD) and
+// 404 otherwise. Routes registered on mux later, such as /health, count too.
+func handleUnmatched(mux *http.ServeMux, w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		probe := r.Clone(r.Context())
+		probe.Method = http.MethodGet
+		if _, pattern := mux.Handler(probe); pattern != "" && pattern != "/" {
+			w.Header().Set("Allow", "GET, HEAD")
+			writeError(w, http.StatusMethodNotAllowed, errMethodNotAllowed, codeMethodNotAllowed, "Metode tidak diizinkan")
+			return
+		}
+	}
+	writeError(w, http.StatusNotFound, service.ErrNotFound, codeNotFound, "Endpoint tidak ditemukan")
+}
+
+var errMethodNotAllowed = errors.New("method not allowed")
 
 type queryParams struct {
 	limit      int
@@ -87,10 +110,11 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 // Error codes returned in the "error.code" field.
 const (
-	codeNotFound       = "NOT_FOUND"
-	codeBadRequest     = "BAD_REQUEST"
-	codePageOutOfRange = "PAGE_OUT_OF_RANGE"
-	codeInternalError  = "INTERNAL_ERROR"
+	codeNotFound         = "NOT_FOUND"
+	codeBadRequest       = "BAD_REQUEST"
+	codeMethodNotAllowed = "METHOD_NOT_ALLOWED"
+	codePageOutOfRange   = "PAGE_OUT_OF_RANGE"
+	codeInternalError    = "INTERNAL_ERROR"
 )
 
 type errorBody struct {
@@ -303,6 +327,11 @@ func (h *Handler) handleSearch(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := h.svc.SearchWilayah(r.Context(), q, tipe, params.limit, params.halaman, params.pagination)
 	if err != nil {
+		if errors.Is(err, service.ErrQueryTooShort) {
+			writeError(w, http.StatusBadRequest, err, codeBadRequest, err.Error())
+			return
+		}
+
 		if errors.Is(err, service.ErrNotFound) {
 			writeError(w, http.StatusNotFound, err, codeNotFound, err.Error())
 			return
