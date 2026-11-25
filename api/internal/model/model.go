@@ -50,7 +50,7 @@ type DesaKelurahan struct {
 	Lat           float64 `json:"lat"`
 	Lng           float64 `json:"lng"`
 	KodeKecamatan string  `json:"kode_kecamatan"`
-	KodePos       string  `json:"kode_pos"`
+	KodePos       string  `json:"kode_pos,omitempty"`
 	GeojsonURL    string  `json:"geojson_url"`
 }
 

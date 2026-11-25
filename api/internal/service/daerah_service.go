@@ -83,7 +83,7 @@ func buildResponse[T any](data []T, limit, halaman, totalItem int, pagination bo
 	}
 
 	if !pagination {
-		return map[string]interface{}{"data": data}, nil
+		return model.PaginatedResponse[T]{Data: data}, nil
 	}
 
 	meta := &model.PaginationMeta{
