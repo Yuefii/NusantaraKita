@@ -126,7 +126,7 @@ func fetchPaginatedData[T any](ctx context.Context, r *DaerahRepository, query s
 
 // ---------------- Provinsi ----------------
 func (r *DaerahRepository) GetProvinsi(ctx context.Context, limit, offset int, pagination bool) ([]model.Provinsi, int, error) {
-	query := "SELECT kode, nama, lat, lng FROM nk_provinsi"
+	query := "SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC"
 	countQuery := "SELECT COUNT(*) FROM nk_provinsi"
 	return fetchPaginatedData(ctx, r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.Provinsi, error) {
 		var p model.Provinsi
@@ -137,7 +137,7 @@ func (r *DaerahRepository) GetProvinsi(ctx context.Context, limit, offset int, p
 
 // ---------------- Kabupaten / Kota ----------------
 func (r *DaerahRepository) GetKabKota(ctx context.Context, limit, offset int, pagination bool) ([]model.KabupatenKota, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota"
+	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota ORDER BY kode ASC"
 	countQuery := "SELECT COUNT(*) FROM nk_kabupaten_kota"
 	return fetchPaginatedData(ctx, r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.KabupatenKota, error) {
 		var k model.KabupatenKota
@@ -147,7 +147,7 @@ func (r *DaerahRepository) GetKabKota(ctx context.Context, limit, offset int, pa
 }
 
 func (r *DaerahRepository) GetKabKotaByProvinsi(ctx context.Context, kodeProv string, limit, offset int, pagination bool) ([]model.KabupatenKota, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode_provinsi = $1"
+	query := "SELECT kode, nama, lat, lng, kode_provinsi FROM nk_kabupaten_kota WHERE kode_provinsi = $1 ORDER BY kode ASC"
 	countQuery := "SELECT COUNT(*) FROM nk_kabupaten_kota WHERE kode_provinsi = $1"
 	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeProv}, limit, offset, pagination, func(rows *sql.Rows) (model.KabupatenKota, error) {
 		var k model.KabupatenKota
@@ -158,7 +158,7 @@ func (r *DaerahRepository) GetKabKotaByProvinsi(ctx context.Context, kodeProv st
 
 // ---------------- Kecamatan ----------------
 func (r *DaerahRepository) GetKecamatan(ctx context.Context, limit, offset int, pagination bool) ([]model.Kecamatan, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan"
+	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan ORDER BY kode ASC"
 	countQuery := "SELECT COUNT(*) FROM nk_kecamatan"
 	return fetchPaginatedData(ctx, r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.Kecamatan, error) {
 		var k model.Kecamatan
@@ -168,7 +168,7 @@ func (r *DaerahRepository) GetKecamatan(ctx context.Context, limit, offset int, 
 }
 
 func (r *DaerahRepository) GetKecamatanByKabKota(ctx context.Context, kodeKab string, limit, offset int, pagination bool) ([]model.Kecamatan, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan WHERE kode_kabupaten_kota = $1"
+	query := "SELECT kode, nama, lat, lng, kode_kabupaten_kota FROM nk_kecamatan WHERE kode_kabupaten_kota = $1 ORDER BY kode ASC"
 	countQuery := "SELECT COUNT(*) FROM nk_kecamatan WHERE kode_kabupaten_kota = $1"
 	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeKab}, limit, offset, pagination, func(rows *sql.Rows) (model.Kecamatan, error) {
 		var k model.Kecamatan
@@ -179,7 +179,7 @@ func (r *DaerahRepository) GetKecamatanByKabKota(ctx context.Context, kodeKab st
 
 // ---------------- Desa / Kelurahan ----------------
 func (r *DaerahRepository) GetDesaKelurahan(ctx context.Context, limit, offset int, pagination bool) ([]model.DesaKelurahan, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan"
+	query := "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan ORDER BY kode ASC"
 	countQuery := "SELECT COUNT(*) FROM nk_desa_kelurahan"
 	return fetchPaginatedData(ctx, r, query, countQuery, nil, limit, offset, pagination, func(rows *sql.Rows) (model.DesaKelurahan, error) {
 		var d model.DesaKelurahan
@@ -189,7 +189,7 @@ func (r *DaerahRepository) GetDesaKelurahan(ctx context.Context, limit, offset i
 }
 
 func (r *DaerahRepository) GetDesaKelurahanByKecamatan(ctx context.Context, kodeKec string, limit, offset int, pagination bool) ([]model.DesaKelurahan, int, error) {
-	query := "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = $1"
+	query := "SELECT kode, nama, lat, lng, kode_kecamatan, kode_pos FROM nk_desa_kelurahan WHERE kode_kecamatan = $1 ORDER BY kode ASC"
 	countQuery := "SELECT COUNT(*) FROM nk_desa_kelurahan WHERE kode_kecamatan = $1"
 	return fetchPaginatedData(ctx, r, query, countQuery, []interface{}{kodeKec}, limit, offset, pagination, func(rows *sql.Rows) (model.DesaKelurahan, error) {
 		var d model.DesaKelurahan
