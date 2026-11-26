@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"nusantarakita/internal/model"
 	"regexp"
@@ -316,6 +317,76 @@ func TestListQueriesOrderByKode(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestFetchPaginatedDataRowsErr(t *testing.T) {
+	errIter := errors.New("connection reset during iteration")
+
+	t.Run("without pagination", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		if err != nil {
+			t.Fatalf("failed to open sqlmock database: %s", err)
+		}
+		defer db.Close()
+
+		repo := NewDaerahRepository(db)
+		rows := sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}).
+			AddRow("11", "ACEH", 4.695135, 96.749399).
+			AddRow("12", "SUMATERA UTARA", 2.115355, 99.545097).
+			RowError(1, errIter)
+		mock.ExpectQuery("^SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC$").WillReturnRows(rows)
+
+		provs, total, err := repo.GetProvinsi(context.Background(), 10, 0, false)
+		if !errors.Is(err, errIter) {
+			t.Fatalf("expected iteration error %v, got %v", errIter, err)
+		}
+		if provs != nil || total != 0 {
+			t.Errorf("expected no data on error, got %d items, total %d", len(provs), total)
+		}
+	})
+
+	t.Run("with pagination", func(t *testing.T) {
+		db, mock, err := sqlmock.New()
+		if err != nil {
+			t.Fatalf("failed to open sqlmock database: %s", err)
+		}
+		defer db.Close()
+		mock.MatchExpectationsInOrder(false)
+
+		repo := NewDaerahRepository(db)
+		dataQuery := "^SELECT kode, nama, lat, lng FROM nk_provinsi ORDER BY kode ASC LIMIT \\$1 OFFSET \\$2$"
+
+		// A first successful call caches the COUNT result, so the failing call
+		// below only runs the data query and its error is reported deterministically.
+		mock.ExpectQuery("^SELECT COUNT\\(\\*\\) FROM nk_provinsi$").
+			WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(38))
+		mock.ExpectQuery(dataQuery).
+			WithArgs(10, 0).
+			WillReturnRows(sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}).
+				AddRow("11", "ACEH", 4.695135, 96.749399))
+		if _, _, err := repo.GetProvinsi(context.Background(), 10, 0, true); err != nil {
+			t.Fatalf("expected no error on first call, got %v", err)
+		}
+
+		rows := sqlmock.NewRows([]string{"kode", "nama", "lat", "lng"}).
+			AddRow("11", "ACEH", 4.695135, 96.749399).
+			AddRow("12", "SUMATERA UTARA", 2.115355, 99.545097).
+			RowError(1, errIter)
+		mock.ExpectQuery(dataQuery).
+			WithArgs(10, 0).
+			WillReturnRows(rows)
+
+		provs, total, err := repo.GetProvinsi(context.Background(), 10, 0, true)
+		if !errors.Is(err, errIter) {
+			t.Fatalf("expected iteration error %v, got %v", errIter, err)
+		}
+		if provs != nil || total != 0 {
+			t.Errorf("expected no data on error, got %d items, total %d", len(provs), total)
+		}
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unmet expectations: %v", err)
+		}
+	})
 }
 
 func TestDesaListsCoalescePostalCodes(t *testing.T) {
