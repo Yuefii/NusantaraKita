@@ -8,6 +8,7 @@ import { GetProvinsi } from '@/pages/get-provinsi';
 import { InstalationGuide } from '@/pages/instalation-guide';
 import { KabupatenKota } from '@/pages/kabupaten-kota';
 import { Kecamatan } from '@/pages/kecamatan';
+import { NotFound } from '@/pages/not-found';
 import Overview from '@/pages/overview';
 import { Provinsi } from '@/pages/provinsi';
 import { ReverseGeocodingApiDoc } from '@/pages/reverse-geocoding';
@@ -43,6 +44,7 @@ export const routers = createBrowserRouter([
           { path: 'desa-kelurahan', Component: DesaKelurahan },
         ],
       },
+      { path: '*', Component: NotFound },
     ],
   },
 ]);
