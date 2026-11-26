@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"math"
 	"testing"
@@ -27,13 +28,30 @@ func TestBuildResponse(t *testing.T) {
 			t.Fatalf("expected no error, got %v", err)
 		}
 
-		resMap, ok := res.(map[string]interface{})
+		paginatedRes, ok := res.(model.PaginatedResponse[string])
 		if !ok {
-			t.Fatalf("expected map[string]interface{}, got %T", res)
+			t.Fatalf("expected model.PaginatedResponse[string], got %T", res)
+		}
+		if paginatedRes.Pagination != nil {
+			t.Errorf("expected nil Pagination when disabled, got %+v", paginatedRes.Pagination)
+		}
+		if len(paginatedRes.Data) != 1 || paginatedRes.Data[0] != "item1" {
+			t.Errorf("expected data [item1], got %v", paginatedRes.Data)
 		}
 
-		if _, exists := resMap["data"]; !exists {
-			t.Error("expected 'data' key in response")
+		rawBytes, err := json.Marshal(res)
+		if err != nil {
+			t.Fatalf("failed to marshal response: %v", err)
+		}
+		var raw map[string]json.RawMessage
+		if err := json.Unmarshal(rawBytes, &raw); err != nil {
+			t.Fatalf("failed to unmarshal JSON: %v", err)
+		}
+		if _, hasPagination := raw["pagination"]; hasPagination {
+			t.Errorf("expected pagination field to be omitted, got %s", string(rawBytes))
+		}
+		if _, hasData := raw["data"]; !hasData {
+			t.Errorf("expected data field in JSON, got %s", string(rawBytes))
 		}
 	})
 
@@ -194,6 +212,110 @@ func TestDetailService(t *testing.T) {
 		}
 		if singleRes.Data.GeojsonURL == "" {
 			t.Errorf("expected non-empty GeojsonURL")
+		}
+	})
+}
+
+func TestKodePosOmitEmptyConsistency(t *testing.T) {
+	t.Run("Empty kode_pos is omitted across all models", func(t *testing.T) {
+		cases := []struct {
+			name  string
+			value any
+		}{
+			{
+				name: "DesaKelurahan",
+				value: model.DesaKelurahan{
+					Kode:          "32.73.01.1001",
+					Nama:          "SARIJADI",
+					KodeKecamatan: "32.73.01",
+					KodePos:       "",
+				},
+			},
+			{
+				name: "SearchItem",
+				value: model.SearchItem{
+					Kode:    "32.73.01.1001",
+					Nama:    "SARIJADI",
+					Tipe:    "desa_kelurahan",
+					KodePos: "",
+				},
+			},
+			{
+				name: "DesaKelurahanInfo",
+				value: model.DesaKelurahanInfo{
+					Kode:    "32.73.01.1001",
+					Nama:    "SARIJADI",
+					KodePos: "",
+				},
+			},
+		}
+
+		for _, tc := range cases {
+			t.Run(tc.name, func(t *testing.T) {
+				b, err := json.Marshal(tc.value)
+				if err != nil {
+					t.Fatalf("failed to marshal %s: %v", tc.name, err)
+				}
+				var fields map[string]json.RawMessage
+				if err := json.Unmarshal(b, &fields); err != nil {
+					t.Fatalf("failed to unmarshal %s: %v", tc.name, err)
+				}
+				if _, exists := fields["kode_pos"]; exists {
+					t.Errorf("expected kode_pos to be omitted for %s when empty, got %s", tc.name, string(b))
+				}
+			})
+		}
+	})
+
+	t.Run("Non-empty kode_pos is serialized across all models", func(t *testing.T) {
+		cases := []struct {
+			name  string
+			value any
+		}{
+			{
+				name: "DesaKelurahan",
+				value: model.DesaKelurahan{
+					Kode:          "32.73.01.1001",
+					Nama:          "SARIJADI",
+					KodeKecamatan: "32.73.01",
+					KodePos:       "40151",
+				},
+			},
+			{
+				name: "SearchItem",
+				value: model.SearchItem{
+					Kode:    "32.73.01.1001",
+					Nama:    "SARIJADI",
+					Tipe:    "desa_kelurahan",
+					KodePos: "40151",
+				},
+			},
+			{
+				name: "DesaKelurahanInfo",
+				value: model.DesaKelurahanInfo{
+					Kode:    "32.73.01.1001",
+					Nama:    "SARIJADI",
+					KodePos: "40151",
+				},
+			},
+		}
+
+		for _, tc := range cases {
+			t.Run(tc.name, func(t *testing.T) {
+				b, err := json.Marshal(tc.value)
+				if err != nil {
+					t.Fatalf("failed to marshal %s: %v", tc.name, err)
+				}
+				var decoded struct {
+					KodePos string `json:"kode_pos"`
+				}
+				if err := json.Unmarshal(b, &decoded); err != nil {
+					t.Fatalf("failed to unmarshal %s: %v", tc.name, err)
+				}
+				if decoded.KodePos != "40151" {
+					t.Errorf("expected kode_pos 40151 for %s, got %q (%s)", tc.name, decoded.KodePos, string(b))
+				}
+			})
 		}
 	})
 }
