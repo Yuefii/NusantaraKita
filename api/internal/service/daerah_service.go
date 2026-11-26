@@ -8,8 +8,11 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 	"time"
+	"unicode/utf8"
 
 	"nusantarakita/internal/model"
 	"nusantarakita/internal/repository"
@@ -18,9 +21,9 @@ import (
 )
 
 var (
-	ErrNotFound          = errors.New("tidak ditemukan data")
-	ErrBadRequest        = errors.New("parameter tidak valid")
-	ErrQueryTooShort     = errors.New("parameter 'q' minimal 2 karakter")
+	ErrNotFound         = errors.New("tidak ditemukan data")
+	ErrBadRequest       = errors.New("parameter tidak valid")
+	ErrQueryTooShort    = errors.New("parameter 'q' minimal 2 karakter")
 	ErrOutsideIndonesia = errors.New("koordinat berada di luar wilayah Indonesia")
 )
 
@@ -105,7 +108,7 @@ func (s *DaerahService) withCache(ctx context.Context, cacheKey string, fetcher 
 
 	// 1. Try to get from Upstash Redis
 	if useRedis {
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/get/%s", s.upstashURL, cacheKey), nil)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/get/%s", s.upstashURL, url.PathEscape(cacheKey)), nil)
 		if err == nil {
 			req.Header.Set("Authorization", "Bearer "+s.upstashToken)
 			resp, err := s.httpClient.Do(req)
@@ -348,8 +351,14 @@ func (s *DaerahService) GetDesaKelurahanByKode(ctx context.Context, kode string)
 // ---------------- Search / Autocomplete ----------------
 
 func (s *DaerahService) SearchWilayah(ctx context.Context, q, tipe string, limit, halaman int, pagination bool) (any, error) {
-	if len(q) < 2 {
+	q = strings.TrimSpace(q)
+	if utf8.RuneCountInString(q) < 2 {
 		return nil, ErrQueryTooShort
+	}
+	switch tipe {
+	case "", "provinsi", "kab-kota", "kabupaten_kota", "kecamatan", "desa-kel", "desa_kelurahan":
+	default:
+		return nil, ErrBadRequest
 	}
 
 	cacheKey := fmt.Sprintf("search_%s_%s_%d_%d_%v", q, tipe, limit, halaman, pagination)

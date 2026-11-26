@@ -7,6 +7,8 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
+	"unicode/utf8"
 
 	"nusantarakita/internal/service"
 )
@@ -316,8 +318,8 @@ func (h *Handler) handleDesaKelByKecamatan(w http.ResponseWriter, r *http.Reques
 
 // ---------------- Search / Autocomplete ----------------
 func (h *Handler) handleSearch(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query().Get("q")
-	if len(q) < 2 {
+	q := strings.TrimSpace(r.URL.Query().Get("q"))
+	if utf8.RuneCountInString(q) < 2 {
 		writeError(w, http.StatusBadRequest, service.ErrQueryTooShort, codeBadRequest, "parameter 'q' minimal 2 karakter")
 		return
 	}
@@ -327,7 +329,7 @@ func (h *Handler) handleSearch(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := h.svc.SearchWilayah(r.Context(), q, tipe, params.limit, params.halaman, params.pagination)
 	if err != nil {
-		if errors.Is(err, service.ErrQueryTooShort) {
+		if errors.Is(err, service.ErrQueryTooShort) || errors.Is(err, service.ErrBadRequest) {
 			writeError(w, http.StatusBadRequest, err, codeBadRequest, err.Error())
 			return
 		}
